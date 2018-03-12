@@ -1,7 +1,7 @@
-title: hoyouly 的博客 - GitHub.io
-description: hoyouly 的博客
+title: hoyouly 的博客 
+description: 我要用自己的双手，敲出一个美好的未来！
 google_analytics: 
-show_downloads: true
+show_downloads: false
 theme: jekyll-theme-hacker
 
 gems:
