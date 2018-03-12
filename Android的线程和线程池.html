@@ -1,0 +1,240 @@
+<!DOCTYPE html><html><head><title>Android的线程和线程池</title><meta charset='utf-8'><link href='https://dn-maxiang.qbox.me/res-min/themes/marxico.css' rel='stylesheet'><style>
+
+.note-content  {font-family: "Helvetica Neue", Arial, "Hiragino Sans GB", STHeiti, "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, Song, sans-serif;}
+</style></head><body><div id='preview-contents' class='note-content'>
+                        <div id="wmd-preview" class="preview-content"></div>
+                    <div id="wmd-preview-section-46" class="wmd-preview-section preview-content">
+
+</div><div id="wmd-preview-section-74" class="wmd-preview-section preview-content">
+
+<h1 id="android的线程和线程池">Android的线程和线程池</h1>
+
+<p></p>
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><a href="#android的线程和线程池">Android的线程和线程池</a><ul>
+<li><a href="#asynctaks">AsyncTaks</a><ul>
+<li><a href="#asynctaks-的一些限制">AsyncTaks 的一些限制</a></li>
+<li><a href="#asynctask-的工作原理">AsyncTask 的工作原理</a></li>
+</ul>
+</li>
+<li><a href="#handlerthread">HandlerThread</a></li>
+<li><a href="#intentservice">IntentService</a></li>
+<li><a href="#android中的线程池">Android中的线程池</a><ul>
+<li><a href="#threadpoolexecutor">ThreadPoolExecutor</a></li>
+<li><a href="#线程池的分类">线程池的分类</a><ul>
+<li><a href="#fixedthreadpool-线程数量固定的线程池">FixedThreadPool 线程数量固定的线程池</a></li>
+<li><a href="#cachedtheadpool-线程数量不定的线程池">CachedTheadPool 线程数量不定的线程池</a></li>
+<li><a href="#schedulethreadpool-核心线程固定非核心线程没有限制">ScheduleThreadPool 核心线程固定，非核心线程没有限制</a></li>
+<li><a href="#singlethreadpool-只有一个核心线程">SingleThreadPool 只有一个核心线程</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<p>线程是操作系统调度的最小单元，又是一种受限制的系统资源，即线程不可能无限次地生产，并且线程的创建和消耗都有相应的开销，当系统中存在大量的线程是，系统会通过时间片轮转的方式调度每个线程，分为两种</p>
+
+<ol><li rel="1">主线程： 处理和界面相关的事情</li>
+<li rel="2">子线程：用于好事的操作</li>
+</ol>
+
+<p>如果线程中频繁创建和消耗线程，这种做法不是很高效，可以采用线程池，一个线程池会缓存一定数量的线程，通过线程池可以避免频繁创建和消耗线程所带来的系统开销。主要通过Executor来派生特定类型的线程池。</p>
+
+<p>扮演线程的角色有很多，包括AsyncTask和IntentService,同时HandlerThread也是一种特殊的线程 </p></div><div id="wmd-preview-section-48" class="wmd-preview-section preview-content">
+
+<h2 id="asynctaks">AsyncTaks</h2>
+
+<p>AsyncTask 底层使用的是线程池，分装了线程池和Handler，主要用于开发者可以使用在子线程中更新UI是一种轻量级的异步任务类。并不适合进行特别耗时的后台任务，</p>
+
+</div><div id="wmd-preview-section-49" class="wmd-preview-section preview-content">
+
+<h3 id="asynctaks-的一些限制">AsyncTaks 的一些限制</h3>
+
+<ol><li rel="1">AsyncTask的类必须在主线程中加载。</li>
+<li rel="2">AsyncTask的对象必须在主线程中创建</li>
+<li rel="3">execute方法必须在UI线程中调用</li>
+<li rel="4">不要在程序中直接调用onPreExecute().onPosteExecute(),doInBackground和onProgressUpdate方法</li>
+<li rel="5">一个AsyncTask对象只能执行一次，即只能调用一次execute()方法，否则会包运行时一次</li>
+<li rel="6">在1.6 之前是串行，在3.0 之前是采用线程池并行，在3.0 之后，为避免并发错误，有采用串行执行任务。但是可以同executeOnExecutor方法并行执行任务</li>
+</ol>
+
+</div><div id="wmd-preview-section-50" class="wmd-preview-section preview-content">
+
+<h3 id="asynctask-的工作原理">AsyncTask 的工作原理</h3>
+
+<p>从execute方法分析</p>
+
+</div><div id="wmd-preview-section-51" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs">  <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> AsyncTask&lt;Params, Progress, Result&gt; execute(Params... params) {<br>        <span class="hljs-keyword">return</span> executeOnExecutor(sDefaultExecutor, params);<br>    }<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">final</span> AsyncTask&lt;Params, Progress, Result&gt; executeOnExecutor(Executor exec,<br>            Params... params) {<br>        <span class="hljs-keyword">if</span> (mStatus != Status.PENDING) {<br>            <span class="hljs-keyword">switch</span> (mStatus) {<br>                <span class="hljs-keyword">case</span> RUNNING:<br>                    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">"Cannot execute task:"</span><br>                            + <span class="hljs-string">" the task is already running."</span>);<br>                <span class="hljs-keyword">case</span> FINISHED:<br>                    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> IllegalStateException(<span class="hljs-string">"Cannot execute task:"</span><br>                            + <span class="hljs-string">" the task has already been executed "</span><br>                            + <span class="hljs-string">"(a task can be executed only once)"</span>);<br>            }<br>        }<br><br>        mStatus = Status.RUNNING;<br><br>        onPreExecute();<br><br>        mWorker.mParams = params;<br>        exec.execute(mFuture);<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;<br>    }<br></code></pre>
+
+<p>又以上源码可知</p>
+
+<ol><li rel="1">execute 方法调用的是executeOnExecutor 方法</li>
+<li rel="2">因为ececute方法是在主线程中调用的，所以onPreExecute方法确实是在主线程中执行的，然后才开始执行线程池</li>
+<li rel="3">sDefaultExecutor看源码可知是一个串行的线程池，一个进程中的所有AsyncTack全部都放入到这个线程池中排队执行。</li>
+</ol>
+
+</div><div id="wmd-preview-section-52" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs">  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Executor SERIAL_EXECUTOR = <span class="hljs-keyword">new</span> SerialExecutor();<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">volatile</span> Executor sDefaultExecutor = SERIAL_EXECUTOR;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">SerialExecutor</span> <span class="hljs-keyword">implements</span> <span class="hljs-title">Executor</span> </span>{<br>        <span class="hljs-keyword">final</span> ArrayDeque&lt;Runnable&gt; mTasks = <span class="hljs-keyword">new</span> ArrayDeque&lt;Runnable&gt;();<br>        Runnable mActive;<br><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">execute</span><span class="hljs-params">(<span class="hljs-keyword">final</span> Runnable r)</span> </span>{<br>            mTasks.offer(<span class="hljs-keyword">new</span> Runnable() {<br>                <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>{<br>                    <span class="hljs-keyword">try</span> {<br>                        r.run();<br>                    } <span class="hljs-keyword">finally</span> {<br>                        scheduleNext();<br>                    }<br>                }<br>            });<br>            <span class="hljs-keyword">if</span> (mActive == <span class="hljs-keyword">null</span>) {<br>                scheduleNext();<br>            }<br>        }<br><br>        <span class="hljs-function"><span class="hljs-keyword">protected</span> <span class="hljs-keyword">synchronized</span> <span class="hljs-keyword">void</span> <span class="hljs-title">scheduleNext</span><span class="hljs-params">()</span> </span>{<br>            <span class="hljs-keyword">if</span> ((mActive = mTasks.poll()) != <span class="hljs-keyword">null</span>) {<br>                THREAD_POOL_EXECUTOR.execute(mActive);<br>            }<br>        }<br>    }<br></code></pre>
+
+<p>从SerialExecutor 的实现可以分析AsyncTask的排队执行过程</p>
+
+<ol><li rel="1">把AsyncTask的Params参数封装为FutureTask对象，这个并发类，</li>
+<li rel="2">把FutureTask对象交给SerialExecutor的exctute方法执行</li>
+<li rel="3">如果这个时候没有活动中的AsyncTask人物，那么就执行scledulNext方法执行下一个AsyncTask人物，同事如果AsyncTask执行完，会执行其他的任务</li>
+</ol>
+
+<p>AsyncTask有两个线程池，（sDefaultExecutor 和THREAD_POOL_EXECUTOR）和一个Handler（InternalHandler） 其中THREAD_POOL_EXECUTOR 是用来执行任务，而sDefaultExecutor 只是为了任务的排队。InternalHandler用于将执行环境从线程池切换到主线程</p>
+
+</div><div id="wmd-preview-section-53" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs">  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">AsyncTask</span><span class="hljs-params">()</span> </span>{<br>        mWorker = <span class="hljs-keyword">new</span> WorkerRunnable&lt;Params, Result&gt;() {<br>            <span class="hljs-function"><span class="hljs-keyword">public</span> Result <span class="hljs-title">call</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> Exception </span>{<br>                mTaskInvoked.set(<span class="hljs-keyword">true</span>);<br>Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);<br>                <span class="hljs-comment">//noinspection unchecked</span><br>                <span class="hljs-keyword">return</span> postResult(doInBackground(mParams));<br>            }<br>        };<br>        }<br></code></pre>
+
+<p>在AsyncTask的构造函数中，我们可以看到在mWorker的call方法中，首先讲啊mTaksInvoked 设置为true，表示当前任务已经被调用，然后执行doInbackgroud方法，接着将其返回值传递给postResult方法，</p>
+
+</div><div id="wmd-preview-section-54" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"> <span class="hljs-function"><span class="hljs-keyword">private</span> Result <span class="hljs-title">postResult</span><span class="hljs-params">(Result result)</span> </span>{<br>        <span class="hljs-annotation">@SuppressWarnings</span>(<span class="hljs-string">"unchecked"</span>)<br>        Message message = sHandler.obtainMessage(MESSAGE_POST_RESULT,<br>                <span class="hljs-keyword">new</span> AsyncTaskResult&lt;Result&gt;(<span class="hljs-keyword">this</span>, result));<br>        message.sendToTarget();<br>        <span class="hljs-keyword">return</span> result;<br>    }<br><br><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">InternalHandler</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Handler</span> </span>{<br>        <span class="hljs-annotation">@SuppressWarnings</span>({<span class="hljs-string">"unchecked"</span>, <span class="hljs-string">"RawUseOfParameterizedType"</span>})<br>        <span class="hljs-annotation">@Override</span><br>        <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">handleMessage</span><span class="hljs-params">(Message msg)</span> </span>{<br>            AsyncTaskResult result = (AsyncTaskResult) msg.obj;<br>            <span class="hljs-keyword">switch</span> (msg.what) {<br>                <span class="hljs-keyword">case</span> MESSAGE_POST_RESULT:<br>                    <span class="hljs-comment">// There is only one result</span><br>                    result.mTask.finish(result.mData[<span class="hljs-number">0</span>]);<br>                    <span class="hljs-keyword">break</span>;<br>                <span class="hljs-keyword">case</span> MESSAGE_POST_PROGRESS:<br>                    result.mTask.onProgressUpdate(result.mData);<br>                    <span class="hljs-keyword">break</span>;<br>            }<br>        }<br>    }<br><br>     <span class="hljs-function"><span class="hljs-keyword">private</span> <span class="hljs-keyword">void</span> <span class="hljs-title">finish</span><span class="hljs-params">(Result result)</span> </span>{<br>        <span class="hljs-keyword">if</span> (isCancelled()) {<br>            onCancelled(result);<br>        } <span class="hljs-keyword">else</span> {<br>            onPostExecute(result);<br>        }<br>        mStatus = Status.FINISHED;<br>    }<br></code></pre>
+
+<p>从上面三段代码可以看出</p>
+
+<ol><li rel="1">postResult 其实就是通过sHandler发送一个MESSAGE_POST_RESULT消息</li>
+<li rel="2">sHandler 是一个静态的Handler对象，这样就能保证sHandler是在主线程中的，因为静态成员会在加载类的时候进行初始化</li>
+<li rel="3">MESSAGE_POST_RESULT这个消息类型在sHandler 中最后执行了result.mTask.finish(）方法，而result.mTask.其实就是一个AsyncTask对象，即最后执行到了AsyncTask的finish方法中，</li>
+<li rel="4">在finish方法中可以看到，如果取消了，就执行取消的方法，否则执行onPostExecute方法，这样就有在主线程中了。整个AsyncTask的过程也就分析完毕了</li>
+</ol>
+
+</div><div id="wmd-preview-section-55" class="wmd-preview-section preview-content">
+
+<h2 id="handlerthread">HandlerThread</h2>
+
+<p>HandlerThread底层使用的是线程，是一种拒用消息循环的线程，他的内部可以使用handler <br>
+是一种可以使用Handler的Thread，实现很简单，</p>
+
+</div><div id="wmd-preview-section-56" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"> <span class="hljs-annotation">@Override</span><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>{<br>        mTid = Process.myTid();<br>        Looper.prepare();<br>        <span class="hljs-keyword">synchronized</span> (<span class="hljs-keyword">this</span>) {<br>            mLooper = Looper.myLooper();<br>            notifyAll();<br>        }<br>        Process.setThreadPriority(mPriority);<br>        onLooperPrepared();<br>        Looper.loop();<br>        mTid = -<span class="hljs-number">1</span>;<br>    }<br></code></pre>
+
+<p>在run方法中创建Looper.perpare()来创建消息队列，通过loop()开启消息循环， <br>
+由于HandlerThread的run方法是一个无线循环，因此当明确不需要使用HandlerThread的时候，通过quit或者quitSafety方法来终止线程的执行。</p>
+
+</div><div id="wmd-preview-section-57" class="wmd-preview-section preview-content">
+
+<h2 id="intentservice">IntentService</h2>
+
+<p>一种特殊的Service，继承Service并且是一个抽象类 public abstract class IntentService extends Service ，可用于执行后台耗时任务，当任务执行后会自动停止，由于是一个service，所以优先级比单纯的线程要高，适合执行一些优先级高的后台任务，内部封装了HandlerThread和Handler，可在onCreate方法中看处理</p>
+
+</div><div id="wmd-preview-section-58" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"> <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onCreate</span><span class="hljs-params">()</span> </span>{<br>      <span class="hljs-keyword">super</span>.onCreate();<br>      HandlerThread thread = <span class="hljs-keyword">new</span> HandlerThread(<span class="hljs-string">"IntentService["</span> + mName + <span class="hljs-string">"]"</span>);<br>      thread.start();<br>      mServiceLooper = thread.getLooper();<br>      mServiceHandler = <span class="hljs-keyword">new</span> ServiceHandler(mServiceLooper);<br>    }<br></code></pre>
+
+<p>当第一启动的适合，onCreate被调用，创建一个HandlerThread，然后使用它的looper来构造一个Handler对象mServiceHandler,这样mServiceHandler发送消息最终都会在handlerThread中执行，他的onStartCommand每次调用，都会处理后台任务中的Intent，</p>
+
+</div><div id="wmd-preview-section-59" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"> <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">int</span> <span class="hljs-title">onStartCommand</span><span class="hljs-params">(Intent intent, <span class="hljs-keyword">int</span> flags, <span class="hljs-keyword">int</span> startId)</span> </span>{<br>        onStart(intent, startId);<br>        <span class="hljs-keyword">return</span> mRedelivery ? START_REDELIVER_INTENT : START_NOT_STICKY;<br>    }<br><br>  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">onStart</span><span class="hljs-params">(Intent intent, <span class="hljs-keyword">int</span> startId)</span> </span>{<br>        Message msg = mServiceHandler.obtainMessage();<br>        msg.arg1 = startId;<br>        msg.obj = intent;<br>        mServiceHandler.sendMessage(msg);<br>    }<br></code></pre>
+
+<p>由onStart方法可知，IntentService仅仅通过mServiceHandler发送一个消息，这个消息会在handlerThread中处理，mServiceHandler收到消息后，会将Intent对象传递给onHandleIntent 方法处理，这个Intent的内容和外界的startService（Intent）的内容是完全一致，</p>
+
+</div><div id="wmd-preview-section-60" class="wmd-preview-section preview-content">
+
+<h2 id="android中的线程池">Android中的线程池</h2>
+
+<p>线程池的好处：</p>
+
+<ol><li rel="1">重用线程池中的线程，避免因为线程的创建和消耗带来的性能开销</li>
+<li rel="2">能有效的控制线程池的最大并发数，避免大量的线程之间因为互相抢占系统资源而导致的阻塞现象</li>
+<li rel="3">能够对线程进行简单的管理，并提供定时执行依据指定间隔循环执行等功能</li>
+</ol>
+
+</div><div id="wmd-preview-section-61" class="wmd-preview-section preview-content">
+
+<h3 id="threadpoolexecutor">ThreadPoolExecutor</h3>
+
+<p>线程池的实现类。Android中的线程池都是直接或者间接通过配置ThreadPoolExecutor 来实现的，从线程池的功能上来说，Android的线程池主要分为4类，这4类线程池可以通过Executors所提供的工厂方法来得到。</p>
+
+</div><div id="wmd-preview-section-62" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs">一个常用的创建线程池的构造方法<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ThreadPoolExecutor</span><span class="hljs-params">(<br><span class="hljs-keyword">int</span> corePoolSize,<br><span class="hljs-keyword">int</span> maximumPoolSize,<br><span class="hljs-keyword">long</span> keepAliveTime,<br>TimeUnit unit,<br>BlockingQueue&lt;Runnable&gt; workQueue,<br>ThreadFactory threadFactory)</span><br><br>corePoolSize： 核心线程数，默认会一直在线程池中存活，<br>如果allowCoreThreadTimeOut 设置为<span class="hljs-keyword">true</span>，那么闲置的核心线程在等待新任务的时候有超时策略，这个由keepAliveTime 决定，<br>maximumPoolSize： 线程池所能容纳的最大线程数，当活动线程达到这个数字后，后续任务会被阻塞<br>keepAliveTime： 非核心线程超时时长，当allowCoreThreadTimeOut 设置为<span class="hljs-keyword">true</span>，同样作用于核心线程<br>unit：keepAliveTime的时间单位，是一个枚举类型，常用的有TimeUnit.<span class="hljs-title">MILLISECONDS</span><span class="hljs-params">(毫秒)</span>,TimeUnit.SECONDS（秒）,TimeUnit.MINUTES（分钟）<br>workQueue ：线程池中的任务队列，通过线程池中的execute方法提交的Runnable对象，会存储在这这个参数中<br>threadFactory： 线程工厂，为线程池提供创建新线程的功能，是一个借口，只有一个方法，Thread <span class="hljs-title">newThread</span><span class="hljs-params">(Runnable r)</span></span>;<br></code></pre>
+
+<p>ThreadPoolExecutor 的参数配置在AsyncTask中有明显的体现，</p>
+
+</div><div id="wmd-preview-section-63" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CPU_COUNT = Runtime.getRuntime().availableProcessors();<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> CORE_POOL_SIZE = CPU_COUNT + <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> MAXIMUM_POOL_SIZE = CPU_COUNT * <span class="hljs-number">2</span> + <span class="hljs-number">1</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">int</span> KEEP_ALIVE = <span class="hljs-number">1</span>;<br><br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> ThreadFactory sThreadFactory = <span class="hljs-keyword">new</span> ThreadFactory() {<br>        <span class="hljs-keyword">private</span> <span class="hljs-keyword">final</span> AtomicInteger mCount = <span class="hljs-keyword">new</span> AtomicInteger(<span class="hljs-number">1</span>);<br>        <span class="hljs-function"><span class="hljs-keyword">public</span> Thread <span class="hljs-title">newThread</span><span class="hljs-params">(Runnable r)</span> </span>{<br>            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Thread(r, <span class="hljs-string">"AsyncTask #"</span> + mCount.getAndIncrement());<br>        }<br>    };<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> BlockingQueue&lt;Runnable&gt; sPoolWorkQueue =<br>            <span class="hljs-keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;(<span class="hljs-number">128</span>);<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> Executor THREAD_POOL_EXECUTOR<br>            = <span class="hljs-keyword">new</span> ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE,<br>                    TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);<br><br></code></pre>
+
+<p>AsyncTask中对线程池的配置</p>
+
+<ol><li rel="1">核心线程数等于CPU核心数+1；</li>
+<li rel="2">线程池的最大线程数为CPU核心线程数的2倍+1；</li>
+<li rel="3">核心线程无超时机制，非核心线程池在闲置时超时时间为1秒</li>
+<li rel="4">任务队列的容量为128</li>
+</ol>
+
+</div><div id="wmd-preview-section-64" class="wmd-preview-section preview-content">
+
+<h3 id="线程池的分类">线程池的分类</h3>
+
+<p>Android中最常见的四类不同功能特性的线程池。他们都是直接或者间接通过配置ThreadPoolExecute来实现自己的功能特性的。分别是FixedThreadPool，CachedThreadPool，ScheduledThreadPool以及SingleThreadExecute</p>
+
+</div><div id="wmd-preview-section-65" class="wmd-preview-section preview-content">
+
+<h4 id="fixedthreadpool-线程数量固定的线程池">FixedThreadPool 线程数量固定的线程池</h4>
+
+<ol><li rel="1">通过Executors的newFixedThreadPool(int nThreads) 创建</li>
+<li rel="2">线程数量固定的线程池，当线程处于空闲状态，不会被回收，除非线程池被关闭</li>
+<li rel="3">只有核心线程并且不会被回收，这意味着它能够更加快速的相应外界的请求</li>
+</ol>
+
+</div><div id="wmd-preview-section-66" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"> <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title">newFixedThreadPool</span><span class="hljs-params">(<span class="hljs-keyword">int</span> nThreads)</span> </span>{<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,<br>                                      <span class="hljs-number">0L</span>, TimeUnit.MILLISECONDS,<br>                                      <span class="hljs-keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());<br>    }<br><br></code></pre>
+
+</div><div id="wmd-preview-section-67" class="wmd-preview-section preview-content">
+
+<h4 id="cachedtheadpool-线程数量不定的线程池">CachedTheadPool 线程数量不定的线程池</h4>
+
+<ol><li rel="1">只有非核心线程，并且最大值为Integer.MAX_VALUE，由于Integer.MAX_VALUE很大，实际上可以理解为最大线程可以任意大</li>
+<li rel="2">当线程池中的线程都处于活动状态，线程池会创建新的线程处理新任务</li>
+<li rel="3">空闲线程都有超时机制，超过60秒，就会被回收</li>
+<li rel="4">CachedTheadPool的任务队列是一个空集合，</li>
+<li rel="5">适合执行搭理耗时较少的任务</li>
+<li rel="6">当整个线程处于空闲状态的时候，线程池中的线程都会因为超时被停止，这个时候CachedTheadPool时间是没有任何线程，几乎不占任何系统资源</li>
+</ol>
+
+</div><div id="wmd-preview-section-68" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs">  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title">newCachedThreadPool</span><span class="hljs-params">()</span> </span>{<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ThreadPoolExecutor(<span class="hljs-number">0</span>, Integer.MAX_VALUE,<br>                                      <span class="hljs-number">60L</span>, TimeUnit.SECONDS,<br>                                      <span class="hljs-keyword">new</span> SynchronousQueue&lt;Runnable&gt;());<br>    }<br><br></code></pre>
+
+</div><div id="wmd-preview-section-69" class="wmd-preview-section preview-content">
+
+<h4 id="schedulethreadpool-核心线程固定非核心线程没有限制">ScheduleThreadPool 核心线程固定，非核心线程没有限制</h4>
+
+<ol><li rel="1">当非核心线程闲置时会理解被回收</li>
+<li rel="2">主要用于执行定时任务和具有固定周期的重复任务</li>
+</ol>
+
+</div><div id="wmd-preview-section-70" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ScheduledExecutorService <span class="hljs-title">newScheduledThreadPool</span><span class="hljs-params">(<span class="hljs-keyword">int</span> corePoolSize)</span> </span>{<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize);<br>    }<br><br> <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ScheduledExecutorService <span class="hljs-title">newScheduledThreadPool</span><span class="hljs-params">(<br>            <span class="hljs-keyword">int</span> corePoolSize, ThreadFactory threadFactory)</span> </span>{<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize, threadFactory);<br>    }<br>===================<br> <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">ScheduledThreadPoolExecutor</span><span class="hljs-params">(<span class="hljs-keyword">int</span> corePoolSize,<br>                                       ThreadFactory threadFactory)</span> </span>{<br>        <span class="hljs-keyword">super</span>(corePoolSize, Integer.MAX_VALUE,<br>              DEFAULT_KEEPALIVE_MILLIS, MILLISECONDS,<br>              <span class="hljs-keyword">new</span> DelayedWorkQueue(), threadFactory);<br>    }<br></code></pre>
+
+</div><div id="wmd-preview-section-71" class="wmd-preview-section preview-content">
+
+<h4 id="singlethreadpool-只有一个核心线程">SingleThreadPool 只有一个核心线程</h4>
+
+<ol><li rel="1">所有任务都在一个线程中按照顺序执行。</li>
+<li rel="2">意义在于统一所有外界任务到一个线程中，使得这些任务之间不需要处理线程同步的问题</li>
+</ol>
+
+</div><div id="wmd-preview-section-72" class="wmd-preview-section preview-content">
+
+<pre class="prettyprint hljs-dark"><code class="language-java hljs">   <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> ExecutorService <span class="hljs-title">newSingleThreadExecutor</span><span class="hljs-params">()</span> </span>{<br>        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> FinalizableDelegatedExecutorService<br>            (<span class="hljs-keyword">new</span> ThreadPoolExecutor(<span class="hljs-number">1</span>, <span class="hljs-number">1</span>,<br>                                    <span class="hljs-number">0L</span>, TimeUnit.MILLISECONDS,<br>                                    <span class="hljs-keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;()));<br>    }<br></code></pre></div><div id="wmd-preview-section-footnotes" class="preview-content"></div></div></body></html>
