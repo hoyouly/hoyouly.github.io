@@ -1,37 +1,50 @@
-permalink: /blog/:year/:month/:title.html 
-include: ['.htaccess']
-exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "CNAME", "Gemfile", "Gemfile.lock"]
-markdown: kramdown
-highlights: pygments
-url: 
-cdn_url: 7u2t01.com1.z0.glb.clouddn.com
-lsi: false
-safe: true
-timezone: Asia/Shanghai
-auto: false 
+# Site settings
+title: hoyouly的博客
+email: suyan0830@gmail.com
+description: > # this means to ignore newlines until "baseurl:"
+  何磊的博客
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: http://hoyouly.top # the base hostname & protocol for your site
+rss_url: /pages/feed.xml
+author: Su Yan
 
-paginate: 8
-paginate_path: "page:num"
+# Sidebar filter
+# Choose 'tag' or 'category' as filter in sidebar.
+filter: 'category'
+recent_num: 20
 
-kramdown:
-  auto_ids: true,
-  footnote_nr: 1
-  entity_output: as_char
-  toc_levels: 1..6
-  use_coderay: false
-
-JB :
-  IMAGE_PATH : http://coolshell.info/images
-
-# presonal config
-domain: http://coolshell.info
-title: hoyouly的blog
-description: 我要用自己的双手，敲出一个美好的未来
-author: hoyouly
-email: hoyouly@163.com
+# Social account
+twitter: hoyouly
+weibo: hoyouly
 github: hoyouly
+#instagram: suyan404
+#linkedin: suyan404
 
-config:
-  js_dir:
-  img_dir:
-  css_dir:
+# avatar and Favicon
+avatar: http://7u2ho6.com1.z0.glb.clouddn.com/site-avatar.png
+favicon: http://7u2ho6.com1.z0.glb.clouddn.com/site-favicon.ico
+
+# disqus config
+disqus:
+  shortname: suyan-zh
+
+# google analytics config
+ga:
+  id: UA-54767140-1
+  url: yansu.org
+
+# Build settings
+permalink: /:year/:month/:day/:title.html
+markdown: kramdown
+highlighter: rouge
+mathjax: disabled
+sass:
+  style: compressed
+
+# Jekyll Plugin
+# https://help.github.com/articles/adding-jekyll-plugins-to-a-github-pages-site/
+gems:
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-feed
+
