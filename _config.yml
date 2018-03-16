@@ -1,12 +1,11 @@
 # Site settings
 title: hoyouly的博客
-email: suyan0830@gmail.com
-description: > # this means to ignore newlines until "baseurl:"
-  何磊的博客
+email: hoyouly@163.com
+description: 我要用自己的双手，敲出一个美好的未来。
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: http://hoyouly.top # the base hostname & protocol for your site
 rss_url: /pages/feed.xml
-author: Su Yan
+author: hoyouly
 
 # Sidebar filter
 # Choose 'tag' or 'category' as filter in sidebar.
@@ -47,4 +46,3 @@ gems:
   - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-feed
-
