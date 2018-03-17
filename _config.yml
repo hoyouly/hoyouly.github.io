@@ -28,8 +28,8 @@ disqus:
 
 # google analytics config
 ga:
-  id: UA-54767140-1
-  url: yansu.org
+  id: UA-115937602-1
+  url: hoyouly.top
 
 # Build settings
 permalink: /:year/:month/:day/:title.html
