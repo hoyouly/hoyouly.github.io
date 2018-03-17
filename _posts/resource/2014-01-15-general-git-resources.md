@@ -5,6 +5,7 @@ category: 资源
 tags: Git
 keywords: Git
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 库管理
 
@@ -25,7 +26,7 @@ git show xxxx # 查看某次修改
 ```
 
 ### 标签功能
-    
+
 ```bash    
 git tag # 显示所有标签
 git tag -l 'v1.4.2.*' # 显示 1.4.2 开头标签
@@ -67,10 +68,10 @@ git mv a.php ./test/a.php
 ### 查看文件修改
 
 ```bash
-git diff          # 查看未暂存的文件更新 
-git diff --cached # 查看已暂存文件的更新 
+git diff          # 查看未暂存的文件更新
+git diff --cached # 查看已暂存文件的更新
 ```
-    
+
 ### 暂存和恢复当前staging
 
 ```bash
@@ -90,7 +91,7 @@ git rebase -i 0580eab8
 ## 分支管理
 
 ### 创建分支
-    
+
 ```bash
 git branch develop # 只创建分支
 git checkout -b master develop # 创建并切换到 develop 分支
@@ -141,7 +142,7 @@ git clone https://github.com/chaconinc/MainProject
 git submodule init
 git submodule update
 ```
-    
+
 ## Git设置
 
 Git的全局设置在`~/.gitconfig`中，单独设置在`project/.git/config`下。

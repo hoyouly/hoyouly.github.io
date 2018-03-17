@@ -4,13 +4,14 @@ title: SVN 常用资源
 category: 资源
 tags: SVN
 keywords: SVN
-description: 
+description:
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用指令
 
 ### 将文件checkout到本地目录
-    
+
     svn checkout path（path是服务器上的目录）
     svn checkout svn://192.168.1.1/pro/domain
     svn co
@@ -65,7 +66,7 @@ description:
 
 ### 查看日志
 
-    svn log path 
+    svn log path
     svn log test.php 显示这个文件的所有修改记录，及其版本号的变化
 
 ### 查看文件详细信息
@@ -93,7 +94,7 @@ description:
 
 ### 版本库下的文件和目录列表
 
-    svn list path 
+    svn list path
     svn ls
 
 ### 创建纳入版本控制下的新目录
@@ -101,7 +102,7 @@ description:
     svn mkdir: 创建纳入版本控制下的新目录。
     mkdir PATH…
     mkdir URL…
-    
+
     创建版本控制的目录。
 
     1、每一个以工作副本 PATH 指定的目录，都会创建在本地端，并且加入新增调度，以待下一次的提交。
@@ -115,7 +116,7 @@ description:
 
 ### 代码库URL变更
 
-    svn switch (sw): 更新工作副本至不同的URL。 
+    svn switch (sw): 更新工作副本至不同的URL。
 
     1、switch URL [PATH]
     2、switch –relocate FROM TO [PATH...]
@@ -133,4 +134,3 @@ description:
 
     svn cat 目标[@版本]…如果指定了版本，将从指定的版本开始查找。
     svn cat -r PREV filename > filename (PREV 是上一版本,也可以写具体版本号,这样输出结果是可以提交的)
-

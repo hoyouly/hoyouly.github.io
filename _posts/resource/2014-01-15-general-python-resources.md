@@ -4,8 +4,9 @@ title: Python 常用资源
 category: 资源
 tags: Python
 keywords: Python
-description: 
+description:
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用代码
 
@@ -35,4 +36,3 @@ description:
     timeStr=time.strftime("%Y-%m-%d %H:%M:%S", ltime)
 ### 之后的包从绝对位置导入
     from __future__ import absolute_import
-

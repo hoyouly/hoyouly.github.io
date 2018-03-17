@@ -6,6 +6,7 @@ tags: Python
 keywords: Python,Stevedore,OpenStack
 description: 在阅读OpenStack项目Ceilometer代码时，发现其利用stevedore来实现动态扩展，故需要先学习一下stevedore机制。
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ### 1.stevedore作用
 Python导入动态代码很容易，例如通过在运行时导入扩展插件来扩展你的应用。许多应用通过`__import__`或importlib实现了这个功能。[stevedore](http://stevedore.readthedocs.org/en/latest/index.html)的功能就是管理扩展的，但是它的实现方式是借助steuptools的entry points（我的[上一篇](/2013/06/07/learn-python-setuptools-in-detail.html)有讲entry points功能）。

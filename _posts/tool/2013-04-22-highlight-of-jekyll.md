@@ -5,15 +5,16 @@ category: 工具
 tags: Jekyll
 description: 在这个博客里，我使用了bootstrap作为前端框架，另外通过比较选择了一个还算满意的代码高亮方式
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ### 代码高亮方式选择
 
-#### 1.小片段 
+#### 1.小片段
 
 直接使用“ \` ”符号包含起来，或者使用一个tab直接利用markdown来做高亮
 
 #### 2.Pygments渲染
-  
+
 Jekyll通过[Pygments](http://pygments.org/)可以直接处理代码高亮
 
 在Github Pages的[文档](https://github.com/mojombo/jekyll/wiki/Liquid-Extensions)里，也提到了这个方式，但是总觉得这样有点不是很舒服，打破了markdown的格式

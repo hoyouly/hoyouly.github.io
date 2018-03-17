@@ -6,6 +6,8 @@ tags: Python
 keywords: Python Setuptools
 description: setuptools可能在未来被distutils2代替，但是现在用到的还挺多，需要学习一下，有利于读Python代码。
 ---
+转载   [yansu的bolg](http://yansu.org/)
+
 ### 0.什么是setuptools
 setuptools是Python distutils增强版的集合，它可以帮助我们更简单的创建和分发Python包，尤其是拥有依赖关系的。用户在使用setuptools创建的包时，并不需要已安装setuptools，只要一个[启动模块](http://peak.telecommunity.com/dist/ez_setup.py)即可。
 
@@ -38,7 +40,7 @@ setuptools是Python distutils增强版的集合，它可以帮助我们更简单
 ### 2.创建一个简单的包
 有了setuptools后，创建一个包基本上是无脑操作
 
-    cd /tmp 
+    cd /tmp
     mkdir demo
     cd demo
 
@@ -151,7 +153,7 @@ setuptools是Python distutils增强版的集合，它可以帮助我们更简单
         `-- zip-safe
 
 打开python终端或者ipython都行，直接导入我们的包
-    
+
     >>> import demo
     >>> demo.test()
     hello world!
@@ -174,7 +176,7 @@ setuptools是Python distutils增强版的集合，它可以帮助我们更简单
             └── data
                 ├── abc.dat
                 └── abcd.dat
-            
+
 如果不加控制，则setuptools只会将`__init__.py`加入到egg中，想要将这些文件都添加，需要修改`setup.py`
 
     from setuptools import setup, find_packages
@@ -319,8 +321,3 @@ setuptools可以帮助你将应用变成插件模式，供别的应用使用。�
 
 ### 5. 以后增加
 以上内容大部分来自于[官方文档](http://pythonhosted.org/setuptools/setuptools.html)，需要额外学习的以后再增加
-
-
-
-
-

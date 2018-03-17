@@ -6,6 +6,7 @@ tags: Python
 keywords: Python ABC module
 description: 在学习stevedore时，需要先了解python的abc module
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ### 1.abc模块作用
 Python本身不提供抽象类和接口机制，要想实现抽象类，可以借助abc模块。ABC是Abstract Base Class的缩写。

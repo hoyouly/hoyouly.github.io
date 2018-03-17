@@ -5,6 +5,7 @@ category: 资源
 tags: Vim
 keywords: Vim
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 在粘贴代码时不启动自动缩进
 
@@ -15,4 +16,3 @@ keywords: Vim
 
 关闭 `:set nonu`
 开启 `:set number`
-

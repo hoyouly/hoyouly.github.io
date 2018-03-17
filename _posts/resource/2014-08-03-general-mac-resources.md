@@ -4,8 +4,9 @@ title: Mac 常用资源
 category: 资源
 tags: Mac
 keywords: Mac
-description: 
+description:
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用软件
 
@@ -36,7 +37,7 @@ description:
 ### 剪贴板操作
 写入剪切板
 
-    echo 'test' > pbcopy 
+    echo 'test' > pbcopy
     cat testfile > pbcopy
 
 读取剪贴板

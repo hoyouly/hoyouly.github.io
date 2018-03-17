@@ -4,12 +4,13 @@ title: 在Github上搭建Jekyll博客和创建主题
 category: 工具
 tags: Jekyll
 keywords: Jekyll,Github
-description: 
+description:
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 > 之前本来想展开写的，后来发现Jekyll官网的教程已经非常完善了就没有多写，所以只有[这篇][1]。
 > 但是过了这么久，发现很多人还是不清楚怎么搭建，所以这里打算详细写一下，并且把自己对图片的解决方案以及主题的创建步骤也一并写下。
-> 
+>
 > 本篇主要谈如何搭建，不再讲为什么用它们。
 
 __说明：本篇用到的代码中，为了防止解析冲突，一律多了`\`这个来防止被误解析__

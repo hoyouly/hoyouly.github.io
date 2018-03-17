@@ -5,6 +5,7 @@ category: 工具
 tags: Git
 description: git创建远程库
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 # git创建远程库
 
@@ -41,7 +42,7 @@ description: git创建远程库
     # 增加新增文件到库管理
     $ git add .
     # 提交
-    $ git commit 
+    $ git commit
     # 新建一个分支
     $ git branch test
 
@@ -52,7 +53,7 @@ description: git创建远程库
     # 修改文件
     $ echo "foo">foo
     # 提交
-    $ git commit 
+    $ git commit
     # 增加远程库位置
     $ git remote add origin flie:///git/repo
     # 提交更改

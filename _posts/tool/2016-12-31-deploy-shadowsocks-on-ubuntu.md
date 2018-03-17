@@ -5,6 +5,7 @@ category: 工具
 tags: Tools
 keywords: 科学上网,工具,VPN,Shadowsocks
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 回国以后先试了部署 L2TP VPN（[在 Ubuntu 下部署 L2TP VPN](/2016/12/30/deploy-l2tp-on-ubuntu.html)），结果发现 VPN 稳定性还是略差，经常掉线。其实对于一般的浏览网页需求，Shadowsocks 就足够了，所以就有了此文。
 
@@ -58,5 +59,3 @@ ssserver -c /etc/shadowsocks.json -d start
 所以现在改到了[SpechtLite](https://github.com/zhuhaow/SpechtLite)，根据[这篇文章](http://www.jianshu.com/p/663a898aa01a)可以非常方便配置。iOS下的客户端的话，推荐 [Wingy](https://itunes.apple.com/cn/app/wingy-proxy-for-http-s-socks5/id1178584911?mt=8)，设置也非常简单。
 
 这里提一下最近很火的 Surge，这个软件确实是神器一枚，使用起来非常方便。只是它暂时功能还有限，感觉并不值当前的价格，如果未来提供像 Charles 一样强大的功能的话，即使不用来科学上网，也是很值得入手的应用之一。不过据说还在开发中，所以之后可以考虑入手一枚。
-
-

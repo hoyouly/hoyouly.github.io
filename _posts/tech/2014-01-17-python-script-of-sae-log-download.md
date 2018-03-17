@@ -4,8 +4,9 @@ title: Python脚本--下载合并SAE日志
 category: 技术
 tags: Python
 keywords: Python,SAE,日志,合并,下载
-description: 
+description:
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 # Python脚本--下载合并SAE日志
 
@@ -60,13 +61,13 @@ description:
     sign = md5.hexdigest()
 
     request = api_url + request + 'sign=' + sign
-    
+
     if response['errno'] != 0:
         print '[!] '+response['errmsg']
         exit()
 
     print '[#] request success'
-    
+
 ## 下载日志文件
 SAE将每天的日志文件都打包成tar.gz的格式，下载保存下来即可，文件名以`日期.tar.gz`命名
 

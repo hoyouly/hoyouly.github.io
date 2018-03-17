@@ -5,6 +5,7 @@ category: 工具
 tags: Git
 description: 最近使用git从github上clone代码，总是失败，奔溃了快。还有ubuntu连apt-get update都执行不了，有的时候都装不了git，就快骂娘了。可惜在这样一个环境下，只能靠自己搞定了，设置代理是比较好的方式
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 安装goagent
 这个教程网上很多，放狗一搜即可。
@@ -24,4 +25,3 @@ description: 最近使用git从github上clone代码，总是失败，奔溃了�
 上面的方法也可以直接使apt代理，如果不想设置环境变量，可以使用下面命令
 
     sudo apt-get -o Acquire::http::proxy="http://127.0.0.1:8087/" update
-

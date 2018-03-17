@@ -5,6 +5,7 @@ category: 工具
 tags: Tools
 keywords: 收藏,写作,发布,工具
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 > 我日常非工作时间外的学习，基本流程就是收藏，写作和分享，所以我把这三个集合写在一篇文章里面。同时记录下来这个过程，可以让我清晰的知道，我应该在做哪件事情的时候，用哪个工具。
 
@@ -90,7 +91,3 @@ Mac下的各个软件已经把分享功能做的比较简单了，这里我分�
 ![](http://7u2ho6.com1.z0.glb.clouddn.com/tool-my-notification-share.png)
 
 如果涉及到图片的分享，也可以使用Dropzone的扩展来做，直接拖图片到相应扩展即可。目前只有Twitter分享的扩展，如果有时间我可以写一个Weibo的。
-
-
-
-

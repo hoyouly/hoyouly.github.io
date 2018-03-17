@@ -5,6 +5,7 @@ category: 工具
 tags: Sublime
 description: 总有时候有一些不是很大的代码段需要重复输入，利用sublime中的snippet可以方便很多
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 ### 创建
 点击菜单栏Tools ==> New Snippet打开一个snippet模板文件

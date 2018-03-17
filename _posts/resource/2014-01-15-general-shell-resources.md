@@ -4,20 +4,21 @@ title: Shell 常用资源
 category: 资源
 tags: Shell
 keywords: Shell
-description: 
+description:
 ---
+转载   [yansu的bolg](http://yansu.org/)
 
 
 ## 常用指令
 
 ### 文本内容搜索
 
-    grep aaa * 
+    grep aaa *
 
 ### 文件夹操作
 
     查看文件夹大小   du -h --max-depth=1 /home/ys
-    查看驱动器空间   df -h 
+    查看驱动器空间   df -h
 
 ### 压缩命令
 
@@ -42,12 +43,12 @@ description:
     date +%s   时间戳
     date -d "2010-07-20 10:25:30" +%s  指定时间时间戳
     date -d "@1279592730"    时间戳转时间
-    date -d "1970-01-01 14781 days" "+%Y/%m/%d %H:%M:%S" 
+    date -d "1970-01-01 14781 days" "+%Y/%m/%d %H:%M:%S"
 
 ### 查看进程内存使用情况
 
     top -d 1 -p pid [,pid ...]
-    pmap pid 
+    pmap pid
     ps aux|grep process_name
     查看/proc/process_id/文件夹下的status文件
 
@@ -76,7 +77,7 @@ description:
 
     screen -d -m -S some_ name ping my_router
 
-### 查看进程执行的时间 
+### 查看进程执行的时间
 
     ps -A -opid,stime,etime,args | grep python
 
@@ -94,7 +95,7 @@ description:
 
 ### 诊断网络
 
-    mtr 
+    mtr
     ping
     traceroute
     dig
@@ -119,4 +120,3 @@ description:
 ### 封禁一个ip的访问
 
     iptables -I INPUT -s 211.1.0.0 -j DROP
-
