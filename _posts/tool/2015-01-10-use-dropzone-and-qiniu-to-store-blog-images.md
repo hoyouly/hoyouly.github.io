@@ -59,9 +59,9 @@ description:
     - remote path(可选): 本地同步图片的目录，如果你希望本地也存一份图片，选一个地址即可
     - root url: 七牛的公共链接根目录
 
-    ![access key](http://7u2ho6.com1.z0.glb.clouddn.com/tool-qiniu-access-key.png)
+    ![access key](http://p5sfwb51p.bkt.clouddn.com/qiniu-access-key.png)
 
-    ![root url](http://7u2ho6.com1.z0.glb.clouddn.com/tool-qiniu-root-url.png)
+    ![root url](http://p5sfwb51p.bkt.clouddn.com/qiniu-root-url.png)
 
 ## 其他建议
 
