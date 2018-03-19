@@ -34,3 +34,9 @@ sudo apt-get update
 sudo apt-get install atom  
 ```
 强迫症的我非要安装一个最新的Atom版本，咋办呢，简单，直接在Atom网站下载一个最新的安装包。例如“atom-amd64.deb”，然后直接点击安装就可以了。
+
+摘抄：
+
+[Ubuntu16.04安装/卸载Atom](http://blog.csdn.net/bleachswh/article/details/51684821)
+
+[在Linux上，如何卸载 Atom 文本编辑器？](https://ask.helplib.com/atom-editor/post_1052428)
