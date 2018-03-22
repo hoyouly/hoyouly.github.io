@@ -49,7 +49,7 @@ public View getView(int position, View convertView, ViewGroup parent) {
 5. 减小item view 的布局层级关系，布局层级过深，直接导致View的测量和绘制时间加大
 6. adapter中的getView()方法尽量少使用逻辑,可以想办法把逻辑抽离到其他地方
 7. getView()中尽量少做耗时操作，避免创建大量对象
-8. 善用自定义VIew，自定义View可以很好的控制层级，并且对绘制过程可以很好的控制。
+8. 善用自定义View，自定义View可以很好的控制层级，并且对绘制过程可以很好的控制。
 9. 使用RecycleView代替，ListView 每次更新数据都要 notifyDataSetChanged()，有些太暴力了。RecycleView 在性能和可定制性上都有很大的改善，推荐使用。
 
 ## 性能优化方案
