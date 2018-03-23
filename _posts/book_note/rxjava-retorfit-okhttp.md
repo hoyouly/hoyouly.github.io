@@ -103,20 +103,11 @@ Observable<String> observable=Observable.create(new Observable.OnSubscribe<Strin
             }
         });
 
-      public interface OnSubscribe<T> extends Action1<Subscriber<? super T>> {
-                // cover for generics insanity
-            }
-      public interface Action1<T> extends Action {
-                void call(T t);
-            }
-      public interface Action extends Function {
-            //空接口
-            }
-      public interface Function {
-        //空接口
-        }
 ```
 creat()是RxJava 最基本的创建事件序列的方法，基于这个方法，RxJava还创建了一系列方法用来快速创建事件序列
+### 接口 Action
+
+
 ```java
 // 方法一
 Observable observable = Observable.just("Hello", "Hi", "Aloha");
@@ -152,7 +143,6 @@ public class Observable<T> {
      public static <T> Observable<T> just(T t1, T t2, T t3) {
         return from((T[])new Object[] { t1, t2, t3 });
     }
-
 ```
 其实就是just()方式，把参数集合封装成一个数组，然后执行from()方法，然后from（）方法又把这个数组转换成OnSubscribeFromArray对象，也就是OnSubcribe对象，执行creat()方法
 
@@ -220,6 +210,561 @@ public <T> Subscription onSubscribeReturn(Subscription subscription) {
 
 ### subscribe()不完整定义
 除了 subscribe(Observer) 和 subscribe(Subscriber) ，subscribe() 还支持不完整定义的回调，RxJava 会自动根据定义创建出 Subscriber 。
+
+```Java
+Action1<String> onNextAction=new Action1<String>() {
+       @Override
+       public void call(String s) {
+       }
+   };
+
+   Action1<Throwable > onErrorAction=new Action1<Throwable>() {
+       @Override
+       public void call(Throwable throwable) {
+       }
+   };
+
+   Action0 onCompletedAction=new Action0() {
+       @Override
+       public void call() {
+       }
+   };
+
+   //自动创建Subscriber,并且使用onNextAction来定义onNext()方法
+   observable.subscribe(onNextAction);
+   //自动创建Subscriber,并且使用onNextAction来定义onNext()方法，使用onErrorAction来定义onError()方法
+   observable.subscribe(onNextAction,onErrorAction);
+   //自动创建Subscriber,并且使用onNextAction来定义onNext()方法，使用onErrorAction来定义onError()方法，使用onCompleteAction来定义onComplete()方法
+   observable.subscribe(onNextAction,onErrorAction,onCompletedAction);
+
+```
+### 接口Action
+解释Action之前，需要了解一个Action是个啥玩意儿，二话不说，源码走起
+
+```java
+
+public interface Action extends Function {/**空接口*/}
+
+        /**
+       * All Func and Action interfaces extend from this.
+       * Marker interface to allow instanceof checks.
+       */      
+      public interface Function  {/**空接口*/}
+
+```
+
+Actoin是一个接口，是一个空接口，继承 Function这个空接口，定义一个空接口Function，然后在使用另外一个空接口（Action）继承，写RxJava 的人有毛病吧，其实人家 在Function上已经解释了 ，**All Func and Action interfaces extend from this,Marker interface to allow instanceof checks.** 翻译过来就是说你们所有的Func和Action来自Function，为了就是允许instanceof检查的标记接口。其实定义Function就是为了instanceof检查
+
+接下来看看Action0,Action1的定义
+
+```java
+public interface Action0 extends Action {
+    void call();
+}
+
+public interface Action1<T> extends Action {
+          void call(T t);
+}
+```
+看出来点眉目了吗，没有咱们就再来几个看看
+```java
+public interface Action2<T1, T2> extends Action {
+    void call(T1 t1, T2 t2);
+}
+public interface Action3<T1, T2, T3> extends Action {
+    void call(T1 t1, T2 t2, T3 t3);
+}
+public interface ActionN extends Action {
+    void call(Object... args);
+}
+```
+这应该发现了点规律吧，
+1. 都是继承Action接口的，
+2. Action几后面有几个泛型参数，例如Action1 后面有一个泛型参数T,Action2后面有两个泛型参数<T1,T2>,ActionN 后面虽然没有泛型参数，但是call方法里面有一个可变参数
+3. 关于call()方法里面的参数，Actoin后面有几个泛型参数，call()方法里面就有几个参数，
+
+因为onNext()和onError()方法中有一个参数，所以使用了Actoin1定义，而onComplete()属于无参数方法，所以使用了Action0定义，其实一看源码就知道了怎么回事了
+
+```java
+// Observable.java
+public final Subscription subscribe(final Action1<? super T> onNext) {
+     if (onNext == null) {
+         throw new IllegalArgumentException("onNext can not be null");
+     }
+
+     Action1<Throwable> onError = InternalObservableUtils.ERROR_NOT_IMPLEMENTED;
+     Action0 onCompleted = Actions.empty();
+     return subscribe(new ActionSubscriber<T>(onNext, onError, onCompleted));
+ }
+
+ public final Subscription subscribe(final Action1<? super T> onNext, final Action1<Throwable> onError) {
+       if (onNext == null) {
+           throw new IllegalArgumentException("onNext can not be null");
+       }
+       if (onError == null) {
+           throw new IllegalArgumentException("onError can not be null");
+       }
+
+       Action0 onCompleted = Actions.empty();
+       return subscribe(new ActionSubscriber<T>(onNext, onError, onCompleted));
+   }
+
+   public final Subscription subscribe(final Action1<? super T> onNext, final Action1<Throwable> onError, final Action0 onCompleted) {
+        if (onNext == null) {
+            throw new IllegalArgumentException("onNext can not be null");
+        }
+        if (onError == null) {
+            throw new IllegalArgumentException("onError can not be null");
+        }
+        if (onCompleted == null) {
+            throw new IllegalArgumentException("onComplete can not be null");
+        }
+
+        return subscribe(new ActionSubscriber<T>(onNext, onError, onCompleted));
+    }
+
+```
+不管你传递几个Action系列，少于三个的话，会把默认的Action传递进去，例如默认的onErrorAction是InternalObservableUtils.ERROR_NOT_IMPLEMENTED，默认的onCompleteAction是Actions.empty()，最终都是把三个Action封装成一个ActionSubscribe类，然后调用了Subscription subscribe(Subscriber<? super T> subscriber)方法。
+
+这三个是有顺序的，如果传递一个Action，那么就必须是onNextAction，也就是执行onNext()方法，如果传递的是两个Action的话，就必须是onNextAction,和onErrorAction，不能是onNextAction和onCompleteAction，更不能是onErrorAction和onCompleteAction,原因参照源码
+```java
+public final class ActionSubscriber<T> extends Subscriber<T> {
+    final Action1<? super T> onNext;
+    final Action1<Throwable> onError;
+    final Action0 onCompleted;
+
+    public ActionSubscriber(Action1<? super T> onNext, Action1<Throwable> onError, Action0 onCompleted) {
+        this.onNext = onNext;
+        this.onError = onError;
+        this.onCompleted = onCompleted;
+    }
+
+    @Override
+    public void onNext(T t) {
+        onNext.call(t);
+    }
+
+    @Override
+    public void onError(Throwable e) {
+        onError.call(e);
+    }
+
+    @Override
+    public void onCompleted() {
+        onCompleted.call();
+    }
+}
+```
+因为第一个参数就是onNext接收的，执行的onNext()方法，第二个参数是onError接受的，在onError()方法中执行了，第三个同理
+
+在 RxJava 的默认规则中，事件的发出和消费都是在同一个线程的，如果只用上面的方法，实现出来的只是一个同步的观察者模式。观察者模式本身的目的就是『后台处理，前台回调』的异步机制，因此异步对于 RxJava 是至关重要的。而要实现异步，则需要用到 RxJava 的另一个概念： `Scheduler` 。
+## Scheduler 线程控制，调度器
+在不指定线程的情况下，RxJava 遵循的是线程不变的原则，在那个线程中调用了subscribe（），在哪个线程中生产事件，也就在哪个线程中消费事件，如果要切换线程，就需要使用到Schedule，调度器
+
+### Scheduler 的API
+在RxJava中，Scheduler相当于线程控制器，RxJava通过Scheduler指定每一段代码在那个线程中执行，Rxjava内置了几个Schedule，他们已经适应于大多数情况了
+* Schedulers.immediate(); 直接在当前线程运行，相当于不指定线程，默认的Schedule
+* Schedulers.newThread(); 总是启用新线程，并且在新线程中执行操作
+* Schedulers.computation(); 计算所使用的 Scheduler。这个计算指的是 CPU 密集型计算，即不会被 I/O 等操作限制性能的操作，例如图形的计算。这个 Scheduler 使用的固定的线程池，大小为 CPU 核数。不要把 I/O 操作放在 computation() 中，否则 I/O 操作的等待时间会浪费 CPU。
+* Schedulers.io() I/O 操作（读写文件、读写数据库、网络信息交互等）所使用的 Scheduler。行为模式和 newThread() 差不多，区别在于 io() 的内部实现是是用一个无数量上限的线程池，可以重用空闲的线程，因此多数情况下 io() 比 newThread() 更有效率。不要把计算工作放在 io() 中，可以避免创建不必要的线程。
+* Android 还专门有一个AndroidSchedulers.mainThread()，它指定的操作将在 Android 主线程运行
+
+有了这几个Scheduler，就可以使用subscribon()和observeon()进行调用了
+* subscribeon() 指定subscribe()所发生的线程，也就是Observe.OnSubscribe激活所在的线程，或者叫事件产生的线程
+* observeron() 指定Subscribe所运行的线程，或者叫事件消耗的线程
+
+例如
+```java
+Observable.just(1,2,3,4)//
+             .subscribeOn(Schedulers.io())//指定subcribe()发生的线程是在io线程，即被创建的事件的内容 1、2、3、4 将会在 IO 线程发出
+             .observeOn(AndroidSchedulers.mainThread())//指定Subscribe的回调线程是在Android主UI线程
+             .subscribe(new Action1<Integer>() {
+         @Override
+         public void call(Integer integer) {//这个方法将会在Android 主线程中执行
+
+         }
+     });
+```
+这种在 subscribe() 之前写上两句 subscribeOn(Scheduler.io()) 和 observeOn(AndroidSchedulers.mainThread()) 的使用方式非常常见，它适用于多数的 『后台线程取数据，主线程显示』的程序策略。
+
+在如后台加载图片，UI线程显示的
+```java
+protected void onCreate(@Nullable Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_rxjava);
+  imageView= (ImageView) findViewById(R.id.btn);
+  imgResId=R.mipmap.ic_launcher;
+
+  Log.d("hoyouly", getClass().getSimpleName() + " -> onCreate: "+Thread.currentThread());
+
+  Observable.create(new Observable.OnSubscribe<Drawable>() {
+			@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+			@Override
+			public void call(Subscriber<? super Drawable> subscriber) {
+				Log.d("hoyouly", getClass().getSimpleName() + " -> call: "+Thread.currentThread());
+				Drawable drawable = getTheme().getDrawable(imgResId);
+				subscriber.onNext(drawable);
+				subscriber.onCompleted();
+			}
+		})//
+		.subscribeOn(Schedulers.io())//指定subscribe()即 加载图片过程 是在io线程中
+		.observeOn(AndroidSchedulers.mainThread())//指定Subscribe回调是在Android UI线程中，即设置图片则被设定在了主线程
+		.subscribe(new Observer<Drawable>() {
+					@Override
+					public void onCompleted() {
+						Log.d("hoyouly", getClass().getSimpleName() + " -> onCompleted: "+Thread.currentThread());
+					}
+
+					@Override
+					public void onError(Throwable e) {
+						Toast.makeText(getApplicationContext(), "加载图片失败", Toast.LENGTH_LONG).show();
+					}
+
+					@Override
+					public void onNext(Drawable drawable) {
+						Log.d("hoyouly", getClass().getSimpleName() + " -> onNext: "+Thread.currentThread());
+						imageView.setImageDrawable(drawable);
+					}
+				});
+	}
+```
+输出的结果
+```
+RxjavaActivity -> onCreate: Thread[main,5,main]
+-> call: Thread[RxCachedThreadScheduler-1,5,main]
+-> onNext: Thread[main,5,main]
+-> onCompleted: Thread[main,5,main]
+```
+onNext()和onCompleted()是和onCreat()方法在同一个线程中的，即UI线程中，而call()方法是在RxCachedThreadScheduler-1这个线程中的，也就是所谓的 加载图片将会发生在 IO 线程，而设置图片则被设定在了主线程
+
+
+### Schedule的原理
+Schedule 竟然这么神奇，subscribe()方法在最外层直接调用的方法，竟然能指定线程，神奇的不要不要的好不好，这究竟是为啥呢，其实原理是以变换为基础的，<span style="border-bottom:1px solid red;">变换，就是将事件的对象或者整个序列进行加工处理，转换成不同的事件或事件序列</span>
+```Java
+Observable.just("images/logo.png")//输入类型是String
+				.map(new Func1<String, Bitmap>() { //Func1 两个泛型变量，String,Bitmap
+					@Override
+					public Bitmap call(String s) {// 参数类型是String，返回类型是Bitmap
+						return null;
+					}
+				})//
+				.subscribe(new Action1<Bitmap>() {//一个参数类型，输入类型是Bitmap
+					@Override
+					public void call(Bitmap bitmap) {//参数类型是Bitmap，返回类型是void
+
+					}
+				});
+```
+### Func1
+```Java
+public interface Func1<T, R> extends Function {
+    R call(T t);
+}
+```
+查看源码可知，Func1 也是继承Function，和Action是同一个老子，其实它和Action类似，不同的是，Action包含的call（）方法是没有返回值的，而Func1 包含的call()方法是有返回值的。返回值就是你泛型里面设置的。
+
+解释了Func1这个小插曲，接下来进入正题，转换
+map() 方法将参数中的 String 对象转换成一个 Bitmap 对象后返回，而在经过 map() 方法后，事件的参数类型也由 String 转为了 Bitmap。这种直接变换对象并返回的，是最常见的也最容易理解的变换。不过 RxJava 的变换远不止这样，它不仅可以针对事件对象，还可以针对整个事件队列，这使得 RxJava 变得非常灵活。？？？？？？
+
+举例说明
+1. 如果打印一组学生的名字.
+
+```java
+    final Student [] students=new Student[]{};
+
+		final Subscriber<String> subscriber = new Subscriber<String>() {
+			@Override
+			public void onCompleted() {}
+			@Override
+			public void onError(Throwable e) {}
+
+			@Override
+			public void onNext(String s) {
+				//输出来的就是学生的名字
+				Log.d("hoyouly", getClass().getSimpleName() + " -> onNext: "+s);
+			}
+		};
+		Observable.from(students)//
+				.map(new Func1<Student, String>() {
+					@Override
+					public String call(Student student) {
+						return student.getName();
+					}
+				})//
+				.subscribe(subscriber);
+
+```
+使用map()方法进行转换一下就行了，可是如果我想要打印学生的课程呢？我们知道，学生和名字是一一对应的，可是学生与课程的关系就是一对多啊，当然，我们可以通过for循环来处理。
+
+```java
+final Student [] students=new Student[]{};
+
+Subscriber<Student> studentSubscriber=new Subscriber<Student>() {
+    @Override
+    public void onCompleted() {}
+
+    @Override
+    public void onError(Throwable e) {}
+
+    @Override
+    public void onNext(Student student) {
+      //得到的是学生信息，然后通过for循环打印课程
+      for (Courses courses:student.getCourses()) {
+        Log.d("hoyouly", getClass().getSimpleName() + " -> onNext: "+courses.toString());
+      }
+    }
+  };
+
+  Observable.from(students).subscribe(studentSubscriber);
+```
+可是如果我不想使用for循环呢，这个好像就不符合RxJava的流式API了啊，那有什么办法呢，就要祭出神器了，flatmap()
+```java
+Subscriber<Courses> coursesSubscriber=new Subscriber<Courses>() {
+			@Override
+			public void onCompleted() {}
+
+			@Override
+			public void onError(Throwable e) {}
+
+			@Override
+			public void onNext(Courses courses) {
+				//得到的就是每一个课程的名字
+        Log.d("hoyouly", getClass().getSimpleName() + " -> onNext: "+courses.toString());
+			}
+		};
+
+		Observable.from(students)//
+				.flatMap(new Func1<Student, Observable<Courses>>() {
+					@Override
+					public Observable<Courses> call(Student student) {
+						return Observable.from(student.getCourses());
+					}
+				})//
+				.subscribe(coursesSubscriber);
+```
+flatMap与map 相同点，就是把传入的参数转换成后返回另外一个对象
+不同点：map 返回的是一个普通对象，而flatMap()返回的是一个Observable对象，并且这个对象并没有直接发送给Subscribe的调用（即onNext()）方法中，
+
+flatMap()原理：
+1. 使用传入的对象创建一个Observable对象
+2. 不发送这个Observable对象，而是激活它，于是它开始发送事件
+3. 每一个创建的Observable 发送的事件，都被汇入到同一个Observable中，而这个Observable将这些事件统一交给Subscribe的回调方法。
+这三步骤，通过一组新创建的Observable对象将初始化的对象**平铺**之后，然后通过统一的路径分发下去，这就是flatMap（），flat 就是平铺，平面的意思
+
+### 扩展 Retorfit和RxJava 配合
+由于可以在嵌套的 Observable 中添加异步代码， flatMap() 也常用于嵌套的异步操作，例如嵌套的网络请求
+```java
+networkClient.token() // 返回 Observable<String>，在订阅时请求 token，并在响应后发送 token
+    .flatMap(new Func1<String, Observable<Messages>>() {
+        @Override
+        public Observable<Messages> call(String token) {
+            // 返回 Observable<Messages>，在订阅时请求消息列表，并在响应后发送请求到的消息列表
+            return networkClient.messages();
+        }
+    })
+    .subscribe(new Action1<Messages>() {
+        @Override
+        public void call(Messages messages) {
+            // 处理显示消息列表
+            showMessages(messages);
+        }
+    });
+```
+
+### 变换的原理 lift()
+变换的功能虽然不同，但是本质上都是**针对事件序列的处理再发送**,在RxJava中，基于同一个基础变换方法，即lift(Operator)
+老样子，从源码开始吧，我们从上一次打印一组学生的例子开始看起
+```java
+    final Student [] students=new Student[]{};
+		final Subscriber<String> subscriber = new Subscriber<String>() {
+			...
+			@Override
+			public void onNext(String s) {
+				//输出来的就是学生的名字
+			}
+		};
+
+		Func1<Student, String> func1 = new Func1<Student, String>() {
+			@Override
+			public String call(Student student) {
+				return student.getName();
+			}
+		};
+
+		Observable.from(students)//
+				.map(func1)//
+				.subscribe(subscriber);
+```
+我修改了一下结构把map（）里面的参数提取出来，成为一个变量，摈弃删除了一些暂时无关紧要的代码（onError()和onCompleted()）,这样看起来我感觉能更清晰一些
+
+然后看看map()里面的实现
+```java
+public final <R> Observable<R> map(Func1<? super T, ? extends R> func) {
+       return lift(new OperatorMap<T, R>(func));
+   }
+// 因为我们指定泛型类型是 Student 和String ，所以就直接换了吧，这样看起来舒服
+public final  Observable<String> map(Func1<Student, String> func) {
+		return lift(new OperatorMap<Student, String>(func));
+	}
+```
+先看看这个OperarMap是什么玩意吧
+```java
+//同样。里面的泛型也是被实际替换了，
+// 注意 泛型类型调换了，参照源码 public final class OperatorMap<T, R> implements Operator<R, T> {}，
+public final class OperatorMap<Student, String> implements Operator<String，Student> {
+    private final Func1<Student, String> transformer;
+
+    public OperatorMap(Func1<Student, String> transformer) {
+        this.transformer = transformer;
+    }
+
+    @Override
+    public Subscriber<Student> call(final Subscriber<String> o) {
+        return new Subscriber<Student>(o) {
+
+            @Override
+            public void onCompleted() {
+                o.onCompleted();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                o.onError(e);
+            }
+
+            @Override
+            public void onNext(Student t) {
+                try {
+                    o.onNext(transformer.call(t));
+                } catch (Throwable e) {
+                    Exceptions.throwOrReport(e, this, t);
+                }
+            }
+
+        };
+    }
+}
+
+public interface Operator< String，Student> extends Func1<Subscriber<String>, Subscriber<Student>> {
+      // cover for generics insanity
+}
+
+```
+根据源码可知，其实这个OperatorMap本质上是一个Func1,只不过被包装了一下，
+```java
+
+public final class OperatorMap<Student, String> implements Func1<Subscriber<String>, Subscriber<Student>>{
+  public OperatorMap(Func1<Student, String> transformer) {
+      this.transformer = transformer;
+  }
+
+  @Override // Func1 意义就是有两个泛型，call的参数是Subscriber<String>，返回值是Subscriber<Student>
+  public Subscriber<Student> call(final Subscriber<String> o) {
+      return new Subscriber<Student>(o) {
+
+          @Override
+          public void onCompleted() {
+              o.onCompleted();
+          }
+
+          @Override
+          public void onError(Throwable e) {
+              o.onError(e);
+          }
+
+          @Override
+          public void onNext(Student t) {
+              try {
+                  o.onNext(transformer.call(t));
+              } catch (Throwable e) {
+                  Exceptions.throwOrReport(e, this, t);
+              }
+          }
+
+      };
+  }
+}
+```
+然后我们看lift()源码，
+```Java
+public final  Observable<Student> lift(final Operator<Student, String> operator) {
+       return new Observable<Student>(new OnSubscribe<Student>() {
+           @Override
+           public void call(Subscriber<Student> o) {
+               try {
+                   Subscriber<String> st = hook.onLift(operator).call(o);
+                   try {
+                       st.onStart();
+                       onSubscribe.call(st);
+                   } catch (Throwable e) {
+                       Exceptions.throwIfFatal(e);
+                       st.onError(e);
+                   }
+               } catch (Throwable e) {
+                   Exceptions.throwIfFatal(e);
+                   o.onError(e);
+               }
+           }
+       });
+   }
+```
+这段代码有点意思，lift()竟然返回的是生成一个新的Observable对象并且将它返回，而且创建Observable所用的参数OnSubscribe的回调方法call（）看起来竟然和之前的Observable.subcribe()那么相似，其实并不真的的一样，失之毫厘谬以千里，onSubscribe.call(st)中onSubscibe指的对象并不同，
+接下来开始绕口令：
+* subscribe()中的onSubcribe指的是Observable中的onSubscribe对象，这个没问题，但是lift()之后，的情况就复杂了
+* 当含有lift()时：
+  1.lift()创建一个新的Observable后，加上原来的Observable，代码就有了两个Observable对象了
+  2. 同样的，新的Observable中有新的OnSubscribe对象即 Subscriber<Student> o  ，再加上原来的Observable中的OnSubscribe对象，就有两个OnSubcribe对象了
+  3. 当用户调用经过lift()后的Observable的subscribe（）方法时候，使用的是通过lift()创建并返回的 新的Observable对象，于是它触发的onSubscribe.call(subscribe),也是用的新的Observable中的新的OnSubscribe对象，即在lift()中生成的那个OnSubscribe对象o,
+  4. 而这个新的OnSubscribed对象o 的call()方法中的OnSubscribe，就是指的原始Observable中的OnSubscribe，在这个call()中，新的OnSubscribe利用operator.call(subscriber)生成新的Subscribe（**Operator就是在这里，通过自己的call()方法，将新的Subscribe和原始的Subscribe进行关联，并插入自己的变换代码实现变换**） 然后利用新的Subscribe像原始的Observable进行订阅
+
+这样就实现了lift()过程，有点像代理机制，通过事件拦截和处理实现事件序列变换。
+
+我们知道，RxJava的实现，是一条从上到下的链式调用方式，所谓链式调用，说白了就是先创建该对象，然后调用该对象的其他方法，可是返回的结果却还是该对象，就这样一直可以调用下去，像一条链子一样，这是我们通常的实现方式，也是所谓的Builder模式，Android最常见的应该就是这个AlertDialog的使用
+```java
+AlertDialog alertDialog = new AlertDialog.Builder(this)
+    .setTitle(title)
+    .setMessage(msg)
+    .setCancelable(false)
+    .setPositiveButton(btn,
+            new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(final DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).show();
+
+```
+查看 AlterDialog 源码就可知实现原理：
+
+```java
+    // AlterDialog.java
+    public Builder setTitle(int titleId) {
+           P.mTitle = P.mContext.getText(titleId);
+           return this;
+       }
+       public Builder setTitle(CharSequence title) {
+           P.mTitle = title;
+           return this;
+       }
+       public Builder setCustomTitle(View customTitleView) {
+           P.mCustomTitleView = customTitleView;
+           return this;
+       }
+       public Builder setMessage(int messageId) {
+           P.mMessage = P.mContext.getText(messageId);
+           return this;
+       }
+       public Builder setMessage(CharSequence message) {
+           P.mMessage = message;
+           return this;
+       }
+       public Builder setIcon(int iconId) {
+           P.mIconId = iconId;
+           return this;
+       }
+
+```
+这只是部分源码，但是已经能看出来门道了，返回的都是this,就是该对象，虽然RxJava也是使用的链式调用，也是使用的Builder模式，可是用的却不一样，它的返回并不是一个this,尤其是lift()方法，我们知道lift()虽然返回的还是一个Observable对象，看着符合链是调用，但是人家是new 了一个Observable对象，所以尽管Observable.creat()已经创建了一个Observable对象，并且附带的创建了一个OnSubscribe对象，但是到lift()这，它竟然 偷梁换柱，重新创建了一个新的Observable对象和相应的OnSubscribe对象并返回，从而让后面的方法使用。所以后面执行的 subscribe(subscriber),其实是执行的lift() 创建并返回的Observable对象，
 
 
 搬运：
