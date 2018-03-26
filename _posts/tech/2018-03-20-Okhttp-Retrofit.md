@@ -39,12 +39,387 @@ RESTful 都满足以下条件
 几种网络框架的对比
 ![](http://p5sfwb51p.bkt.clouddn.com/%E5%87%A0%E7%A7%8D%E7%BD%91%E7%BB%9C%E6%A1%86%E6%9E%B6%E7%9A%84%E5%AF%B9%E6%AF%94.png)
 
+### 使用介绍：
+大致分为7步，这里面会夹杂一个实例应用。以获取豆瓣Top250 榜单
+1. 添加Retrofit依赖库
+2. 创建接收器返回的数据类
+3. 创建用于描述网络请求的接口
+4. 创建Retrofit 实例
+5. 创建网络请求接口实例并配置网络请求参数
+6. 发送网络请求（异步/同步）
+7. 处理服务器返回的数据
+
+### 步骤1.添加Retrofit依赖库
+这个就是没什么可说的了，就是一些Retrofit所需要的库,一般会添加下面几个库
+```java
+  compile 'com.squareup.retrofit2:retrofit:2.1.0'//retrofit
+  compile 'com.squareup.okhttp3:okhttp:3.1.2'
+
+  compile 'com.google.code.gson:gson:2.6.2'//Gson 库
+  //下面两个是RxJava 和RxAndroid
+  compile 'io.reactivex:rxjava:1.1.0'
+  compile 'io.reactivex:rxandroid:1.1.0'
+  compile 'com.squareup.retrofit2:converter-gson:2.1.0'//转换器，请求结果转换成Model
+  compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'//配合Rxjava 使用
+```
+说明：
+1. 因为retrofit Retrofit是基于okhttp的封装的，所以肯定需要OkHttp的库
+2. 因为我们通常用到json解析，所以使用了gson库，以及retrofit转换成javabean的转换器converter-gson，当然，还有其他的转换器可以使用。
+3. 因为我们经常会把Retrofit和RxJava配合使用，所以可能还会用到RxJava相应的库
+4. 当然，需要添加网络权限，
+
+### 步骤二：创建接收器返回的数据类
+其实就是一些javabean,用于保存返回来的数据，例如
+```java
+public class MovieObject {
+	public int count;
+	public int start;
+	public int total;
+	public List<Movie> subjects;
+	public String title;
+}
+
+public class Movie {
+	public Rate rating;
+	public String title;
+	public String collect_count;
+	public String original_title;
+	public String subtype;
+	public String year;
+	public MovieImage images;
+
+	public static class Rate{
+		public int max;
+		public float average;
+		public String stars;
+		public int min;
+	}
+
+	public static class MovieImage{
+		public String small;
+		public String large;
+		public String medium;
+	}
+
+	@Override
+	public String toString() {
+    return "Movie{" + "title='" + title + '\'' + ", subtype='" + subtype + '\'' +  '}';
+	}
+}
+
+```
+### 步骤三：创建用于描述网络请求的接口
+Retrofit 把Http请求抽象成一个java接口，采用注解方式描述和配置网络请求参数
+* 使用动态代理方式将该接口的注解翻译成一个Http 请求，最后再执行Http 请求
+* 接口中的每个方法都需要使用注解，否则会报错。
+
+```java
+public interface MovieService {
+    //获取豆瓣Top250 榜单
+    @GET("top250")
+    Call<MovieObject> getTop250(@Query("start") int start, @Query("count") int count);
+}
+```
+解释：
+1. `@GET("top250")` 就是使用get方式发送请求，top250 是一个尾地址，我们一般访问网络，都会有一个基本地址，例如“https://api.douban.com/v2/movie/”， 后边再拼一个字符串（例如top250），形成当前接口的完整地址，所以该接口的完整地址就是 “https://api.douban.com/v2/movie/top250”，当然，也可以直接使用绝对路径。例如`@GET("https://api.douban.com/v2/movie/top250")`,这样就不需要设置基本路径了。
+2. Call<MovieObject> Call 就是一种返回类型，MovieObject 是我们上一步定义的实体bean
+3. getTop250 这个是方法名，就不解释了，
+4. 接下来看方法中的参数，`@Query("start") int start`，这种方式挺怪哦，之前没见到过，@Query标签 ，表示请求参数，将会以key=value的方式拼接在url后面，例如
+`url = http://www.println.net/?cate=android，其中，Query = cate`
+如果参数多的话可以用@QueryMap标签，接收一个Map
+
+####  网络请求接口注解类型
+我们指定，网络请求有其中方式，除了常见的get,post，还有put,delete,path,head,options,所以Retrofit对应了了其中相应的注解
+![](http://p5sfwb51p.bkt.clouddn.com/retrofit_network_type.png)
+
+重点说一下  @HTTP，这个注解，HTTP注解则可以代替以上方法中的任意一个注解,有3个属性：method、path,hasBody,下面是用HTTP注解实
+```java
+    /**
+     * method 表示请求的方法，区分大小写
+     * path表示路径 默认为""，值为请求的相对URL路径
+     * hasBody 表示是否有请求体，默认为false
+     * {id} 表示是一个变量
+     */
+    @HTTP(method = "GET", path = "blog/{id}", hasBody = false)
+    Call<ResponseBody> getBlog(@Path("id") int id);
+```
+method 的值 retrofit 不会做处理，所以要自行保证其准确性，
+
+#### 网络请求参数
+
+![](http://p5sfwb51p.bkt.clouddn.com/retrofit_network_param.png)
+##### @Header & @Headers
+具体使用如下：
+
+```java
+// @Header
+@GET("user")
+Call<User> getUser(@Header("Authorization") String authorization)
+
+// @Headers
+@Headers("Authorization: authorization")
+@GET("user")
+Call<User> getUser()
+
+```
+以上的效果是一致的。区别在于：
+* @Headers 作用于方法,   用于添加固定请求头，可以同时添加多个。通过该注解添加的请求头不会相互覆盖，而是共同存在
+* @Header 作用于方法的参数，用于添加不固定值的Header，该注解会更新已有的请求头
+
+
+##### @Body
+* 作用： 以post形式 传递 自定义数据类型给服务器。
+* 特别注意： 如果提交的是一个Map，那么作用相当于@Field ,
+不过Map要经过FromBody.Builder 类处理成符合OkHttp 格式的表单，如
+```Java
+    FormBody.Builder builder=new FormBody.Builder();
+		builder.add("key","value");
+```
+
+##### @Field & @FieldMap
+* 作用： 发送Post 请求的时候，提交请求的表单字段。
+* 格式如下：
+
+```java
+public interface GetRequest_Interface {
+        @POST("/form")
+        @FormUrlEncoded
+        Call<ResponseBody> testFormUrlEncoded1(@Field("username") String name, @Field("age") int age);
+
+         // Map的key作为表单的键
+        @POST("/form")
+        @FormUrlEncoded
+        Call<ResponseBody> testFormUrlEncoded2(@FieldMap Map<String, Object> map);
+}
+
+```
+注意：
+1. 必须加上 @FormUrlEncoded标签，否则会抛异常
+2. 参数标签用 @Field 或者 @Body 或者 @FieldMap
+2. 使用POST方式时，必须要有参数，否则会抛异常
+
+具体使用：
+```java
+// @Field
+ Call<ResponseBody> call1 = service.testFormUrlEncoded1("Carson", 24);
+
+ // @FieldMap
+ // 实现的效果与上面相同，但要传入Map
+ Map<String, Object> map = new HashMap<>();
+ map.put("username", "Carson");
+ map.put("age", 24);
+ Call<ResponseBody> call2 = service.testFormUrlEncoded2(map);
+```
+##### @Part & @PartMap
+* 作用： 发送Post 请求的时候，提交请求的表单字段，尽管与@Field & @FieldMap功能相同，但是`它携带的数据类型更加丰富，包括数据流，所以适用于有 文件上传的场景`
+
+* 格式如下：与 @Multipart 注解配合使用
+
+```java
+public interface GetRequest_Interface {
+       @POST("/from")
+       @Multipart
+       Call<ResponseBody> testFileUpload1(@Part("name") ResponseBody nameBody, @Part("age") ResponseBody ageBody, @Part MultipartBody.Part file);
+
+        @POST("/form")
+        @Multipart
+        Call<ResponseBody> testFileUpload2(@PartMap Map<String, RequestBody> args, @Part MultipartBody.Part file);
+
+        @POST("/form")
+        @Multipart
+        Call<ResponseBody> testFileUpload3(@PartMap Map<String, RequestBody> args);
+}
+
+
+```
+解释：
+1. Part 后面支持三种类型，RequestBody,MultipartBody.Part,任意类型
+2. 除了 MultipartBody.Part 以外，其他类型必须带上表单字段，因为MultipartBody.Part中已经包含了表单字段的信息
+3. PartMap 注解支持一个Map作为参数。支持RequestBody 类型，如果还有其他类型，会被retrofit2.Converter 转换，使用Gson GsonRequestBodyConverter ,所以MultipartBody.Part就不适用了，文件只能用** @Part MultipartBody.Part **
+
+具体使用：
+```java
+       MediaType textType = MediaType.parse("text/plain");
+       RequestBody name = RequestBody.create(textType, "Carson");
+       RequestBody age = RequestBody.create(textType, "24");
+       RequestBody file = RequestBody.create(MediaType.parse("application/octet-stream"), "这里是模拟文件的内容");
+
+       // @Part
+       MultipartBody.Part filePart = MultipartBody.Part.createFormData("file", "test.txt", file);
+       Call<ResponseBody> call3 = service.testFileUpload1(name, age, filePart);
+       ResponseBodyPrinter.printResponseBody(call3);
+
+       // @PartMap
+       // 实现和上面同样的效果
+       Map<String, RequestBody> fileUpload2Args = new HashMap<>();
+       fileUpload2Args.put("name", name);
+       fileUpload2Args.put("age", age);
+       //这里并不会被当成文件，因为没有文件名(包含在Content-Disposition请求头中)，但上面的 filePart 有
+       //fileUpload2Args.put("file", file);
+       Call<ResponseBody> call4 = service.testFileUpload2(fileUpload2Args, filePart); //单独处理文件
+       ResponseBodyPrinter.printResponseBody(call4);
+
+```
+
+##### @Query & @QueryMap
+* 作用：用于 @GET 方法的查询参数（Query = Url 中 ‘?’ 后面的 key-value）
+`如：url = http://www.println.net/?cate=android，其中，Query = cate`
+* 具体使用：配置时只需要在接口方法中增加一个参数即可：
+```java
+  @GET("/")    
+  Call<String> cate(@Query("cate") String cate);
+```
+##### @Path
+* 作用： URL地址的缺省值/默认值
+* 具体使用：
+```java
+  @GET("users/{user}/repos")
+  Call<ResponseBody>  getBlog（@Path("user") String user ）;
+  // 访问的API是：https://api.github.com/users/{user}/repos
+  // 在发起请求时， {user} 会被替换为方法的第一个参数 user（被@Path注解作用）
+```
+##### @Url
+* 作用：直接传入一个请求 URL变量，用于URL设置
+* 具体使用：
+
+```java
+    @GET //当有URL注解时，@GET传入的URL就可以省略
+    Call<ResponseBody> testUrlAndQuery(@Url String url, @Query("showAll") boolean showAll);
+    // 当GET、POST...HTTP等方法中没有设置Url时，则必须使用  @Url提供
+
+```
+
+#### 标记
+![](http://p5sfwb51p.bkt.clouddn.com/944365-a6f1fc997c23a2e0.png)
+##### @FromUrlEncoded
+* 作用： 发送from-encoded 的数据
+
+每个键值对需要用@Field来注解键名，随后的对象需要提供值
+
+##### @Multipart
+* 作用： 表示发送form-encoded 的数据，适用于有文件上传的场景
+
+每个键值对需要使用@Part来注解键名，随后的对象需要提供值
+
+##### @Streaming
+如果下载一个非常大的文件，Retrofit 会试图将整个文件读进内存，这是绝对不能发生的事情，为了避免这种情况，我们就需要添加@Streaming 注解来声明请求
+
+```java
+  @Streaming
+  @GET
+  Call<ResponseBody> downloadFileWithDynamicUrlAsync(@Url String fileUrl);  
+```
+声明@Streaming并不是意味着你需要观察一个Netflix文件。它意味着立刻传递字节码，而不需要把整个文件读进内存。值得注意的是，如果你使用了@Streaming，并且依然使用以上的代码片段来进行处理。Android将会抛出android.os.NetworkOnMainThreadException异常。
+因此，最后一步就是把这些操作放到一个单独的工作线程中。例如 AsyncTaks
+```Java
+final FileDownloadService downloadService =  ServiceGenerator.create(FileDownloadService.class);
+
+new AsyncTask<Void, Long, Void>() {  
+   @Override
+   protected Void doInBackground(Void... voids) {
+       Call<ResponseBody> call = downloadService.downloadFileWithDynamicUrlSync(fileUrl);
+       call.enqueue(new Callback<ResponseBody>() {
+           @Override
+           public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+               if (response.isSuccess()) {
+                   Log.d(TAG, "server contacted and has file");
+                   boolean writtenToDisk = writeResponseBodyToDisk(response.body());
+                   Log.d(TAG, "file download was a success? " + writtenToDisk);
+               }
+               else {
+                   Log.d(TAG, "server contact failed");
+               }
+           }
+       return null;
+   }
+}.execute();
+```
+### 步骤4： 创建Retrofit 实例
+```java
+Retrofit retrofit = new Retrofit.Builder()//
+                .baseUrl("http://fanyi.youdao.com/") // 设置网络请求的Url地址，这一般是基本路径，
+                .addConverterFactory(GsonConverterFactory.create()) // 设置数据解析器
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create()) // 支持RxJava平台
+                .build();
+```
+#### 关于数据解析器
+Retorfit 支持多种数据解析方式。使用的时候只需要添加相应的依赖库就可以了
+
+|数据解析器|Gradle 库|
+|:----|:----|
+|Gson|com.squareup.retrofit2:converter-gson:2.0.2|
+|Jackson|com.squareup.retrofit2:converter-jackson:2.0.2|
+|Simple XML|com.squareup.retrofit2:converter-simplexml:2.0.2|
+|Protobuf|com.squareup.retrofit2:converter-protobuf:2.0.2|
+|Moshi|com.squareup.retrofit2:converter-moshi:2.0.2|
+|Wire|com.squareup.retrofit2:converter-wire:2.0.2|
+|Scalars|com.squareup.retrofit2:converter-scalars:2.0.2|
+
+好像除了 Gson和Jackson见过，其他都没见过（有点小丢人）
+
+#### 关于网络适配器 (CallAdapter)
+* Retorfit 支持多种网络请求适配方式，guava ,Java8和RxJava
+
+使用时如果使用的是Android默认的CallAdapter，则不需要添加网络适配器的依赖，否则需要按照需求进行添加Retrofit提供的CallAdapter
+* 使用时需要添加的Gradle依赖库
+
+|网络请求适配器	|Gradle 库|
+|:----|:----|
+|guava|com.squareup.retrofit2:adapter-guava:2.0.2|
+|Java8|com.squareup.retrofit2:adapter-java8:2.0.2|
+|RxJava|com.squareup.retrofit2:adapter-rxjava:2.0.2|
+
+这三个好像也只用过RxJava ,还是前两天才了解开始玩的
+
+### 步骤5：创建网络请求接口实例
+
+```java
+    //获取接口实例
+		MovieService movieService = retrofit.create(MovieService.class);
+    //调用getTop250()得到一个Call对象
+		Call<MovieObject> call = movieService.getTop250(0, 20);
+```
+* 调用方法得到一个call  Call其实在Retrofit中就是行使网络请求并处理返回值的类，
+* 调用的时候会把需要拼接的参数传递进去，此处最后得到的url完整地址为 https://api.douban.com/v2/movie/top250
+
+### 步骤6：发送网络请求（同步/异步），并处理返回结果
+
+```java
+//发送异步网络请求
+call.enqueue(new Callback<MovieObject>() {
+			@Override  //请求成功时回调
+			public void onResponse(Call<MovieObject> call, Response<MovieObject> response) {
+        //请求处理,输出结果
+				MovieObject body = response.body();
+				Log.e("hoyouly", "onResponse: " + body.title + "  currentThread:  " + Thread.currentThread());
+				Log.e("hoyouly", "onResponse: " + body.subjects.toString());
+			}
+
+			@Override  //请求失败时候的回调
+			public void onFailure(Call<MovieObject> call, Throwable t) {
+				t.printStackTrace();
+				Log.e("hoyouly", getClass().getSimpleName() + " -> onFailure: " + t.getMessage());
+			}
+		});
+
+// 发送网络请求（同步）
+Response<MovieObject> response = call.execute();
+```
+### 步骤7： 处理返回结果
+主要是 通过response类的 body（）对返回的数据进行处理
+参照步骤6 中的处理
+
+### Retorfit 本质流程
+[](http://p5sfwb51p.bkt.clouddn.com/network_step.png)
 
 搬运地址：
 
 [Retrofit2 完全解析 探索与okhttp之间的关系](https://blog.csdn.net/lmj623565791/article/details/51304204)
 
-
 [这是一份很详细的 Retrofit 2.0 使用教程（含实例讲解）](https://blog.csdn.net/carson_ho/article/details/73732076)
 
-[Retrofit2.0使用总结](https://www.jianshu.com/p/3e13e5d34531)
+[Retrofit 2.0 使用总结](https://www.jianshu.com/p/3e13e5d34531)
+
+[Android 手把手教你使用Retrofit2](https://www.jianshu.com/p/73216939806a)
+
+[【译】Retrofit 2 - 如何从服务器下载文件](https://www.jianshu.com/p/92bb85fc07e8)
