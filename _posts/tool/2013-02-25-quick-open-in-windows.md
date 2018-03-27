@@ -2,7 +2,7 @@
 layout: post
 title: win7快速打开应用程序或文件
 category: 工具
-tags: Windows 转载 
+tags: 转载  Windows 
 description: windows下打开文件或应用程序经常需要手点，作为键盘控肯定是不能忍受的。之前试过一些软件，设置各个程序的快捷键，但是快捷键可能会有冲突，而且记性不好实在不好用，所以选择使用Win自带的“运行”来加快打开速度
 ---
 

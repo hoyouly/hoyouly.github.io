@@ -2,7 +2,7 @@
 layout: post
 title: Android IPC 简介
 category: 读书笔记
-tags: Android开发艺术探索 IPC简介
+tags: Android  Android开发艺术探索 IPC
 description: Android IPC 简介
 ---
 

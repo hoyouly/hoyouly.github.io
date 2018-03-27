@@ -2,7 +2,7 @@
 layout: post
 title: Shell 常用资源
 category: 资源
-tags: Shell 转载 
+tags:  转载 Shell 
 keywords: Shell
 description:
 ---

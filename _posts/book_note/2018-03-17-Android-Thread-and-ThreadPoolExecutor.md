@@ -2,7 +2,7 @@
 layout: post
 title: Android的线程和线程池
 category: 读书笔记
-tags: Android开发艺术探索 线程池 线程
+tags: Android  Android开发艺术探索 线程池 线程
 description: Android的线程和线程池
 ---
 

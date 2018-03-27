@@ -2,7 +2,7 @@
 layout: post
 title: Python 常用资源
 category: 资源
-tags: Python 转载 
+tags:  转载 Python 
 keywords: Python
 description:
 ---

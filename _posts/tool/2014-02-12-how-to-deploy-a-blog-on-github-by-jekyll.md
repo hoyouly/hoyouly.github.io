@@ -2,7 +2,7 @@
 layout: post
 title: 在Github上搭建Jekyll博客和创建主题
 category: 工具
-tags: Jekyll 转载 GitHub
+tags: 转载 Jekyll GitHub
 keywords: Jekyll,Github
 description:
 ---

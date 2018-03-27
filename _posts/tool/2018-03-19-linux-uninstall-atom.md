@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Linux 卸载和安装Atom
+title: Linux 卸载和安装 Atom
 category: 工具
 tags: Linux Atom 卸载 安装
 ---

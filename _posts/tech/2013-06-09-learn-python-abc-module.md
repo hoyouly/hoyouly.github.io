@@ -2,7 +2,7 @@
 layout: post
 title: 学习Python的ABC模块
 category: 技术
-tags: Python 转载 Python ABC module
+tags: 转载 Python ABC module
 description: 在学习stevedore时，需要先了解python的abc module
 ---
 

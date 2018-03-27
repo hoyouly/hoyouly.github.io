@@ -2,7 +2,7 @@
 layout: post
 title: Linux下多个命令连续执行方法
 category: 工具
-tags: Linux 转载 连续命令
+tags: 转载 Linux 连续命令
 keywords: Linux,连续,命令
 description:
 ---

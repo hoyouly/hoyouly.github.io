@@ -2,7 +2,7 @@
 layout: post
 title: Git 常用资源
 category: 资源
-tags: Git 转载 
+tags:  转载 Git 
 keywords: Git
 ---
 

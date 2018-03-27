@@ -2,7 +2,7 @@
 layout: post
 title: SVN 常用资源
 category: 资源
-tags: SVN 转载 
+tags:  转载 SVN 
 keywords: SVN
 description:
 ---

@@ -2,7 +2,7 @@
 layout: post
 title: Python包管理工具setuptools详解
 category: 技术
-tags: Python 转载  Setuptools
+tags:  转载 Python  Setuptools
 keywords: Python Setuptools
 description: setuptools可能在未来被distutils2代替，但是现在用到的还挺多，需要学习一下，有利于读Python代码。
 ---

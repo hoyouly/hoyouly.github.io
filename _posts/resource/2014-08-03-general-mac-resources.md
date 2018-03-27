@@ -2,7 +2,7 @@
 layout: post
 title: Mac 常用资源
 category: 资源
-tags: Mac 转载 
+tags:  转载 Mac 
 keywords: Mac
 description:
 ---

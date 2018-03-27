@@ -1,8 +1,8 @@
 ---
 layout: post
-title: ubuntu 14.04 安装 jeklly
+title: Ubuntu 14.04 安装 jekyll
 category: 工具
-tags: Ubuntu jeklly install
+tags: Ubuntu jekyll install
 ---
 
 * content

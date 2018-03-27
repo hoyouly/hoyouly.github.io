@@ -2,7 +2,7 @@
 layout: post
 title: Android 优化方案
 category: 读书笔记
-tags: ListView的优化 Android 性能优化
+tags: Android  ListView的优化  性能优化
 ---
 * content
 {:toc}
