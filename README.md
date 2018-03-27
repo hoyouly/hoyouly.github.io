@@ -137,6 +137,8 @@ gem install jekyll
 
 在 mac OS X El Capitan 系统下安装可能会出现问题，解决方案详情见 jekyll 官网: [ https://jekyllrb.com/docs/troubleshooting/#jekyll-amp-mac-os-x-1011]( https://jekyllrb.com/docs/troubleshooting/#jekyll-amp-mac-os-x-1011)
 
+在Ubuntu 14.04 上安装jekyll,可以参考我的blog : [ubuntu 14.04 安装 jeklly](http://hoyouly.top/2018/03/27/ubuntu-jeklly-install/)
+
 对 jekyll 本身感兴趣的同学可以看看 jekyll 源码: [https://github.com/jekyll/jekyll](https://github.com/jekyll/jekyll)
 
 ![jekyll logo](http://jekyllcn.com/img/logo-2x.png)
