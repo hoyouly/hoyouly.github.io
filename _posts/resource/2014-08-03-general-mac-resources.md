@@ -2,10 +2,14 @@
 layout: post
 title: Mac 常用资源
 category: 资源
-tags: Mac
+tags: Mac 转载 
 keywords: Mac
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用软件

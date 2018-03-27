@@ -2,9 +2,12 @@
 layout: post
 title: 在 Ubuntu 下部署 Shadowsocks
 category: 工具
-tags: Tools
-keywords: 科学上网,工具,VPN,Shadowsocks
+tags: 转载 科学上网 工具 VPN Shadowsocks
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 回国以后先试了部署 L2TP VPN（[在 Ubuntu 下部署 L2TP VPN](/2016/12/30/deploy-l2tp-on-ubuntu.html)），结果发现 VPN 稳定性还是略差，经常掉线。其实对于一般的浏览网页需求，Shadowsocks 就足够了，所以就有了此文。

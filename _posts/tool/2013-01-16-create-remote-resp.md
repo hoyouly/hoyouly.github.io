@@ -2,9 +2,13 @@
 layout: post
 title: git创建远程库
 category: 工具
-tags: Git
+tags: Git 转载 
 description: git创建远程库
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 # git创建远程库

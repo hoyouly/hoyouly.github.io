@@ -2,10 +2,14 @@
 layout: post
 title: Python 常用资源
 category: 资源
-tags: Python
+tags: Python 转载 
 keywords: Python
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用代码

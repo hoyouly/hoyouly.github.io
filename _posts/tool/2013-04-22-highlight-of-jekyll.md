@@ -2,9 +2,13 @@
 layout: post
 title: Jekyll的中的代码高亮
 category: 工具
-tags: Jekyll
+tags: Jekyll 转载 
 description: 在这个博客里，我使用了bootstrap作为前端框架，另外通过比较选择了一个还算满意的代码高亮方式
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ### 代码高亮方式选择

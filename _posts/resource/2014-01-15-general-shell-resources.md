@@ -2,12 +2,15 @@
 layout: post
 title: Shell 常用资源
 category: 资源
-tags: Shell
+tags: Shell 转载 
 keywords: Shell
 description:
 ---
-转载   [yansu的bolg](http://yansu.org/)
 
+* content
+{:toc}
+
+转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用指令
 

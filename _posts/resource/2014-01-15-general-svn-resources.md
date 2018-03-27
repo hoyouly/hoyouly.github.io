@@ -2,10 +2,14 @@
 layout: post
 title: SVN 常用资源
 category: 资源
-tags: SVN
+tags: SVN 转载 
 keywords: SVN
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用指令

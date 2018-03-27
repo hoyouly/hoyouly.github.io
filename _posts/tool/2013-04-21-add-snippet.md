@@ -2,9 +2,13 @@
 layout: post
 title: 给sublime增加snippet
 category: 工具
-tags: Sublime
+tags: Sublime 转载 
 description: 总有时候有一些不是很大的代码段需要重复输入，利用sublime中的snippet可以方便很多
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ### 创建

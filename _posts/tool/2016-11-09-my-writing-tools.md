@@ -2,9 +2,13 @@
 layout: post
 title: 我使用的收藏，写作和分享工具
 category: 工具
-tags: Tools
+tags: 收藏 写作 发布 工具 转载
 keywords: 收藏,写作,发布,工具
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 > 我日常非工作时间外的学习，基本流程就是收藏，写作和分享，所以我把这三个集合写在一篇文章里面。同时记录下来这个过程，可以让我清晰的知道，我应该在做哪件事情的时候，用哪个工具。

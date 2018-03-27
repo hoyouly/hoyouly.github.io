@@ -2,10 +2,14 @@
 layout: post
 title: 在Github上搭建Jekyll博客和创建主题
 category: 工具
-tags: Jekyll
+tags: Jekyll 转载 GitHub
 keywords: Jekyll,Github
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 > 之前本来想展开写的，后来发现Jekyll官网的教程已经非常完善了就没有多写，所以只有[这篇][1]。

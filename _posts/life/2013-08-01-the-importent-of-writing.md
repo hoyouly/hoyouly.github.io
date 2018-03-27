@@ -2,10 +2,14 @@
 layout: post
 title: 持续写作的重要性
 category: 生活
-tags: Essay
+tags: Essay 转载  写作 writing
 keywords: 写作,writing
 description: 不再学习技术或做项目，就不再产生内容，这就是我从6月中旬到现在都没有更新的原因
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 最近都没有怎么上微博，昨天上去看到这样一句话，让我挺有感触

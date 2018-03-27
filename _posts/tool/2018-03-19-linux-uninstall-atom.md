@@ -2,8 +2,12 @@
 layout: post
 title: Linux 卸载和安装Atom
 category: 工具
-tags: Linux ，卸载Atom
+tags: Linux Atom 卸载 安装
 ---
+
+* content
+{:toc}
+
 之前在Linux上一直使用的是Sublime，可是不知道为啥，最近一直提示我要升级，而且最可恼的是，使用Sublime 打开txt文件，背景竟然是白色的，网上查了半天，也没找到解决方案，解决不了，哥不用了呗，Atom之前都听说过，而且也装的有，只是觉得他打开太慢了，所以就一直没用，现在重新玩Atom吧，可是我安装的版本比较老，是1.13版本，可是最新的版本却是1.25.0 了，那就想办法更新吧，竟然没找到更新按钮，直接卸载重装吧。
 
 ## 卸载Atom

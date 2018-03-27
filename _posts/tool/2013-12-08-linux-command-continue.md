@@ -2,10 +2,14 @@
 layout: post
 title: Linux下多个命令连续执行方法
 category: 工具
-tags: Linux
+tags: Linux 转载 连续命令
 keywords: Linux,连续,命令
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 >有的时候执行一些简单指令的时候总不想分好几次输入，利用以下方法可以方便的一次执行多个命令

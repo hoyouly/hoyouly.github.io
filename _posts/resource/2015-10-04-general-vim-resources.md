@@ -2,9 +2,13 @@
 layout: post
 title: Vim 常用资源
 category: 资源
-tags: Vim
+tags: Vim 转载 
 keywords: Vim
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ## 在粘贴代码时不启动自动缩进

@@ -2,8 +2,11 @@
 layout: post
 title: Android Studio 常用快捷键
 category: 工具
-tags: Android Studio，快捷键
+tags: AndroidStudio 快捷键
 ---
+
+* content
+{:toc}
 
 
 |平台|Mac |Win/Linux|

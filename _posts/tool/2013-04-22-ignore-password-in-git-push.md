@@ -2,9 +2,13 @@
 layout: post
 title: 让git push命令不再需要密码
 category: 工具
-tags: Git
+tags: Git 转载 
 description: 使用git push命令远程提交库时，总是要输入帐号和密码，这样特别麻烦，找了一个方法解决掉
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 最近利用jekyll写博客，为的就是博客管理方便，但是在上传博客的时候使用`git push`命令每次都得输入github帐号和密码特别的不方便，于是就搜了一下。

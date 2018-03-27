@@ -2,10 +2,14 @@
 layout: post
 title: 使用Dropzone和七牛优化博客图床
 category: 工具
-tags: Blog
+tags: Blog 转载 Dropzone Qiniu 七牛 图床 博客
 keywords: Dropzone,Qiniu,七牛,图床,博客
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 > 之前我在用SAE的Storage作为博客图床，但是令我非常不爽的是没有一个很好的上传和获得公共链接的方法。现在总算用Dropzone和七牛把这个问题解决了，下面是我上传图片和获得URL的操作，方法再往下看。

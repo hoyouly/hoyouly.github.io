@@ -2,10 +2,14 @@
 layout: post
 title: MySQL常用资源
 category: 资源
-tags: MySQL
+tags: MySQL 转载 
 keywords: MySQL
 description:
 ---
+
+* content
+{:toc}
+
 转载   [yansu的bolg](http://yansu.org/)
 
 ## 常用命令

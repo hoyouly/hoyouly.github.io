@@ -2,8 +2,12 @@
 layout: post
 title: ubuntu 14.04 安装 jeklly
 category: 工具
-tags: Ubuntu，jeklly,install
+tags: Ubuntu jeklly install
 ---
+
+* content
+{:toc}
+
 先执行下面命令，
 ```shell
 sudo apt-get update

@@ -2,9 +2,13 @@
 layout: post
 title: Android性能优化
 category: 读书笔记
-tags: Android开发艺术探索，性能优化
+tags: Android开发艺术探索 性能优化
 description: Android性能优化
 ---
+
+* content
+{:toc}
+
 ## 布局优化
 思想很简单，就是尽量减少布局文件的层级，层级越少，Android绘制的工作量越少，那么程序的性能自然越高
 布局优化的方法
