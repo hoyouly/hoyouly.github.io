@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Android Studio 常用快捷键
+title: Android Studio 使用技巧集合
 category: 工具
 tags: AndroidStudio 快捷键
 ---
@@ -8,6 +8,7 @@ tags: AndroidStudio 快捷键
 * content
 {:toc}
 
+## 快捷键
 
 |平台|Mac |Win/Linux|
 |:----|:------|:------|
@@ -21,7 +22,28 @@ tags: AndroidStudio 快捷键
 |隐藏所有窗口|CMD + Shift + F12|Ctrl + shift + F12|
 |Surround With..|cmd + alt + t|ctrl + alt + t|
 
+## 修改toString()模板为JSON格式
+参考： [IDEA修改toString方法模板为JSON格式](https://blog.csdn.net/masonqaq/article/details/77975030)
 
+## 自定义模板
+
+以打印调用栈信息为例
+1. 以此打开，setting -> Editor -> Live Templates
+2. 点击右侧加号 选择 Live Templates
+  * Abbreviation 中填写模板快捷键 例如 logz
+  * Description 中是描述，可以随便写
+  * Template text 中就是模板内容
+  ```java
+  android.util.Log.d("hoyouly",getClass().getName()+" -> "+android.util.Log.getStackTraceString(new Throwable()));`
+  ```
+
+3. 右侧勾选 Reformat according to style 和  Shorten RA names
+4. 点击下面的 Define   选择 java中的 statment，然后点击保存就可以了。
+
+这样在编辑框中，输入logz就直接输出来 android.util.Log.d("hoyouly",getClass().getName()+" -> "+android.util.Log.getStackTraceString(new Throwable())); 这行代码了。
+
+当然也可以修改Android studio的代码，例如logd 中的模板我已经改成了 android.util.Log.d("hoyouly", getClass().getName()+" -> $METHOD_NAME$: $content$");
+这样输出log 的时候我就可以不用再考虑TAG 的事情了
 
 
 搬运地址：
