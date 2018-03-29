@@ -20,15 +20,23 @@ tags: Markdown
 3. 编辑第一行的时候前后加上`<br/>和</br>` 也不推荐这种方式，太麻烦，
 
 ## 画分割线
+有三种方式，习惯那种写那种，都是单独占一行，
+1. 三个中划线  `---`
+2. 三个星号 `***`
+3. 三个下划线 `___`
 
-1. `---`
 
----
+## 文字下面划线，
+使用的是 span 标签，html 也不熟悉，都有啥属性自己查吧
 
-2. `***`
-***
+<span style="border-bottom:1px solid red;">我只知道下面的属性是代表划一条实体红色的线</span>
+
+border-bottom  设置下边框的样式：
+1px  就是下边框线宽度是1px
+solid : 代表的是实体线，还有其他类型可以设置，例如
+    * dotted（由点组成的虚线）、
+    * dashed（由短线组成的虚线）、
+red： 就是颜色
 
 ---
 搬运地址：
-
-[Android Studio你不知道的快捷键](http://weishu.me/2015/12/17/shortcut-of-android-studio-you-may-not-know-3/)
