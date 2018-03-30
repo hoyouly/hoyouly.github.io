@@ -236,10 +236,295 @@ mBinding.setStudent(student);
 
 ```
 
+# 绑定ListView
+首先看xml布局文件
+
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <ListView
+            android:id="@+id/lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></ListView>
+    </LinearLayout>
+
+</layout>
+
+```
+这个布局文件没啥可说的，就是一个ListView。与我们之前常见的唯一的区别就是最外层是layout标题，然后看看item 的布局，
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="benefit"
+            type="top.hoyouly.framework.bean.BenefitBean"/>
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:padding="6dp"
+            app:img="@{benefit.url}"/>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/iv"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="@{benefit.desc}"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/iv"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="2dp"
+            android:text="@{benefit.who}"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+</layout>
+```
+这个应该也看懂吧，定义的实体类是BenefitBean,实例名是benefit，然后就是一些设置。ImageView中设置图片的路径，TextView中设置文本，
+加载图片的方法写到任何类中都可以的，例如我写了一个专门加载图片的Util类，只要符合规则就行。一个是静态，二是使用BindingAdapter注解，自定义属性 img 就可以了。
+```java
+public class ImageUtils {
+
+	@BindingAdapter("bind:img")
+	public static void loadInternetImage(ImageView iv, String img) {
+		Picasso.get().load(img).into(iv);
+	}
+}
+```
+照样可以显示图片的。这样的话，我们就可以把所有处理图片的方法归纳到一个类里面了。
+
+接下来看Adapter怎么处理的，这个可NB了，
+```java
+public class MyBaseAdapter<T> extends BaseAdapter {
+	private Context context;
+	private LayoutInflater inflater;
+	private int layoutId; //layoutId这个表示item布局的资源id
+	private int variableId;//variableId是系统自动生成的，根据我们的实体类，直接从外部传入即可
+	private List<T> list;
+
+	public MyBaseAdapter(Context context, int layoutId, List<T> list, int resId) {
+		this.context = context;
+		this.layoutId = layoutId;
+		this.list = list;
+		this.variableId = resId;
+		inflater = LayoutInflater.from(context);
+	}
+
+	public void setList(List<T> list) {
+		this.list = list;
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public int getCount() {
+		return list.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return list.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		ViewDataBinding dataBinding;
+		if (convertView == null) {
+			dataBinding = DataBindingUtil.inflate(inflater, layoutId, parent, false);
+		} else {
+			dataBinding = DataBindingUtil.getBinding(convertView);
+		}
+		dataBinding.setVariable(variableId, list.get(position));
+
+		return dataBinding.getRoot();
+	}
+}
+
+```
+看着和我们之前写的adapter很像，区别有以下几点：
+1. 需要设置一个 variableId ，这个variableId 是系统自动生成的，根据我们的实体类，直接从外部传入即可，
+例如我们需要对应的实体类 是top.hoyouly.framework.bean.BenefitBean，那么对应的variableId就是 top.hoyouly.framework.BR.benefit,
+其实就是DataBinding自动的在我们的包名下面创建了一个BR包，里面有一个benefit。至于这个benefit 名字是怎么来的，没搞清楚
+2. 注意getView()方法中，使用的是DataBindingUtil中的方法加载布局和服用布局的。
+3. 这个几乎就是我们项目中的唯一一个adapter了，因为这个Adapter中没有一个变量和我们的ListView沾边，除非遇到非常奇葩的需求，你这个App中可能就只有这一个给ListView使用的Adapter了，
+
+然后我们怎么使用呢？
+
+```java
+
+public class GankActivity extends BaseBindingActivity<ActivityGankBinding> {
+    private List<BenefitBean> benefitBeans=new ArrayList<BenefitBean>();
+    private GankLoader loader;
+    private MyBaseAdapter<BenefitBean> adapter;
+
+    @Override
+    protected void initView() {
+        initData();
+        getListData();
+    }
+
+    private void initData() {
+        loader=new GankLoader();
+        adapter = new MyBaseAdapter<>(GankActivity.this, R.layout.listview_item, benefitBeans, BR.benefit);//是BR中的，这个BR和我们项目中的R文件类似，都是系统自动生成的。
+        mBinding.lv.setAdapter(adapter);
+    }
+
+    private void getListData() {
+        SubscriberOnNextListener<GankBean> onNextListener = new SubscriberOnNextListener<GankBean>() {
+            @Override
+            public void onNext(GankBean gankBean) {
+                adapter.setList(gankBean.results);
+            }
+        };
+        loader.getGankBenefitList(10,1).subscribe(new ProgressDialogSubscriber<GankBean>(onNextListener,GankActivity.this));
+    }
+
+    @Override
+    protected int getLayouId() {
+        return R.layout.activity_gank;
+    }
+}
+
+//BaseBindingActivity.java
+public abstract class BaseBindingActivity<VB extends ViewDataBinding> extends Activity {
+	protected  VB mBinding;
+
+	@Override
+	protected void onCreate(@Nullable Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+    mBinding=DataBindingUtil.setContentView(this,getLayouId());
+		initView();
+	}
+
+	protected abstract void initView();
+
+	protected abstract int getLayouId();
+
+}
+
+```
+这个应该能看懂了吧，主要是在initData()中创建一个adapter对象，里面传递context,布局资源id,集合，和variableId，即BR.benefit，然后因为我们给listview设置了id为lv，所以可以直接通过mBinding.lv得到这个listVIew，并且设置Adapter，
+在getListData中，我是使用的Retrofit + OkHttp+RxJava 封装的，直接在onNext()得到数据，设置进去就可以了，这样就展示数据了，
+
+## 给Item设置点击事件，
+这个也很简单，
+1. 在BenefitBean中添加一个方法
+```java
+public void onItemClick(View view) {  
+    Toast.makeText(view.getContext(), getDescription(), Toast.LENGTH_SHORT).show();  
+}  
+```
+注意，这个方法名字可以随便起，比如aaa，这个完全可以，但是为了规范，建议命名有含义，还有必须要注意的是，参数是固定的，写死的。其实可以理解之前在Button中设置`android:onClick="change"`这种方式设置点击事件规则就可以了，
+
+然后在item的布局文件的根节点，添加onClick属性。
+
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="top.hoyouly.framework.utils.TextUtil"/>
+        <variable
+            name="benefit"
+            type="top.hoyouly.framework.bean.BenefitBean"/>
+    </data>
+
+    <RelativeLayout
+        android:onClick="@{benefit.onItemClick}"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:orientation="vertical">
+
+        。。。。。。
+        </RelativeLayout>
+</layout>
+
+```
+
+在RelativeLayout 标签中，看到了吗，`android:onClick="@{benefit.onItemClick}"`，意思就是点击这个相对布局的时候，调用BenefitBean中的onItemClick()方法，
+
+## 使用类方法
+
+在一个类中 添加静态方法中
+例如我在TextUtil中添加了一个静态方法，就是把传递过来的文本，显示两遍。
+```java
+public class TextUtil {
+
+    public static String doubleWord(final String word) {
+        return word+"_"+word;
+    }
+}
+```
+使用的是，只需要在 data标签下面使用import导入这个类，就可以了，然后在要使用的地方`  android:text="@{TextUtil.doubleWord(benefit.desc)}"` 完美。。
+
+```java
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="top.hoyouly.framework.utils.TextUtil"/>
+        <variable
+            name="benefit"
+            type="top.hoyouly.framework.bean.BenefitBean"/>
+    </data>
+
+    <RelativeLayout
+        android:onClick="@{benefit.onItemClick}"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@id/iv"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="@{TextUtil.doubleWord(benefit.desc)}"/>
+
+    </RelativeLayout>
+</layout>
+```
+
+wanwa
+[Android DataBinding：再见Presenter，你好ViewModel！](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0727/3220.html)
 
 
+
+---
+搬运地址：
 
 [告别findView和ButterKnife](https://www.jianshu.com/p/499c8e2b80c4)  
 [DataBinding实用指南](https://www.jianshu.com/p/015ad08c2c75)  
 [ Android基础——框架模式MVVM之DataBinding的实践](https://blog.csdn.net/qq_30379689/article/details/53037430)  
-[玩转Android之MVVM开发模式实战，炫酷的DataBinding！](https://blog.csdn.net/u012702547/article/details/52077515)
+[玩转Android之MVVM开发模式实战，炫酷的DataBinding！](https://blog.csdn.net/u012702547/article/details/52077515)  
+[完全掌握Android Data Binding](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0603/2992.html)
