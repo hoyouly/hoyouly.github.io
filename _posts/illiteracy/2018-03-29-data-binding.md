@@ -207,13 +207,13 @@ public class Student {
 	public int age;
   public String userface;
 
-	@BindingAdapter("bind:userface")
+  @BindingAdapter({"userface"})
 	public static void getInternetImage(ImageView imageView,String userface){
         Picasso.get().load(userface).into(imageView);
     }
 }
-
 ```
+之前的方式是使用 `@BindingAdapter("bind:userface")` 中注解方式，但是会有一个警告的 `警告: Application namespace for attribute bind:img will be ignored.`,
 
 主要看getInternetImage（）方法。
 1. 使用了注解 BindingAdapter，该注解表示用户在ImageView使用userface属性的时候，会触发这个方法
