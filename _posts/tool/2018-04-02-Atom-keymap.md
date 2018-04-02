@@ -12,6 +12,7 @@ tags: Atom  快捷键
 
 
 ## 快捷键
+
 |平台|Mac |Win/Linux|
 |:----|:------|:------|
 |复制当前行到下一行|cmd-shift-D|Ctrl + shift + D|
