@@ -28,4 +28,4 @@ tags: Atom  快捷键
 
 搬运地址：
 
-[Android Studio你不知道的快捷键](http://weishu.me/2015/12/17/shortcut-of-android-studio-you-may-not-know-3/)
+[Atom快捷键整理](https://www.jianshu.com/p/e33f864981bb)
