@@ -50,11 +50,14 @@ View 和Presenter并没有耦合到一块，对于VIew和Presenter的通信，�
 
 ## 具体到Android项目中
 根据APP的结构 进行纵向划分：
-* 模型层 （M）
+* 模型层 （M）  包含着具体的数据请求，数据源。
 * UI 层 （V） 一般包括Activity，Fragment，Adapter等直接和UI相关的类
-* 逻辑层 （P）
+* 逻辑层 （P）  为业务处理层，既能调用UI逻辑，又能请求数据，该层为纯Java类，不涉及任何Android API。
 
 UI 层的Activity启动后实例化Presenter，然后APP的控制权后移交给Presenter，两者通过BroadCast,Handler或者接口 完成通信，只传递事件和 结果
+三层之间调用顺序为view->presenter->model，为了调用安全着想不可反向调用！不可跨级调用！
+
+
 
 ## MVP 的变种 Passview View
 MVP 变种很多，最常见的就是Passview View ,即被动视图。
