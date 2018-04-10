@@ -21,7 +21,7 @@ android {
 这样就开启DataBinding ,so easy
 # layout 标签
 作用： 作为DataBinding的标志，省去findViewById()方法
-```java
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
@@ -77,10 +77,10 @@ android {
 # data 标签
 在layou 标签下面，通过<data>节点来引入我们要使用的数据源
 
-# variable 节点，
+# variable 节点
 定义在data标签里面的，可以有多个，
 
-```java
+```xml
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools">
     <data>
@@ -97,7 +97,7 @@ android {
 ```
 name属性表示变量的名称，type表示这个变量的类型 其实可以理解为创建了一个Student类型的实例student
 也可以换一种写法：使用import 标签导入实体类，然后直接使用
-```java
+```xml
 <data>
     <import type="top.hoyouly.framework.bean.Student"/>
     <variable
@@ -107,7 +107,7 @@ name属性表示变量的名称，type表示这个变量的类型 其实可以�
 </data>
 ```
 如果有两个同名的类，那该怎么办呢，import 里有一个alias属性，表示给该类起一个别名，使用别名处理就可以了，这样就可以直接在variable中直接使用别名了。
-```java
+```xml
 <data>
     <import type="top.hoyouly.framework.bean.Student" alias="Stu"/>
       <variable
@@ -116,9 +116,9 @@ name属性表示变量的名称，type表示这个变量的类型 其实可以�
 </data>
 
 ```
-设置完variable 标签后，怎么使用呢，其实很简单，只要记号，在xml中使用这些标签属性，格式就是 `@{}`中间填写的就是variable中name的名字，这个就是type类型的变量，直接使用他做操作就行了，例如``android:text="@{student.nickName}"就是把student变量中的name值设置到TextView中。
+设置完variable 标签后，怎么使用呢，其实很简单，只要记号，在xml中使用这些标签属性，格式就是 `@{}`中间填写的就是variable中name的名字，这个就是type类型的变量，直接使用他做操作就行了，例如`android:text="@{student.nickName}"就是把student变量中的name值设置到TextView中。`
 
-```java
+```xml
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -161,7 +161,7 @@ name属性表示变量的名称，type表示这个变量的类型 其实可以�
 # @{}进行简单的计算
 
 ## 基本的三目运算
-```java
+```xml
 <TextView
            android:onClick="@{controller.onClicked}"
            android:id="@+id/tv_name"
@@ -171,7 +171,7 @@ name属性表示变量的名称，type表示这个变量的类型 其实可以�
 ```
 `@{student.name??student.nickName}`,这里面有两个问号，注意，这表示，如果username属性为null则显示nickname属性，否则显示username属性。
 ## 字符串拼接
-```java
+```xml
 <TextView
             android:onClick="@{controller.onClicked}"
             android:id="@+id/tv_name"
@@ -182,7 +182,7 @@ name属性表示变量的名称，type表示这个变量的类型 其实可以�
 拼接字符不是单引号，而是反单引号，也叫重音符，是在ESC上面那个键，使用Markdown语法插入代码的人肯定会经常用到这个符号，之前可能不支持中文，但是现在我测试了一下，是可以支持中文的。
 
 ## 根据数据显示样式
-```java
+```xml
 <TextView
          android:onClick="@{controller.onClicked}"
          android:id="@+id/tv_name"
@@ -219,7 +219,7 @@ public class Student {
 1. 使用了注解 BindingAdapter，该注解表示用户在ImageView使用userface属性的时候，会触发这个方法
 2. 该方法必须是静态方法
 
-```java
+```xml
 <ImageView
            android:id="@+id/iv"
            app:userface="@{student.userface}"
@@ -239,7 +239,7 @@ mBinding.setStudent(student);
 # 绑定ListView
 首先看xml布局文件
 
-```java
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -257,7 +257,7 @@ mBinding.setStudent(student);
 
 ```
 这个布局文件没啥可说的，就是一个ListView。与我们之前常见的唯一的区别就是最外层是layout标题，然后看看item 的布局，
-```java
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -433,8 +433,7 @@ public abstract class BaseBindingActivity<VB extends ViewDataBinding> extends Ac
 在getListData中，我是使用的Retrofit + OkHttp+RxJava 封装的，直接在onNext()得到数据，设置进去就可以了，这样就展示数据了，
 
 ## 给Item设置点击事件，
-这个也很简单，
-1. 在BenefitBean中添加一个方法
+这个也很简单， 在BenefitBean中添加一个方法
 ```java
 public void onItemClick(View view) {  
     Toast.makeText(view.getContext(), getDescription(), Toast.LENGTH_SHORT).show();  
@@ -444,7 +443,7 @@ public void onItemClick(View view) {
 
 然后在item的布局文件的根节点，添加onClick属性。
 
-```java
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -484,7 +483,7 @@ public class TextUtil {
 ```
 使用的是，只需要在 data标签下面使用import导入这个类，就可以了，然后在要使用的地方`  android:text="@{TextUtil.doubleWord(benefit.desc)}"` 完美。。
 
-```java
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -514,12 +513,6 @@ public class TextUtil {
     </RelativeLayout>
 </layout>
 ```
-
-wanwa
-[Android DataBinding：再见Presenter，你好ViewModel！](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0727/3220.html)
-
-
-
 ---
 搬运地址：
 
@@ -527,4 +520,5 @@ wanwa
 [DataBinding实用指南](https://www.jianshu.com/p/015ad08c2c75)  
 [ Android基础——框架模式MVVM之DataBinding的实践](https://blog.csdn.net/qq_30379689/article/details/53037430)  
 [玩转Android之MVVM开发模式实战，炫酷的DataBinding！](https://blog.csdn.net/u012702547/article/details/52077515)  
-[完全掌握Android Data Binding](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0603/2992.html)
+[完全掌握Android Data Binding](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0603/2992.html)  
+[Android DataBinding：再见Presenter，你好ViewModel！](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0727/3220.html)

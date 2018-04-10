@@ -170,9 +170,9 @@ public Builder validateEagerly(boolean validateEagerly) {
      }
  ```
 
- 我们看到，baseurl 为null的时候，直接抛异常了，这个baseUrl就是我们之前通过baseUrl()方法设置的，所以可知。``创建Retrofit的时候，必须执行baseUrl()方法，传递的值必须不能为null，并且需要符合一定的规则。`
+ 我们看到，baseurl 为null的时候，直接抛异常了，这个baseUrl就是我们之前通过baseUrl()方法设置的，所以可知。`创建Retrofit的时候，必须执行baseUrl()方法，传递的值必须不能为null，并且需要符合一定的规则。`
  创建Retrofit，六个参数的，除了baseUrl必须在Builder中指定，其他都有默认值的，
-# 定义 API 并
+# 定义 API
 ```java
 //MovieService.java
 public interface MovieService  {
