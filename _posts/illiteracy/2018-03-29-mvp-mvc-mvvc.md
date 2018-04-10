@@ -129,9 +129,3 @@ UI层内部多用模板方法，以Activity为例，一般有BaseActivity,提供
 [Android App的设计模式概述：MVC、MVP、MVVM](https://www.jianshu.com/p/effad2e593df)  
 [选择恐惧症的福音！教你认清MVC，MVP和MVVM](http://zjutkz.net/2016/04/13/%E9%80%89%E6%8B%A9%E6%81%90%E6%83%A7%E7%97%87%E7%9A%84%E7%A6%8F%E9%9F%B3%EF%BC%81%E6%95%99%E4%BD%A0%E8%AE%A4%E6%B8%85MVC%EF%BC%8CMVP%E5%92%8CMVVM/)  
 [如何构建Android MVVM 应用框架](https://tech.meituan.com/android_mvvm.html)
-
----
-Data Binding
-
-[告别findView和ButterKnife](https://www.jianshu.com/p/499c8e2b80c4)
-[DataBinding实用指南](https://www.jianshu.com/p/015ad08c2c75)
