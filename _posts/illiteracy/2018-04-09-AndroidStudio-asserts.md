@@ -15,7 +15,7 @@ tags: AndroidStudio asserts
 今天遇到的这个问题就是这样。首先说结论吧
 ** Android Studio 中，assets文件夹是放在src/main 下面的，和res 属于平行关系**
 今天做写demo，需要从assets中加载一张图片显示出来，这对我这种有N年开发经验的工程师来说，不是小菜一碟嘛，在res下面建一个assets文件夹，图片放进去，然后读取出来成为InputStream ,然后加载到Imageview,简单，
-```Java
+```java
 InputStream is=getAssets().open("qm.jpg");
 largeImageView.setInputStream(is);
 ```
@@ -23,13 +23,13 @@ largeImageView.setInputStream(is);
 然而，刚开始就出问题
 ## 问题一 java.io.FileNotFoundException
 卧槽，文件不能找到，assert下面的有文件的啊，这是毛线啊，难道我读取assets下的文件方式有问题，那么换一种方式吧，
-```Java
+```java
 String path="file:///android_asset/qm.jpg";
 InputStream is=new FileInputStream(new File(path));
 ```
 问题依旧，NND，为啥啊，
 那我就看看asserts下面有啥东西吧，这个也简单。
-```Java
+```java
 String[] list = getAssets().list("");
 ```
 list()参数为空字符串就可以了。
