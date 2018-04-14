@@ -18,7 +18,7 @@ tags:
 9. bitmap 边界压缩后，占据多大的内存啊，
 10. 两个子线程进行通信 通过handler
 11. 减小布局层级，测量优化了多少时间啊
-
+12. HashMap,linkHashMap 实现原理。
 
 
 ---
