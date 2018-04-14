@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 扫盲系列之---MVP,MVC,MVVC 介绍
-category: 扫盲
+category: 扫盲系列
 tags: MVP MVC MVVC
 ---
 * content

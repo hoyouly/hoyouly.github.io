@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 扫盲系列之---TCP/IP,Socket,HTTP,HTTPS
-category: 扫盲
+category: 扫盲系列
 tags: TCP/IP Socket HTTP HTTPS
 ---
 * content

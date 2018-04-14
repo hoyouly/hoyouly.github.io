@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 街题系列之---java 中 "==" 和equals()的区别
-category: 街题
+category: 街题系列
 tags: java  ==  equals
 ---
 * content

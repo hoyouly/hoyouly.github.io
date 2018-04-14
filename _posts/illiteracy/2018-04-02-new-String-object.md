@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 街题系列---String s=new String("abc")创建了几个对象?
-category: 街题
+category: 街题系列
 tags: jvm
 ---
 * content
