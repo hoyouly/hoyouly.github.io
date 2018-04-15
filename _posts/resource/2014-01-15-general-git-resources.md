@@ -2,7 +2,7 @@
 layout: post
 title: Git 常用资源
 category: 资源
-tags:  转载 Git 
+tags:  转载 Git
 keywords: Git
 ---
 
@@ -181,3 +181,9 @@ git config --global color.diff auto
 git config --global color.status auto
 git config --global color.branch auto
 ```
+
+
+### git reset hard 后恢复
+ git reflog
+
+ reflog： 记录所有的HEAD历史，也就是说当你rest ,checkout等操作，都会记录到reflog中，所以尽管你已经reset 之前的版本，但是想要再恢复过来，只要git reflog 就可以了
