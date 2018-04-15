@@ -1,0 +1,497 @@
+---
+layout: post
+title: 扫盲系列之---Groovy
+category: 扫盲系列
+tags: Groovy
+---
+* content
+{:toc}
+
+构建工具是一个可编程的工具，能够以执行和有序的任务来表达满足需要的自动化过程
+`构建工具就是用来让我们不在做机械重复的事情，解放我们的双手`
+## DSL
+领域特定语言，基本思想是“求专不求全”，不像通用目的语言那样目标覆盖一切软件问题，而是专门针对某一特定问题的计算机语言，通俗的讲就是`行话`
+
+## Gradle
+是一个构建工具，基于groovy，并且是一种DSL，
+Gradle样板文件的代码少，这是因为它的DSL被设计用于解决特定的问题：贯穿软件的生命周期，从编译，到静态检查，直到打包和部署。
+## Groovy
+是一个编程语言，
+* 一个功能强大，灵活动态语言，他是在Java平台上的一种简洁，数学并且易学的语言，大大提高了开发者的效率
+* 属于脚本语言
+* 提供更简单，更灵活的语法，可以在运行时动态进行类型检查
+* 执行groovy脚本的时候，groovy会讲起编译成Java字节码，然后通过JVM来执行该Java类，`所以，在执行的时候，由于Groovy代码已经被编译为Java代码，JVM根本就不知道自己运行的是Groovy代码，`
+### Groovy简单语法
+
+#### 字符串
+
+```java
+def d="world"  
+
+def a="hello $d " //双引号的内容，如果符号中有$的话，会先求$表达式的值，在输出
+println a  //hello world
+
+def b='hello  $d' //如果是单引号的话，不对$符号转义
+println b  //hello  $d
+```
+
+#### 容器类
+* List 链表  对应Java中 的ArrayList  
+* Map键值表     对应Java中的LinkedHashMap
+* Range范围    对List的扩展
+
+##### List 链表
+ 格式  []
+```java
+def list=[4,5]
+ def list2 = new ArrayList<String>(list1) //创建新集合
+ def list3 =  ['a', 1, 'a', 'a', 2.5, 2.5f, 2.5d, 'hello', 7g, null, 9 as  byte] `//可以不同类型，并且可以重复，可以为null`
+def list=[1,'2',true,"helei",null]
+println list.size() //打印长度
+
+//list.get(-1) //数组角标越界
+println list[-2] //倒数第二个 helei
+println list[-1] //倒数第一个  null
+println list[0] //整数第一个  1
+println list[3] //整数第四个  helei
+
+println list.getAt(-2) //倒数第二个 helei
+println list.getAt(2) //整数第二个 true
+
+//集合遍历
+list.each{ //不带下标
+    print "item $it   "
+}
+//相当于下一种，each方法接受一个闭包参数，
+list.each({
+    it->print "$it   "
+})
+
+list.eachWithIndex{ //带下标的
+    it,i->
+    println "$i,$it  "
+}
+```
+```java
+
+def list=[5,"hello",'world',null,true]
+
+println list[8] //null
+println list.size() //5
+
+list[10]=100 //设置第11个元素为100
+println list.size() //集合大小为 11
+//没有赋值的元素为null
+println list // [5, hello, world, null, true, null, null, null, null, null, 100]
+
+```
+
+##### Map 键值表
+使用[:]创建Map  注意其中的冒号。冒号左边是key，右边是Value。`key必须是字符串，value可以是任何对象`。另外，key可以用''或""包起来，也可以不用引号包起来。
+```java
+def map=[name:"zhangsan","sex":true,id:123]
+println map.size()
+println map.get("name")
+println map.name
+println map.age //要是想获取没有属性的值，返回的是null
+
+//添加值
+map.addone="age" //添加一个属性为addone,值为”age“
+map.put("aa",false) //添加一个属性为aa,值为flase
+
+//集合遍历
+map.each{
+    entry->//entry 是map的一个属性，
+    println "key:$entry.key value: $entry.value"
+}
+
+map.eachWithIndex{
+    entry,i->
+   println "$i   key:$entry.key value: $entry.value"
+}
+
+map.each{
+    key,value->
+    println "key: $key value: $value"
+}
+
+map.eachWithIndex{
+    key,value ,i->
+   println "$i   key:$key value: $value"
+}
+```
+##### Range 类
+是List的一个变体，能够很方便的创建有顺序的集合
+* 使用 .. 创建左右都包含的Range
+* 使用.. <创建左包含，右边不包含的Range
+
+```java
+def range=5..8 //[5, 6, 7, 8]
+println range
+
+range=5..<8  //[5, 6, 7] 不包含8
+println range
+println range.from+" , "+range.to //打印集合的起始值和末尾值 5  7
+
+for(i in range){
+    println "hello $i"
+}
+(1..10).each{//each 方法遍历，和List一样
+    i->
+    print "hello $i  "
+}
+
+def getRate(year){
+    //特殊用法，用在switch 语句中
+    switch (year){
+        case 1..10://如果输入的年份在1到10之间，执行
+            interestRate=0.076
+        break
+         case 11..25://如果年份在11到25之间，执行
+            interestRate=0.052
+        break
+        default :interestRate=0.037
+    }
+}
+
+println getRate(2)  //0.076
+println getRate(22)  //0.052
+println getRate(32)  //0.037
+```
+
+### Groovy 中的闭包
+
+闭包是一段开放的，匿名的代码，用大括号{}括起来的代码块，这个代码块在调用的时候触发，
+
+
+#### 闭包格式
+
+```java
+{
+	[closureParameters ->]
+	statements
+}
+```
+闭包[closureParameters ->] 是可选的，看起来像是一个List,并且这些参数的类型可以不写
+
+例如
+```java
+{ String x, int y -> //参数                                
+    println "hey ${x} the value is ${y}" //statement语句
+}
+```
+
+#### 创建闭包
+闭包是一种类型，所以定义的时候要用=给它赋值，这是跟方法的本质区别
+三种方法
+```java
+// 使用 def 声明一个闭包
+def listener={e -> println "Clicked on $e.source"}
+
+// 使用指定类型 Closure 声明一个闭包
+Closure callback={ println 'Done !'} //这个同时省略了参数
+
+//使用泛型，生命一个固定返回类型的闭包
+
+Closure<Boolean > isTextFile={
+	File it ->it.name.endsWith('.txt')//返回boolean类型
+}
+```
+
+#### 调用闭包
+闭包是一个匿名代码块，不能像调用方法那样调用，
+
+1. 无参闭包
+
+```java
+	def code={123}
+	println code()//调用该闭包
+	println code.call()//另外一种闭包方式
+```
+2. 带参数的闭包
+```java
+	Closure isOldNumber={
+	    int  i-> //声明参数，int 可以省略
+	    i%2==1  //可以省略return语句
+	}
+	println isOldNumber(32)
+	println isOldNumber.call(4)
+```
+
+#### 闭包参数说明
+1. 普通的参数
+	* 可以不写参数类型
+	* 可以给参数一个默认值
+```java
+	Closure closureWithTwoArgs =//使用指定类型Closure定义闭包，
+	{
+    a,b ->// 无参数类型，
+    a+b  //传入不能相加的类型会报错
+	}
+
+	println closureWithTwoArgs(1,2) //3
+	println closureWithTwoArgs(1,2.5)// 3.5
+	println closureWithTwoArgs(1,'2')// 12  因为'2'转换成相应的AICCS码表对应的值了
+	println closureWithTwoArgs(1,"q")// 1q 这种是把数字1当成了字符串拼接了
+
+	//默认参数
+	def closureWithTwoArgsAndDefalutValue={
+	    int a,int b=2 ->
+	    a+b
+	}
+
+	println closureWithTwoArgsAndDefalutValue(1) //3
+	println closureWithTwoArgsAndDefalutValue(1,3)// 3.5
+	//println closureWithTwoArgsAndDefalutValue(1,'2')// 报错，类型已经指定
+```
+
+2. 隐式参数   
+
+如果闭包没有定义参数的话，则隐含一个参数，这个参数名字叫it，它保存了返回这个闭包的一个值，
+```java
+def greeting={"hello ,$it !"}//隐含参数it，这个it是任意参数类型
+
+//相当于
+Closure greetingT={
+	it ->
+	//return "hello $it !"  //GString 用法
+	return "hello,"+it+"！"
+}
+
+println greeting("world")//hello ,world !
+println greeting(1)//hello ,1 !
+println greetingT("world")//hello,world！
+
+
+def isOddNumber={it %2==1}// 这种情况下it类型就是int
+
+println isOddNumber(3)
+// println isOddNumber(3.5) //报错
+// println isOddNumber('3')// 报错
+
+
+def noParamClousre={-> true}
+//绝对不能传递参数的
+println noParamClousre()
+// println noParamClousre("111") 报错
+```
+
+3. 可变参数
+
+```java
+def aMethod ={
+    int... args -> // ... 表示可变
+    int sum=0;
+    args.eachWithIndex{// 遍历求和
+        it,i->
+        sum=sum+args[i]
+    }
+    return sum
+}
+println aMethod(1,2,3)
+```
+#### 闭包的Delegation代理
+Groovy中的闭包具有能够改变代理或代理策略的能力，使得我们能够使用它设计很优美的DSL语言
+
+1. 理解this,owner
+Groovy中的闭包内置了3个不同的对象，可以直接使用
+* this 闭包躲在的最近的类 .class
+* owner 定义闭包的宿主，不仅仅是类，还可能是一个闭包
+* delegate 代理  
+
+```java
+
+class NestedClocure {
+    void run(){
+        def nestedClosure={ //嵌套闭包
+           def cl={  owner} //owner 值的就是该闭包的宿主，即nestedClosure
+           println cl() //NestedClocure$_run_closure1@33f6a532
+
+            def cl2={this}// this 指的是最近的class，即NestedClocure.class
+            println cl2()  //NestedClocure@d9081e1
+
+        }
+       println  nestedClosure()
+       println  nestedClosure  //NestedClocure$_run_closure1@4658ef71
+       //println  nestedClosure()==nestedClosure
+    }
+}
+
+def n=new NestedClocure()
+n.run()
+```
+
+2. 理解delegate
+this 和owner是Groovy内置在Closure中 的对象，那么delegate就是用户指定的对象，用于Closure使用。delegate默认使用的是owner   
+
+```java
+class Enclosing {
+    void run(){
+        def cl={getDelegate()}// 使用getDelegate()方法获取Closure的delegate
+        def cl2={delegate}// 使用delegate
+
+        println cl()==cl2() //true
+        println cl()==this  //true
+        def enclosed={
+            {-> delegate}.call()
+        }
+        println enclosed()==enclosed  //true
+    }
+}
+
+def e=new Enclosing()
+e.run()
+```
+
+delegate可以设置为不同的对象
+```java
+
+class Person {
+    String name
+}
+
+class Thing {
+    String name
+}
+
+def p=new Person(name:'Norman')
+def t=new Thing(name : 'Teapot')
+
+//定义一个闭包，使用delegate获取名字，并返回大写值
+def upperCassName={delegate.name.toUpperCase()}
+
+upperCassName.delegate=p  //设置为p，则返回NORMAN
+println  upperCassName()=='NORMAN'
+
+upperCassName.delegate=t //设置为p，则返回TEAPOT
+println  upperCassName()=='TEAPOT'
+
+// delegate 对象可以透明使用，即不需要在方法前面显示声明delegate
+
+def p1=new Person(name : 'helei')
+
+//并没有写delegate.name,默认使用owner，owner没有name属性，所以使用delegate的name属性
+def cl={name.toUpperCase()}
+
+cl.delegate=p1
+println cl()=="HELEI"
+```
+3. delegate strategy 代理的代理策略
+delegate 的策略默认是Closure.OWNER_FRIST,即owner优先，所有在宿主没有属性，就会去delegate中查查，如果delegate也没有，就报错了，  
+
+##### delegate 的策略
+* Closure.OWNER_FIRST
+* Closure.DELEGATE_FIRST
+* Closure.OWNER_ONLY
+* Closure.DELEGATE_ONLY
+* Closure.TO_SELF
+
+```java
+
+class Person{
+    String name
+    int age
+    def fetchAge={age}
+}
+
+class Thing{
+    String name
+}
+
+def p=new Person(name:'helei',age:42)
+
+def t=new Thing(name: 'Printer')
+def cl=p.fetchAge
+cl.delegate=p
+println  cl()
+
+cl.delegate=t
+println cl()// 42 owner 优先，fetachAge 是一个闭包，他的owner是Person
+
+cl.resolveStrategy=Closure.DELEGATE_ONLY //修改策略
+cl.delegate=p
+println cl() //42
+
+cl.delegate=t
+//修改策略后，仅在delegate查找，因为Thing中没有有Age属性，所以报错
+// println cl() //Thing 中没有Age属性，所以报错
+```
+
+### 例子解析
+### 一
+```java
+dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+    }
+```
+1. dependencies 是一个函数名，接受的参数是一个闭包类型，这是一个方法调用，而不是函数定义，因为在`groovy中方法调用是可以省略()`
+```java
+dependencies ({
+        classpath 'com.android.tools.build:gradle:2.1.2'
+    })
+```
+注意和上一个比较，在大括号外部添加了一对小括号
+2. {} 实际上是一个groovy的闭包类型的参数，并且这个闭包是无参数的，相当于
+```java
+{it -> classpath 'com.android.tools.build:gradle:2.1.2'
+    }
+```
+3. 闭包里面由执行了 classpath这个方法，而classpath方法的调用同样省略了(),实际上是
+```java
+classpath ('com.android.tools.build:gradle:2.1.2'）
+```
+所以，整个代码补全后相当于
+```java
+dependencies ({
+     it ->   classpath('com.android.tools.build:gradle:2.1.2')
+    })
+```
+
+#### 二
+
+```java
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+1. task 是一个方法，参数因为中间没有逗号，所以只有一个,
+```java
+task ( clean(type: Delete) {
+    delete rootProject.buildDir
+}）
+```
+2. clean是一个方法。里面有两个参数，一个是Map，一个是闭包
+即
+```java
+def clean(Map type,Closure cl){
+    type.type
+}
+```
+把执行的clean返回的结果传递给方法task
+3. clean(type: Delete) 是往clean的Map集合中存放一个键值对，键是type，值是Delete，
+4. 因为根据Groovy的语法特性，`当一个方法的最后一个参数是闭包，可以将这个闭包写在()外面。`
+```java
+ clean(type: Delete) {
+    delete rootProject.buildDir
+}
+```
+所以相当于
+```java
+ clean(type: Delete, {
+    delete rootProject.buildDir
+})
+```
+5. 所以，整个改编后，
+```java
+task (
+	clean(type: Delete, {
+	    delete rootProject.buildDir
+	})
+)
+//一个一个单独写出来，就是如下所示
+def closure={delete rootProject.buildDir}
+def result=clean(type:Delete,closure())
+task result
+```
+---
+搬运地址：
