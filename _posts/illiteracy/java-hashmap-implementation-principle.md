@@ -18,7 +18,10 @@ tags: Java HashMap
 Java中常见的两种结构是数组和模拟指针(引用)，几乎所有的数据结构都可以用这两种结构组合实现，HashMap也不例外，实际上HashMap是一个“链表散列”，结构如下
 ![](http://p5sfwb51p.bkt.clouddn.com/20170209185858523.jpeg)
 
-从图中可以看出，HashMap底层还是数组，只是数组中每一项成为一个桶，即bucket，每一个桶只存一个元素，也就是一个Node对象,由于Node对象可以包含一个引用变量next用于指向另外一个Node,源码如下，因此可能出现，尽管桶里面只有一个Node对象，但是这个对象又指向另外一个Node对象，这样就形成了一条链，即Node链，其中Capacity就是该数组的长度，这个长度是可以改变的，
+从图中可以看出，HashMap底层还是数组，只是数组中每一项成为一个桶，即bucket，每一个桶只存一个元素，也就是一个Node对象,由于Node对象可以包含一个引用变量next用于指向另外一个Node,源码如下，因此可能出现，尽管桶里面只有一个Node对象，但是这个对象又指向另外一个Node对象，这样就形成了一条链，即Node链，
+每一个Node链中对应的Key的hash（hashCode）返回值相同。
+
+其中Capacity就是该数组的长度，这个长度是可以改变的，
 
 ### Node
 是HashMap的一个内部类，实现了Map.Entry接口，它也维护这一个key-value映射关系，除了key-value,还有一个next引用，该引用指向当前table位置的链表，hash值，用来确定每一个Node链表在table的位置。
