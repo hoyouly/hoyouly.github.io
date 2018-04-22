@@ -306,6 +306,18 @@ final Node<K, V>[] resize() {
 ```
 代码中都带有注释，就不过多解释了，相信能看懂的。
 
+## HashMap 与HashTable的区别
+1. HashMap 非线程安全，HashTable 线程安全
+2. HashMap 的键值都允许为null,而HashTable则不行
+3. 因为线程问题，哈希效率问题，HashMap 效率比HashTable的高
+4. HashMap默认初始化大小是16，HashTable 的为11，HashMap 扩容是乘以2，使用位运算取得hash,效率高于取模运算，而后者扩容是乘以2加一，都是素数和计数，这样取模哈希结果更均匀。
+
+Java中另外一个线程安全，功能与HashMap类似的是ConcurrentHashMap,
+它和HashMap 的区别：
+ConcurrentHashMap 也是不允许键值为 null，但是他线程安全，并且对整个桶组进行了分割，然后再每一段上都用了lock锁进行保护，相对于HashTable的syn关键字锁的粒度更精细一些，并发性更好一些，
+
+
+
 ---
 搬运地址：  
 [Java容器（四）：HashMap（Java 7）的实现原理](https://blog.csdn.net/jeffleo/article/details/54946424)   
