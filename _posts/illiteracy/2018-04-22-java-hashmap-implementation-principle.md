@@ -90,6 +90,7 @@ HashMap 采用方法二计算该对象应该保存到table数组中哪一个索�
 所以最后hash的值就是 1111 1111 1111 1111 0000 1111 0001 0101
 
 4. 取模运算，用n-1把步骤三的结果取模 ，因为我们知道，n是2的幂次方结果，默认是16，所以n-1 肯定是15，即 1111
+
 ```java
   0000 0000 0000 0000 0000 0000 0000 1111
 & 1111 1111 1111 1111 0000 1111 0001 0101
@@ -141,6 +142,7 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
                             treeifyBin(tab, hash);
                         break;
                     }
+                    //key已经存在，则直接覆盖value
                     if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
                         break;
                     }
@@ -165,8 +167,144 @@ final V putVal(int hash, K key, V value, boolean onlyIfAbsent, boolean evict) {
     }
 ```
 
+## 扩容机制
+扩容（resize） 重新计算容器。java数组无法自动扩容，方法就是使用新数组代替已有的容量小的数组。
+### JDK1.7 源码解析
+```java
+void resize(int newCapacity) {//穿入新的容量
+    HashMapEntry[] oldTable = table;//引用扩展前的数组
+    int oldCapacity = oldTable.length;
+    if (oldCapacity == MAXIMUM_CAPACITY) {//扩容前如果数组大小已经达到最大2^30了
+        threshold = Integer.MAX_VALUE;//修改阙值为int的最大值，这样以后就不会在扩容了
+        return;
+    }
 
+    HashMapEntry[] newTable = new HashMapEntry[newCapacity];//初始化一个新的数组
+    transfer(newTable);//将数据转移到新的数组中
+    table = newTable;//HashMap中的table属性指向新的数组
+    threshold = (int)Math.min(newCapacity * loadFactor, MAXIMUM_CAPACITY + 1);//修改阙值
+}
+```
+这里面主要做五步
+1. 扩容也是有个限度的，并不是无限扩容，当扩容数字数组大小达到了2^30，就不在扩容了，修改阙值为最大值，这样就不会在扩容了，只能随你碰撞了，
+2. 创建一个新的数组，数组程度就是扩容后的长度
+3. 把原来的数组中的元素转移到新的数组中
+4. HashMap中的table属性指向新的数组
+5. 修改阙值
 
+这里面最主要的就是转移数组，也就是第三步，接下来咱们看看transfer()方法
+```java
+void transfer(HashMapEntry[] newTable) {
+    int newCapacity = newTable.length;
+    for (HashMapEntry<K,V> e : table) {//遍历旧的数组，取得数组中 的每一个元素
+        while(null != e) {
+            HashMapEntry<K,V> next = e.next;
+            int i = indexFor(e.hash, newCapacity);//重新计算每个元素在数组中的位置。
+            e.next = newTable[i]; //标记【i】
+            newTable[i] = e;//将元素放到数组上
+            e = next;//访问下一个Entry 链的元素
+        }
+    }
+}
+```
+这里面做的事情其实也挺简单，想明白最后三行代码就可以了，
+1. 循环遍历之前的旧的数组，
+2. 取得每个元素，既然是转移，就一个都不能放过，因为这个元素可能有next 元素，所以需要再使用循环遍历每个桶内的Entry 链
+3. 先保存下来Entry 的next元素
+4.   e.next = newTable[i]; 重点解释这句话，其实这话也很好理解，我们先根据Entry的hashcode和容量得到该Entry 元素在新的数组中的位置i,这就是之前使用的indexFor()方法计算得到i
+5. 因为这个i 所在的位置可能已经存在一个元素了，也就是所谓的发生了碰撞，所以新过来的元素就放到了链头，有点像是一个堆结构，先进后出，这个是先来的往后排，后来的往前排，所以不管新的数组中第i 个元素是否已经有Entry 元素，都要放到后来这个Entry的next位置，如果旧的链表迁移到新的链表，位置相同，则链表的位置会倒置过来，就是这个意思
+6. 然后i 这个位置放入新的Entry 元素
+7. 最后把e指向之前保存下来的next元素，直到e 为null，为止
+
+接下来看JDK1.8 的扩容源码
+JDK 1.8的优化
+使用2次幂进行扩容的，所以元素的位置，要么在原来的位置，要么在原来的位置再移动2次幂的位置。  
+在扩容的HashMap的时候，不需要像JDK1.7 那样重新结算hash,只需要看看原来的hash新增的那位bit值是1还是0就好，如果是0，索引不变，如果为1，索引变成原索引+oldCap，并且扩容后，JDK1.8不会倒置链表
+
+```java
+final Node<K, V>[] resize() {
+      Node<K, V>[] oldTab = table;
+      int oldCap = (oldTab == null) ? 0 : oldTab.length;
+      int oldThr = threshold;
+      int newCap, newThr = 0;
+      if (oldCap > 0) {//说明不是初始化，
+          //超过最大值就不在扩容，只好随你去碰撞吧
+          if (oldCap >= MAXIMUM_CAPACITY) {
+              threshold = Integer.MAX_VALUE;
+              return oldTab;
+              //没有超过最大值，就扩充到原来的二倍
+          } else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY) {
+              newThr = oldThr << 1; // double threshold 新的阙值就是旧的阙值左移一位
+          }
+      } else if (oldThr > 0) {// initial capacity was placed in threshold{
+          newCap = oldThr;//初始容量被放入阈值
+      } else {               // zero initial threshold signifies using defaults 零初始阈值表示使用默认值
+          newCap = DEFAULT_INITIAL_CAPACITY;
+          newThr = (int) (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+      }
+
+      //计算新的resize上限
+      if (newThr == 0) {
+          float ft = (float) newCap * loadFactor;
+          newThr = (newCap < MAXIMUM_CAPACITY && ft < (float) MAXIMUM_CAPACITY ? (int) ft : Integer.MAX_VALUE);
+      }
+      threshold = newThr;
+      @SuppressWarnings({"rawtypes", "unchecked"})
+      Node<K, V>[] newTab = (Node<K, V>[]) new Node[newCap];
+      table = newTab;
+      if (oldTab != null) {
+          //把整个bucket都移动到新的bucket中
+          for (int j = 0; j < oldCap; ++j) {
+              Node<K, V> e = oldTab[j];
+              if (e != null) {//说明该位置存有元素
+                  oldTab[j] = null;//把原来的位置清空
+                  if (e.next == null) {//说明该位置只有一个元素，
+                      newTab[e.hash & (newCap - 1)] = e;//计算新的位置并把该元素放入新的位置
+                  } else if (e instanceof TreeNode) {//说明该元素是一个红黑树
+                      ((TreeNode<K, V>) e).split(this, newTab, j, oldCap);
+                  } else { // preserve order  维持秩序
+                      Node<K, V> loHead = null, loTail = null;
+                      Node<K, V> hiHead = null, hiTail = null;
+                      Node<K, V> next;
+                      do {
+                          next = e.next;//保存该元素的next
+                          //原索引
+                          int newBit = e.hash & oldCap;//原来的hash值与旧的容量进行与操作，得到的就是bit是1还是0就好了
+                          if (newBit == 0) {// 说明插入的新的坐标位置和原来的一直
+                              if (loTail == null) {// 低位的末尾为null
+                                  loHead = e; //低位的头就是该元素
+                              } else {//低位的末尾不为null，说明这个位置已经有元素了，也就是发生了碰撞
+                                  loTail.next = e;//那么这个元素就排在后面，而不是插在已有的位置前面
+                              }
+                              loTail = e;//该低位尾部指向该元素
+                          } else {//原索引加上oldcap 说明插入的新的坐标位置和原来的不一样
+                              if (hiTail == null) {//高位的末尾为null
+                                  hiHead = e;//那么高位的头元素就是该元素
+                              } else {//
+                                  hiTail.next = e;
+                              }
+                              hiTail = e;//高位的尾部指向该元素
+                          }
+                      } while ((e = next) != null);
+
+                      //原索引放入到buckets中
+                      if (loTail != null) {
+                          loTail.next = null;//低位的末尾设置为null
+                          newTab[j] = loHead;//高位的新坐标就指向头低位的头元素
+                      }
+                      //原索引加上oldcap放入buckets中
+                      if (hiTail != null) {
+                          hiTail.next = null;
+                          newTab[j + oldCap] = hiHead;//高位的新坐标加上就的数组长度指向新的头元素
+                      }
+                  }
+              }
+          }
+      }
+      return newTab;
+  }
+```
+代码中都带有注释，就不过多解释了，相信能看懂的。
 
 ---
 搬运地址：  
