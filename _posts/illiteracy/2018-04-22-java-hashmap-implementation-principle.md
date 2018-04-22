@@ -324,4 +324,5 @@ ConcurrentHashMap 也是不允许键值为 null，但是他线程安全，并且
 [Java HashMap工作原理及实现](https://yikun.github.io/2015/04/01/Java-HashMap%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E5%8F%8A%E5%AE%9E%E7%8E%B0/)   
 [HashMap 里的“bucket”、“负载因子” 介绍
 ](https://blog.csdn.net/wenyiqingnianiii/article/details/52204136)   
-[Java 8系列之重新认识HashMap](https://tech.meituan.com/java-hashmap.html)
+[Java 8系列之重新认识HashMap](https://tech.meituan.com/java-hashmap.html)   
+[ Java集合——HashMap、HashTable以及ConCurrentHashMap异同比较](https://blog.csdn.net/seu_calvin/article/details/52653711)
