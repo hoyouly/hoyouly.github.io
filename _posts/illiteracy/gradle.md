@@ -49,7 +49,177 @@ dependencies{
 ```
 这个会告诉Gradle 在aars文件夹下，添加一个叫做libraryname的文件，且其后缀是aar的作为依赖。
 
-##
+## 项目根目录下面的build.gradle
+```java
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+//Project 的build.gradle文件，也就是根目录的build.gradle文件
+buildscript {
+    repositories {//代表仓库的下载来源，这里的来源是jcenter和google
+        jcenter()
+        google()
+    }
+    dependencies {//项目以来的Gradle构建工具，但是更加具体的版本信息却是在gradle-wrapper.properties这个文件中
+        classpath 'com.android.tools.build:gradle:3.0.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {//指所有参与构建项目的来源，也就是说我们工程里面所有模块的通用配置，，这里只规定了所有模块的都要用的jar包是从jcenter和google中获取
+    // 在allprojects标签下配置的好处就是你不需要在每个模块下的build.gradle中单独配置了。
+    repositories {
+        jcenter()
+        google()
+    }
+}
+
+// buildscript 和allprojects 的区别
+/**
+ * allprojects 用于多个项目构建，在Android中，使用多项目构建，其实就是使用多个Moudle构建，在settings.gradle中通过inclue的Moudle,
+ * 从根目录开始，一直到include进来的所有Moudle都会执行allprojects内容
+ *我们也可以通过subprojects来指定moudle和根目录的不同，也可以通过project(':moduldName'){}指定该Module自己的行为
+ *
+ * buildscript 主要是为了Gradle脚本自身的执行，获取脚本依赖插件，在Android中，我们构建脚本就是Gradle
+ *
+ * respositories也可以是根级别的，为当前项目提供所需要的依赖包，但是在Android中，这个跟allprojects中的repositories一致
+ * 同样，dependencies也可以是根级别的
+ */
+
+```
+
+## app下面的build.gradle
+
+```java
+apply plugin: 'com.android.application'  //语法介绍，apply 是一个方法名， 接受一个map类型参数，key 是plugin,value 是com.android.application
+//apply plugin 表明插件类型，这里是com.android.application类型，库工程是com.android.libary,如果是java项目，则是java
+
+//这里的android表明是Android插件相关的配置
+android { //该方法包含了Android所有的属性，而唯一必须的属性就是compileSdkVersion  和buildToolsVersion
+    compileSdkVersion 26  //编译的sdk
+    buildToolsVersion "26.0.2"//编译的tools版本
+
+    dataBinding {//开启 dagtaBanding
+        enabled = true
+    }
+
+    defaultConfig { //默认配置，里面的属性会重写AndroidManifest.xml中对应的属性
+        //applicationId 重写了AndroidManifest.xml的包名  package name,但是关于package name
+        applicationId "top.hoyouly.framework"  //应用程序的包名， //在eclipse上是配置在AndroidManifest.xml文件中的，在AS中配置在build.gradle中了
+        //注意，如果这个模块是一个library的时候，应该删掉这个applicationId 不然会报错的，
+        // Error:Library projects cannot set applicationId. applicationId is set to '****' in default config.
+        minSdkVersion 14 //支持的最低版本号
+        targetSdkVersion 26//支持的目标版本号
+        //上面这两个属性和AndroidManifest.xml中的<uses-sdk>很像
+        versionCode 1//版本号
+        versionName "1.0" //版本名 这个显示到应用程序列表中应用详情里面
+    }
+
+    sourceSets {//目录指向位置
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'//指定AndroidManifest.xml路径
+            java.srcDirs = ['src/main/java']//指定source目录
+
+            // resources.srcDirs = ['src']//指定source目录 和下面相等
+
+            resources{
+                srcDir 'src/main/'  //指定source目录
+                exclude '/test/**' //不包含test文件路径
+            }
+
+            aidl.srcDirs = ['src/main']//指定source目录
+            renderscript.srcDirs = ['src']//指定source目录
+            res.srcDirs = ['src/main/res']//指定资源目录
+            assets.srcDirs = ['assets']//指定assets目录
+            jniLibs.srcDirs = ['libs']//指定lib目录
+        }
+        debug.res.srcDirs=['src/main/res-debug']//指定debug版本的资源目录是res-debug
+        release.manifest.srcFile 'src/main/release/AndroidManifest.xml'//指定release版本的AndroidManifest.xml路径是android/AndroidManifest.xml
+
+
+    }
+
+    signingConfigs {
+        releaseConfig {//release 版本签名配置 .名字可以随便起的，
+            storeFile file("../signfile/hoyouly.jks")//秘钥文件路径
+            storePassword '7419568'// 秘钥文件密码
+            keyAlias 'hoyouly_app'//秘钥别名
+            keyPassword '1234567' // 秘钥别名密码
+        }
+
+        debugConfig {//debug 版本签名配置
+            storeFile file("../signfile/hoyouly.jks")//秘钥文件路径
+            storePassword '7419568'// 秘钥文件密码
+            keyAlias 'hoyouly_app'//秘钥别名
+            keyPassword '1234567' // 秘钥别名密码
+        }
+    }
+
+    buildTypes {//编译类型，这里只有一种编译类型，但是可以添加例如debug等其他编译类型，
+        release {
+            buildConfigField "String", "BaseUrl","\"http://app.cn/api/pad/\"" //设置正式环境下的网络访问路径
+            minifyEnabled false  //minifyEnabled  控制是否开启混淆
+            //proguardFiles 指定混淆文件，就是proguard-rules.pro
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true //内存对齐
+            shrinkResources false //移除无用的资源文件
+            applicationIdSuffix "test"  //
+            signingConfig signingConfigs.releaseConfig//设置release 签名
+        }
+
+        debug.initWith(release)//复制release 内容到debug
+
+        debug {
+            buildConfigField "String", "BaseUrl","\"http://app.cn/apitest/pad/\"" //设置正式环境下的网络访问路径
+            minifyEnabled false  //minifyEnabled  控制是否开启混淆
+            //proguardFiles 指定混淆文件，就是proguard-rules.pro
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debugConfig //设置debug 签名信息
+        }
+
+        // 如果想要编译releas 版本，在命令行输入 ./gradlew buildRelease     注意，release首字母大写
+    }
+    lintOptions {
+        abortOnError false //lint 时候终止上报，防止编译的时候莫名失败
+    }
+}
+
+dependencies {//和build.gradle中的一样，
+    //想要编译工程，可以compile project(':projectName'
+    //编译aar包，可以compile(name: 'aarName', ext: 'aar')。
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])//表明编译libs 文件下面的jar文件，所以如果有新的jar文件，都放到libs目录下面，如果make工程没反应，可以在Gradle哪里点击同步
+
+    // cong maven库中获取库文件
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'//retrofit
+    compile 'com.squareup.okhttp3:okhttp:3.5.0'
+
+    compile 'com.google.code.gson:gson:2.6.2'//Gson 库
+    //下面两个是RxJava 和RxAndroid
+    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'//转换器，请求结果转换成Model
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'//配合Rxjava 使用
+
+    //添加打印log 的拦截器
+    compile 'com.squareup.okhttp3:logging-interceptor:3.5.0'
+    compile 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'com.android.support:appcompat-v7:26.0.0'
+    implementation 'com.android.support:support-v4:26.0.0'
+    implementation 'com.android.support:recyclerview-v7:26.0.0'
+
+    compile 'com.android.support:design:26.0.0'
+
+    // 排除第三方库中重复的库
+    /*compile('org.eclipse.paho:org.eclipse.paho.android.service:1.0.2') {
+        exclude(group: 'com.google.android', module: 'support-v4')
+    }*/
+//    compile project(':Easylink')//编译附加的项目  （）内的内容要与settings.gradle文件中写的模块名一直，也是以冒号开头，并且用单引号括起来
+
+}
+```
 
 
 ## applicationId和Package name 不同
