@@ -169,6 +169,20 @@ threadB.setPriority(Thread.MIN_PRIORITY);
 不要以为是中断某个线程，他只是线程发出的一个中断信号，让线程在无限等待时，如死锁，能抛出抛出，从而结束线程，如果我们捕获这个异常，那么这个线程还是不会中断的。
 
 ### wait()
+Object.wait(),与obj.notify()必须要在synchronized(obj)一起使用，也就是wait()和notify()是针对已获得obj锁操作的
+* 从语法讲，wait()和notify()必须在sychronized(){}代码块里面
+* 从功能讲，wait()就是说本线程在获得锁对象后，主动释放锁对象，同时本线程休眠，直到其他线程调用该对象的notify()唤醒该线程。才能继续获得该对象锁，继续执行。
+
+notify()就是对对象锁的唤醒操作。但是notify()执行后，并不是马上释放锁对象，而是在相应的sychronized(){}代码快执行结束后，自动释放锁。   
+JVM在wait()对象锁的线程中随机选取一个线程，赋予锁对象，唤醒线程，继续执行。这样就在线程间提供了线程间同步，唤醒操作。
+
+### sleep()和wait()区别
+虽然二者都可以暂停当前线程，释放CPU控制权，但是wait()释放CPU控制权的时候，同时释放了对象锁的控制
+
+#### 共同点
+* 都是在多线程下，在程序调用出，阻塞指定的毫秒数，并且返回
+* 都可以通过interrupt()打断暂停状态，从而是线程立刻抛出InterruptException
+*
 
 
 
@@ -179,5 +193,7 @@ threadB.setPriority(Thread.MIN_PRIORITY);
 乐观锁和悲观锁
 ---
 搬运地址：   
-[Java中的多线程你只要看这一篇就够了](https://www.cnblogs.com/wxd0108/p/5479442.html)[Java多线程学习（吐血超详细总结）
-](https://blog.csdn.net/Evankaka/article/details/44153709)  
+[Java中的多线程你只要看这一篇就够了](https://www.cnblogs.com/wxd0108/p/5479442.html)   
+[Java多线程学习（吐血超详细总结）
+](https://blog.csdn.net/Evankaka/article/details/44153709)    
+[java 中的锁 -- 偏向锁、轻量级锁、自旋锁、重量级锁](https://blog.csdn.net/zqz_zqz/article/details/70233767)
