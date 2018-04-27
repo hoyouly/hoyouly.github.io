@@ -206,6 +206,38 @@ JVM在wait()对象锁的线程中随机选取一个线程，赋予锁对象，�
 
 # 锁
 乐观锁和悲观锁
+
+## Lock
+在java.util 包中，一共有三个实现类
+ReentrantLock
+ReentrantReadWriteLock.ReadLock
+ReentrantReadWriteLock.WriteLock
+
+主要目的和synchronized一样，都是解决同步问题，处理资源争端而产生的艺术。功能类似但是有一些区别
+1. Lock 更灵活，可以自由定义多把锁的加锁解锁顺序，synchronized 要按照先加后解顺序。
+2. 提供多种加锁方案，lock 阻塞式，tyrlock 无阻塞式，lockInterruptily 可打断时，还有trylock带超时时间版本，能力越大，责任越大，必须控制好加锁和解锁，否则会导致灾难。
+3. Lock的性能更高
+
+## ReentrantLock 可重入锁 使用方法
+1. 创建一个实例   ReentrantLock r=new ReentrantLock()
+2. 加锁  r.lock()或者r.lockInterruptily()
+    * lockInterruptily() 可被打断，当线程alock 后，线程b阻塞，此时如果是lockInterruptily，那么调用b.interrupt(),b线程退出阻塞，并放弃对资源的争抢，进入catch块，如果使用lockInterruptily，必须throw interruptable exception 或catch
+3. 释放锁 r.unlock(),必须要做，要放到finally里面，防止异常跳出正常流程，导致灾难。
+
+## ReentrantReadWriteLock 可重入读写锁
+```java
+ReentrantReadWriteLock lock = new ReentrantReadWriteLock()
+　　ReadLock r = lock.readLock();
+　　WriteLock w = lock.writeLock();
+```
+两个都有lock，unlock方法，
+
+<font color=#ff0000>null</font>
+
+
+
+[一道多线程面试题引起的自我救赎](https://segmentfault.com/a/1190000006671595)
+
 ---
 搬运地址：   
 [Java中的多线程你只要看这一篇就够了](https://www.cnblogs.com/wxd0108/p/5479442.html)   
