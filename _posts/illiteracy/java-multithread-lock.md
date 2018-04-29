@@ -181,14 +181,27 @@ JVM在wait()对象锁的线程中随机选取一个线程，赋予锁对象，�
 
 #### 共同点
 * 都是在多线程下，在程序调用出，阻塞指定的毫秒数，并且返回
-* 都可以通过interrupt()打断暂停状态，从而是线程立刻抛出InterruptException
-*
+* 都可以通过interrupt()打断暂停状态，从而是线程立刻抛出InterruptException,如果线程A希望立即结束线程B，那么可以在线程B对应的Thread实例调用interrupt(),如果此刻线程B正在sleep()/wait()/join(),则线程B会立即抛出InterruptException，在catch中直接return即可安全的介绍线程，但是要注意的，InterruptException是线程自己从内部抛出的，并不是interrupt()方法抛出的，对一个线程执行interrupt()，如果该线程正在执行普通的代码，根本就不会抛出InterruptException，但是线程一旦进入到wait()/sleep()/join()，则会立刻抛出InterruptException，
 
+#### 不同点
+* Thread 类 中 sleep()。join()，yield()等，Object类 中 wait(),notify()等
+* 每一个对象都有一个锁来控制同步访问，synchronized 关键字可以和对象进行交互，来实现线程的同步，sleep()没有释放锁，而wait()释放了锁，使得其他线程可以同步控制块或者方法。
+* wait(),notify(),notifyAll()只能在同步方法或者同步块中使用，而sleep()可以在任何地方使用，
 
+总结： sleep()和wait()最大的区别是：
+* sleep()睡眠时保持对象锁，仍然占有该锁
+* wait()睡眠时，释放对象锁。
+但是sleep()和wait()都可以通过Interrupt()方法打断线程的暂停状态，从而使线程立刻抛出InterruptException，
 
+### sleep()
+* 使当前线程进入阻塞状态，让出CPU使用权，目的是不让当前线程独自霸占该CPU资源，以留一定的时间给其他线程机会
+* Thread的静态方法，不能改变对象的的机锁，所以当一个sychronized块中调用了sleep(),线程虽然睡眠了。但是对象的锁并未释放，其他线程无法访问该对象，即使睡着了也持有该对象锁
+* sleep()休眠后，线程并不一定能立即执行，这是因为可能其他线程正在执行并且没有被调度为放弃，除非该线程具有更高的优先级
 
-
-
+### wait()
+* Object 类的方法，当一个对象执行了wait()方法后，它就进入到一个和该对象相关的等待池中，同时释放了对象锁，不过这只是暂时失去，等wait(long time)超时时间到以后，还需要返回该对象锁的，
+* wait()后，其他线程可以访问
+* 必须放到sychronized块中，否则会运行报出异常，java.lang.IllegalMonitorStateException
 
 ### 线程同步
 #### synchronized
