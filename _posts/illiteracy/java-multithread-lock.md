@@ -245,7 +245,14 @@ ReentrantReadWriteLock lock = new ReentrantReadWriteLock()
 ```
 两个都有lock，unlock方法，
 
-<font color=#ff0000>null</font>
+## Condition
+使用 await(),signal(),signalAll() 替换Object中的wait(),notify()，notifyAll()，传统的线程的通信方式，Condition都可以实现，注意Condition绑定在Lock上的，要先创建一个Lock对象，然后创建Condition需要执行Lock的newCondition()方法，  
+Condition的强大之处：可以为不同的线程创建多个Condition,而sychronized/wait()只有一个阻塞队列。notifyAll()唤醒所有阻塞队列的线程，而使用lock/Condition，可以实现多个阻塞队列，signalAll只会唤起某个阻塞队列下的线程。
+
+
+
+
+
 
 
 
