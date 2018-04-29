@@ -22,6 +22,14 @@ Thread 实际上也是实现了Runnable接口，run()方法是多线程的一个
 * 增加程序的健壮性，代码可以被多个线程控制，代码和数据独立
 * 线程池只能放入实现Runnable和callable类的线程，不能直接放入继承Thread类的线程
 
+## Callable
+除了实现Runnable接口和继承Thread类之外，在JDK1.5之后，又添加了另外一种创建多线程的方式，就是实现Callable接口
+1. 该接口的call()方法可以在线程结束的时候产生一个返回值。
+2. 必须用ExecutorService.submit()方法调用
+3. submit()返回的类似是Future对象，他用Callable返回结果的特定类型进行参数化，
+4. 可以使用isDon()检查Futrue是否完成
+5. 也可以使用get(),get()将直接阻塞至结果准备就绪。
+
 
 在java程序中，每次程序运行至少启动2个线程，一个是main线程，一个是JVM线程，
 
@@ -220,6 +228,20 @@ JVM在wait()对象锁的线程中随机选取一个线程，赋予锁对象，�
 # 锁
 乐观锁和悲观锁
 
+## 乐观锁
+认为竞争不会经常发生。任务读多写的少，因此拿数据不上锁。但是在更新的时候会判断在此期间有没有人去更新这个数据，采取在写时先读取版本号，然后加锁操作，比较上一次版本号，如果一样则更新，如果失败则重复比较写的操作。适用于多读场景   
+java中的乐观锁都是通过CAS操作的，CAS是一种更新的原子操作，比较当前值跟穿入值是否一样，一样则更新，否则失败。
+## 悲观锁
+认为竞争经常发生，认为写的多，遇到并发的可能性高，所以每次拿数据都会上锁，这样别人读写这个暑假就的Block，直到拿到锁，   
+java中的悲观锁就是synchroinized,AQS 框架下的锁则是先尝试CAS，去获取锁，获取不到才转换为悲观锁，如ReentrantLock
+
+## Synchronized
+会导致挣不到锁的线程进入阻塞状态，是java中的一个重量级锁，为了性能，JDK1.5，引入轻量级锁与偏向锁，默认启用了自旋锁，他们都是乐观锁
+
+## 自旋锁
+如果持有锁的线程在很短时间内能释放锁，那么等待锁的线程就不要进行内核态与用户态之间的切换进入阻塞状态，他们只需要等一等（自旋），持有锁的线程释放锁资源后就可以立即获得锁
+，这样就避免用户线程和内核线程之间的切换了
+
 ## Lock
 在java.util 包中，一共有三个实现类
 ReentrantLock
@@ -238,6 +260,8 @@ ReentrantReadWriteLock.WriteLock
 3. 释放锁 r.unlock(),必须要做，要放到finally里面，防止异常跳出正常流程，导致灾难。
 
 ## ReentrantReadWriteLock 可重入读写锁
+ReentrantLock 是防止线程A在读数据，线程B写数据造成的数据不一致，那么两个线程都是读数据，就没必要加锁了，所以读写锁ReadWriteLock就产生了，而ReentrantReadWriteLock是 ReadWriteLock的具体实现，实现了读写分离，读锁是共享，写锁是独占，读和读之间不会排斥，读和写，写和读，写和写之间才会排斥。提升了读写性能
+
 ```java
 ReentrantReadWriteLock lock = new ReentrantReadWriteLock()
 　　ReadLock r = lock.readLock();
