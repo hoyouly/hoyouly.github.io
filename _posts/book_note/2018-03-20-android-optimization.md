@@ -11,7 +11,7 @@ tags: Android  ListView的优化  性能优化
 1. 复用contentView,减少重新分配缓存造成的内存频繁分配回收
 2. ViewHolder的使用，主要是因为findViewById()消耗时间太大，使用setTag(),getTag()得到view
 3. 图片加载优化 监听Listview的滑动状态，滑动的时候（SCROLL_STATE_TOUCH_SCROLL）和惯性滑动的时候（SCROLL_STATE_FLING）不加载，停止滑动的时候再加载。listView.setOnScrollListener();
-4. onClickListener的处理，通常是在getView方法时候处理，但是这样的话，每次调用getView（）都会设置onClickListener（）效率低，可以在ViewHolder中设置一个Position，然后实现OnClickListener
+4. onClickListener的处理，通常是在getView方法时候处理，但是这样的话，每次调用getView()都会设置onClickListener()效率低，可以在ViewHolder中设置一个Position，然后实现 OnClickListener
 
 ```java
 class  ViewHolder implements OnClickListener{  
