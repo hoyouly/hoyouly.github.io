@@ -137,8 +137,8 @@ private void performTraversals() {
              measureHierarchy(host, lp, res,desiredWindowWidth, desiredWindowHeight);
         }
 ```
-在measureHierarchy()方法中，创建DecorView的MeasureSpec
-这里涉及到关于MeasureSpce的问题
+在measureHierarchy()方法中，创建DecorView的MeasureSpec   
+这里涉及到关于MeasureSpce的问题   
 ## MeasureSpec
 很大程度上决定了View的尺寸规格，之所以很大程度上，是因为这个过程还受到父容器的影响，因为父容器影响了View的MeasureSpec的创建过程，在测量过程中，系统会将View的LayoutParams,根据父容器的所施加的规则转换成对应的MeasureSpce，然后再根据这个MeasureSpce测量出View的宽高。
 MeasureSpce代表一个32位的int值，高2位代表SpecMode,即测量模式，低30位代表SpecSize，即某种测量模式下的规格大小。
@@ -157,8 +157,8 @@ MeasureSpce 不是唯一由LayoutParams决定的，LayoutParams 需要和父容�
 MeasureSpce一旦确定，onMeasure()中就可以得到View的测量宽和高
 
 
-Hierarchy  层级，阶层，等级制度
 ## measureHierarchy()
+Hierarchy  层级，阶层，等级制度
 
 ```java
 private boolean measureHierarchy(final View host, final WindowManager.LayoutParams lp, final Resources res, final int desiredWindowWidth, final int desiredWindowHeight) {
@@ -471,7 +471,7 @@ for (int i = 0; i < count; ++i) {
 1. onWindowFocusChanged()  VIew 已经初始化完毕，会被调用多次，当Activity的窗口得到焦点和失去焦点的时候，都会执行一次，如果频繁的进行onResume()和onPause()那么onWindowFocusChanged()也会被循环调用
 2. View.post(Runnable) 通过post把一个Runnable对象加到添加队列中，然后等待Looper调用次Runnable的时候，View已经初始化好了，
 3. ViewTreeObserver  使用ViewTreeObserver的众多回调可以完成此功能l，比如使用OnGlobalFocusChangeListener 这个借口，当View的状态树的状态发生改变或者View树内部的可见性发送改变，onGlobalFocusChanged（）这个方法被回调，但是需要注意，伴随View状态树改变，onGlobalFocusChanged（）会被调用多次。
-4. 手动对View进行measure的宽和高。
+4. 手动对View进行measure的宽和高。这种情况比较复杂，根据View的LayoutParams来分
 
 
 因为DecorView是一个Framelayout，所以我们从FrameLayout开始我们的主线任务measureChildBeforeLayout()
@@ -611,6 +611,8 @@ FrameLayout 中的onMeaure()主要做两件事
 # View
 
 # Layout 流程
+Layout 作用就是ViewGroup用来确定子元素的位置。当ViewGroup的位置确定后，他会在onLayout中遍历所有子元素并调用其layout方法，在layout方法中onLayout()方法
+
 
 子View具体的layout的位置都是相对于父容器而言的，view的layout过程同Measure同理，也是从顶级View开始，递归的完成整个控件树的布局操作
 
@@ -631,7 +633,7 @@ FrameLayout 中的onMeaure()主要做两件事
 ```
 
 # ViewGroup
-尽管ViewGroup也重写了layout方法，但是本质上还是通过super.layou调用View的layout方法
+尽管ViewGroup也重写了layout方法，但是本质上还是通过super.layout,调用View的layout方法
 ## layout()
 ```java
  public final void layout(int l, int t, int r, int b) {
@@ -678,37 +680,90 @@ FrameLayout 中的onMeaure()主要做两件事
     }
 ```
 1. 通过setFrame()将l,t,r,b分别设置到mLeft，mTop，mRight,和mButton，这样就可以确定子View在父容器上的位置了，也就是说这四个位置是相当于父容器的
-2. 调用onLayout方法，具体实现类接收到布局变更通知，如果此类是ViewGoup，还会遍历子View的layou方法，使其更新布局，如果是调用onLayout方法，这会导致子View无法调用setFrame(),从二无法更新控件坐标信息
+2. 调用onLayout方法，具体实现类接收到布局变更通知，如果此类是ViewGoup，还会遍历子View的layout方法，使其更新布局，如果是调用onLayout方法，这会导致子View无法调用setFrame(),从而无法更新控件坐标信息
 
 ## onLayout
 ```java
     protected void onLayout(boolean changed, int l, int t, int r, int b) {}
-
 ```
+对于普通View，onlayout方法是一个空实现，主要是具体实现类重写该方法后能接受到布局坐标更新信息
 
 # ViewGroup
 ## onLayout
 ```java
     protected abstract void onLayout(boolean changed,int l, int t, int r, int b);
 ```
-对于普通View，onlayout方法是一个空实现，主要是具体实现类重写该方法后能接受到布局坐标更新信息
-对于ViewGroup来说，和measure一样，不同的类有它不同的布局特性，在ViewGroup中onLayout方法中是abstract的，具体类必须重写该方法，以便接收布局坐标更新信息后，处理自己的子View的坐标信息，
+对于ViewGroup来说，和measure一样，不同的类有它不同的布局特性，在ViewGroup中onLayout方法中是abstract的，具体类必须重写该方法，以便接收布局坐标更新信息后，处理自己的子View的坐标信息，可以看一下 LinearLayout的onLayout()
+
+# LinearLayout
+## onLayout
+```java
+@Override
+protected void onLayout(boolean changed, int l, int t, int r, int b) {
+	if (mOrientation == VERTICAL) {
+		layoutVertical(l, t, r, b);
+	} else {
+		layoutHorizontal(l, t, r, b);
+	}
+}
+```
+这里面和measure（）类似，这里选择layoutVertical()讲解
+## layoutVertical()
+
+```java
+void layoutVertical(int left, int top, int right, int bottom) {
+		...
+		final int count = getVirtualChildCount();
+
+		for (int i = 0; i < count; i++) {
+			final View child = getVirtualChildAt(i);
+			if (child == null) {
+				childTop += measureNullChild(i);
+			} else if (child.getVisibility() != GONE) {
+				final int childWidth = child.getMeasuredWidth();
+				final int childHeight = child.getMeasuredHeight();
+
+				final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+
+				int gravity = lp.gravity;
+				if (gravity < 0) {
+					gravity = minorGravity;
+				}
+				final int layoutDirection = getLayoutDirection();
+				final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
+				...
+
+				childTop += lp.topMargin;
+				//遍历所有子元素并执行setChildFrame（）来确定子元素的指定位置
+				setChildFrame(child, childLeft, childTop + getLocationOffset(child), childWidth, childHeight);
+				childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
+
+				i += getChildrenSkipCount(child, i);
+			}
+		}
+	}
+```
+* 遍历所有子元素并调用setChildFrame()来为子元素指定位置，setChildFrame()内部调用子元素的layout方法，
+* childTop位置会逐渐增大，这就意味着后面的元素会放在靠下的位置，符合竖直方向的LinearLayout的特点，
+这样父元素在layout完成自己的定位后，然后通过onLayout()调用子元素的layout方法，子元素又会通过layout方法定位自己的位置。这样一层层传递下来就完成了整个View树的layout过程。
 
 ## 小结
-
 * measure确定的是控件的尺寸，并在一定程度上确定了子控件的位置。而布局则是针对测量结果来实施，并最终确定子控件的位置。
 * measure结果对布局过程没有约束力。虽说子控件在onMeasure()方法中计算出了自己应有的尺寸，但是由于layout()方法是由父控件调用，因此控件的位置尺寸的最终决定权掌握在父控件手中，测量结果仅仅只是一个参考。
 * 因为measure过程是后根遍历(DecorView最后setMeasureDiemension())，所以子控件的测量结果影响父控件的测量结果。
 * 而Layout过程是先根遍历(layout()一开始就调用setFrame()完成DecorView的布局)，所以父控件的布局结果会影响子控件的布局结果。
 * 完成performLayout()后，空间树的所有控件都已经确定了其最终位置，就剩下绘制了。
+
 # draw的流程
 # View
 View的draw过程遵循如下几步
 
-* 绘制背景drawBackground();
-* 绘制自己onDraw();
-* 如果是ViewGroup则绘制子View，dispatchDraw();
-* 绘制装饰（滚动条）和前景，onDrawForeground();
+* 绘制背景    drawBackground();
+* 绘制自己    onDraw();
+* 如果是ViewGroup则绘制子View，  dispatchDraw();
+* 绘制装饰（滚动条）和前景，     onDrawForeground();
+
+View绘制过程的传递是通过dispatchDraw()来实现的，dispatchDraw()会遍历调用所有子元素的的draw(),如此draw事件就一层层传递下来，
 
 ```java
  public void draw(Canvas canvas) {
