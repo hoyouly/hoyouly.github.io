@@ -2,7 +2,7 @@
 layout: post
 title: Bitmap的加载和Cache处理
 category: 读书笔记
-tags: Android Bitmap Cache 
+tags: Android Bitmap Cache
 description: Bitmap的加载和Cache处理
 ---
 
@@ -36,16 +36,16 @@ description: Bitmap的加载和Cache处理
 **核心：** 存在一种数据结构能够基于访问顺序保存访问对象，这种数据结构就是LinkedHashMap,双向循环列表，在构造函数中，通过boolean值来指定LinkedHashMap的保存方式，
 ```java
 /*
-     * 初始化LinkedHashMap
-     * 第一个参数：initialCapacity，初始大小
-     * 第二个参数：loadFactor，负载因子=0.75f
-     * 第三个参数：accessOrder=true，基于访问顺序；accessOrder=false，基于插入顺序
-     */
-    public LinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder) {
-        super(initialCapacity, loadFactor);
-        init();
-        this.accessOrder = accessOrder;
-    }
+* 初始化LinkedHashMap
+* 第一个参数：initialCapacity，初始大小
+* 第二个参数：loadFactor，负载因子=0.75f
+* 第三个参数：accessOrder=true，基于访问顺序；accessOrder=false，基于插入顺序
+*/
+public LinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder) {
+  super(initialCapacity, loadFactor);
+  init();
+  this.accessOrder = accessOrder;
+}
 ```
 显然在LruCache中，accessOrder值为true，每当我们更新（调用put方法）或者访问（调用put方法）map中的结点时，LinkedHashMap会将这个结点移动的链表的尾部，因此`LinkedHashMap 中尾部则是最近刚刚使用的结点，头部则是最近很少使用的结点`，当内存不足的时候，把LinkedHashMap头部的结点删除，直至有剩余空间放置新的结点
 LinkedHashMap 完成了LRUCache的核心功能，而LruCache 要做的就是
@@ -138,6 +138,7 @@ public final V put(K key, V value) {
 2. 通过safeSizeOf()方法获得要保存数据的大小，并更新当前缓存数据的大小（增加）
 3. 将当前数据放到缓存中，即调用LinkHashMap的put方法，如果返回的值不为null，所以该key之前已经保存，那么替换原来的value值，并返回原来的value，得到之前value的大小，再次更新当前缓存数据的大小（减小）
 4. 清理缓存空间
+
 #### trimToSize() 清理缓存空间
 
 当我们添加一条数据的时候，为了保证当前数据缓存大小没有超过我们指定的总大小，通过调用trimToSize()来进行缓存空间进行管理，
@@ -254,7 +255,7 @@ public final V get(K key) {
 * 该方法没用同步调用，如果其他线程访问缓存时，该方法也会执行。
 开发者根据需求是否重写改方法处理自己的逻辑，可以进行的一些操作包括
 1. 资源的回收
-2. 实现二级缓存，**思路：**重写entryRemoved()方法，把删除掉的item再次存入另外一个`LinkedHashMap<String, SoftWeakReference<Bitmap>>`中，这个数据当做二级缓存，每次获得图片的时候，先判断LruCache 中是否存在缓存，如果没有的话，判断这个二级缓存中是否有，如果都没有在从SDcard中获取，如果SDCard中也不存在，那么直接从网络中获取，
+2. 实现二级缓存，**思路：** 重写entryRemoved()方法，把删除掉的item再次存入另外一个`LinkedHashMap<String, SoftWeakReference<Bitmap>>`中，这个数据当做二级缓存，每次获得图片的时候，先判断LruCache 中是否存在缓存，如果没有的话，判断这个二级缓存中是否有，如果都没有在从SDcard中获取，如果SDCard中也不存在，那么直接从网络中获取，
 
 ```java
 /**
