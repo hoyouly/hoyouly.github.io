@@ -1,8 +1,8 @@
 ---
 layout: post
 title: View 的绘制流程
-category: 扫盲系列
-tags: view
+category: 读书笔记
+tags: view 
 ---
 * content
 {:toc}

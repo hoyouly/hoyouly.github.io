@@ -68,16 +68,16 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 * 属性动画导致的内存泄露  
 属性动画有一类无限循环的动画，如果在Activity中播放此类动画且没有在onDestory中停止动画，那么动画就会一直播放下去，并且这个时候Activity的view会被动画只有，而View有持有Activity，最终Activity就无法释放
 
-#### 使用的检测工具
+### 使用的检测工具
 * LeakCanary
 * Memory Monitor 内存监视器.
 * Dump java heap
 * Android Device Monitor
 * MAT
 
-### 响应速度优化和ANR日志分析
+## 响应速度优化和ANR日志分析
 响应速度优化核心思想：避免在主线程中做耗时操作，而是将耗时操作放到子线程中执行
-#### ANR
+### ANR
 ANR 时间：
 Activity： 5秒
 BroadcastRecevier ：10秒
@@ -101,11 +101,12 @@ BroadcastRecevier ：10秒
 如果以一个100*100 像素的图片计算所占用内存大小
 
 |Bitmap.Config|单位像素占用的字节数|分辨率100*100的图片所占用内存大小|
-|:----|:------|:------|
+|:----|:------:|:------|
 |ALPHA_8|1|100x100x1=10000B~=9.77KB|
 |ARGB_4444|2|100x100x2=20000B~=19.53KB|
 |ARGB_8888|4|100x100x4=40000B~=39.06KB||
 |RGB_565|2|100x100x2=20000B~=19.53KB|
+
 ### 优化策略
 1. Bitmap.Config的配置  质量压缩
 2. 使用inJustDecoeBounds与判断Bitmap的大小以及使用inSampleSize进行压缩，边界压缩
