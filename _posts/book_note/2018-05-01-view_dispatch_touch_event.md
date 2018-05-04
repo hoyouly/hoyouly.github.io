@@ -10,7 +10,7 @@ tags: View 事件分发
 ## 触摸事件
 点击事件，也称为触摸事件，是捕获触摸屏幕产生后的事件，所谓点击事件的分发，其实就是对MotionEvent事件的分发过程，即当一个MotionEvent产生后，系统需要把这个时间传递给具体的view ,而这个传递的过程其实就是分发过程
 ## MotionEvent 类
-触摸事件封装的类，可以得到触摸的坐标，getX()和getRawX（），得到触摸的类型，例如ACTION_DOWN，ACTION_UP,ACTION_MOVE等
+触摸事件封装的类，可以得到触摸的坐标，getX()和getRawX()，得到触摸的类型，例如ACTION_DOWN，ACTION_UP,ACTION_MOVE等
 * getX()是表示view 相对于自身左上角的x坐标,
 * getRawX()是表示相对于屏幕左上角的x坐标值(注意:这个屏幕左上角是手机屏幕左上角,不管activity是否有titleBar或是否全屏幕),
 * getY(),getRawY()一样的道理   
@@ -352,28 +352,24 @@ public boolean performClick() {
     } else {
         result = false;
     }
-
     sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_CLICKED);
     return result;
 }
 ```      
-6. View的LONG_CLICKABLE 属性默认为false，  CLICKABLE 属性与具体的View有关，确切的说，可点击的View 其CLICKABLE为true，比如button，不可点击的View，其CLICKABLE 为false，例如TextView，可以通过setOnClickListener和setOnLongClickListener 然后进行设置源码如下  
-    
+6. View的LONG_CLICKABLE 属性默认为false，CLICKABLE 属性与具体的View有关，确切的说，可点击的View 其CLICKABLE为true，比如button，不可点击的View，其CLICKABLE 为false，例如TextView，可以通过setOnClickListener和setOnLongClickListener 然后进行设置源码如下,   
 ```java
-public void setOnClickListener(@Nullable OnClickListener l) {
-    if (!isClickable()) {
-      setClickable(true);
-    }
-    getListenerInfo().mOnClickListener = l;
-}
-
 public void setOnLongClickListener(@Nullable OnLongClickListener l) {
   if (!isLongClickable()) {
       setLongClickable(true);
   }
   getListenerInfo().mOnLongClickListener = l;
 }
-
+public void setOnClickListener(@Nullable OnClickListener l) {
+    if (!isClickable()) {
+      setClickable(true);
+    }
+    getListenerInfo().mOnClickListener = l;
+}
 ```
 ## 第一份流程图
 
