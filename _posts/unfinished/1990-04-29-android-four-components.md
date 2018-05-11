@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  扫盲系列之---Android 四大组件
-category:  扫盲系列
+category:  待整理
 tags:  Android Activity Service BroadCast ContentProvider
 ---
 * content
@@ -15,10 +15,6 @@ Android四大组件中每个组件的作用是什么？它们都可以开启多�
 2. 在调用方式上。Activity，Service和BroadCastReceiver需要借助Intent，而ContentProvider无需借助Intent
 3. 用户感知上，除了Activity，其他三个组件对用户来说都不是可感知的
 4. Activity A 跳转到Activity B ，如果 Activity 是一个
-
-[如何启动一个没有在AndroidManifest中注册的activity](https://www.aliyun.com/jiaocheng/7068.html)
-[插件化入门篇-如何启动一个未注册过的Activity](https://www.jianshu.com/p/4fc77fbac938)
-
 
 ### Activity 展示型组件
 用于向用户直接展示一个界面，并且可以接受用户的输入信息从而进行交互，

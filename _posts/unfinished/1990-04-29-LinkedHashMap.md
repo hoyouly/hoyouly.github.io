@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 扫盲系列之---LinkedHashMap的实现原理
-category: 扫盲系列
+category: 待整理
 tags: java LinkedHashMap
 ---
 * content

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: DataBinding 补充
-category: 扫盲系列
+category: 待整理
 tags: DataBindng
 ---
 * content
