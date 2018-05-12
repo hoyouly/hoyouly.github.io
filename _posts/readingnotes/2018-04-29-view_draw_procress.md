@@ -2,7 +2,7 @@
 layout: post
 title: View 的绘制流程
 category: 读书笔记
-tags: view 
+tags: view  Android开发艺术探索
 ---
 * content
 {:toc}

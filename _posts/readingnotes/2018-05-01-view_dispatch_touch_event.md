@@ -2,7 +2,7 @@
 layout: post
 title: View 的事件分发机制
 category: 读书笔记
-tags: View 事件分发
+tags: View 事件分发 Android开发艺术探索 
 ---
 * content
 {:toc}

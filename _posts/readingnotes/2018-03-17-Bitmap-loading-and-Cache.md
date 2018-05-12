@@ -2,13 +2,12 @@
 layout: post
 title: Bitmap的加载和Cache处理
 category: 读书笔记
-tags: Android Bitmap Cache
+tags: Bitmap Cache Android开发艺术探索
 description: Bitmap的加载和Cache处理
 ---
 
 * content
 {:toc}
-
 
 # Bitmap 高效加载
 核心思想：采用BitmapFactory.Options 来加载所需要的尺寸的图片，一般都是缩放图片，即用到了inSmapleSize参数

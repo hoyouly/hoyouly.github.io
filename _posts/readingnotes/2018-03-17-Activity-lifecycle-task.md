@@ -2,7 +2,7 @@
 layout: post
 title: Activity的生命周期和启动模式
 category: 读书笔记
-tags: Android  Android开发艺术探索 生命周期 启动模式
+tags: Android开发艺术探索 生命周期 启动模式
 description: Activity的生命周期和启动模式
 keywords: 关键字
 ---
