@@ -46,27 +46,7 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 2. 通过分析工具比如MAT来找出潜在的内存泄露继而解决
 
 ### 内存泄露的例子
-* Handler 造成的内存泄漏
-  1. 创建一个静态内部类，然后对Handler持有对象使用弱引用，
-  2. 当前Activity退出的时候，移除消息队列中所有的消息和Runnable
-* 线程造成的内存泄漏
-  1. 线程写成静态内部类
-  2. 在Activity销毁的时候中断线程，或者取消线程
-* 非静态内部类造成的泄漏  
-  写成静态内部类，因为非静态内部类默认持有外部类的一个引用。
-* 资源未关闭造成的内存泄漏   
-    当Activity销毁的时候，关闭cursor，关闭Stream，回收Bitmap，注销内容观察者ContentObserver,注销动态广播BroadCastReciver
-* 注册监听器的泄漏  
-  在Activity的onDestory中取消注册监听
-* 集合中对象没有清理导致的内存泄漏
-  我们通常把一些对象的引用添加到一个集合上，当我们不需要这些对象的时候，并没有把他们的引用从集合中清理掉，这样集合就会越来越大，如果这个集合是一个static，那么更严重。   
-  解决办法：在Activity退出之前，clear集合，然后集合设置为null，再退出集合。
-* WebView造成的泄露
-  不使用WebView的时候，应该调用onDestory(),并释放占用内存。
-* 静态变量导致的内存泄露
-* 单例模式导致的内存泄露
-* 属性动画导致的内存泄露  
-属性动画有一类无限循环的动画，如果在Activity中播放此类动画且没有在onDestory中停止动画，那么动画就会一直播放下去，并且这个时候Activity的view会被动画只有，而View有持有Activity，最终Activity就无法释放
+参照： [Android 内存泄漏总结](http://hoyouly.top/2018/03/17/android-memory-leak/)
 
 ### 使用的检测工具
 * LeakCanary
