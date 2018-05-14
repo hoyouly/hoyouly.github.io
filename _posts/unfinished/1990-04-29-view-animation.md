@@ -176,6 +176,83 @@ AnimationDrawable drawable= (AnimationDrawable) mPurchaseBtn.getBackground();
 drawable.start();
 ```
 注意： 帧动画使用简单，但是比较容易引起OOM，尽量避免使用过多过大的图片
+# View 动画的特殊场景
+## LayoutAnimation
+作用于ViewGroup，为ViewGroup指定一个动画，这样当子元素出现时就具有该动画效果，常用在ListView上，遵循以下步骤
+1. 定义layoutAnimation，如下所示
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<layoutAnimation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animation="@anim/item_animation"
+    android:animationOrder="normal"
+    android:delay="0.5">
+
+</layoutAnimation>
+```
+
+* android:delay 子元素开始动画的延迟时间。如果子元素入场动画的时间是300ms,那么0.5表示延迟150ms，总的来说，第一个延迟150ms播放动画，那么第二个延迟300ms播放动画，后面依次类推
+* android:animationOrder 子元素动画的顺序。有三个选项
+  * normal 顺序显示   即排在前面的子元素先开始播放动画
+  * reverse  倒序显示
+  * random，  随机显示
+* android:animation  为子元素指定具体入场动画
+
+
+2. 为子元素指定具体的入场动画
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<set
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="300"
+    android:interpolator="@android:anim/linear_inerpolator"
+    android:shareInterpolator="true">
+
+    <alpha android:fromAlpha="0"
+           android:toAlpha="1.0"/>
+    <translate
+        android:fromXDelta="500"
+        android:toXDelta="0"/>
+</set>
+```
+3. 为ViewGroup指定layoutAnimation属性,对于ListView来说，每个item 就具有了出厂动画了，这种方式适合所有的ViewGroup，
+```xml
+<ListView
+       android:layoutAnimation="@anim/viewgroup_animation"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"/>
+```
+
+除了XMl中可以指定layoutAnimation之外，可以在代码中设置，通过LayoutAnimationController 来实现，代码如下
+```java
+ListView listView=findViewById(R.id.lv);
+Animation animation= AnimationUtils.loadAnimation(this,R.anim.viewgroup_animation);
+LayoutAnimationController layoutAnimationController=new LayoutAnimationController(animation);
+layoutAnimationController.setDelay(0.5f);
+layoutAnimationController.setOrder(LayoutAnimationController.ORDER_NORMAL);
+listView.setLayoutAnimation(layoutAnimationController);
+```
+
+## Activity的切换效果
+尽管Activity有默认的切换效果，但是我们可以自定义切换效果的，主要是使用overridePendingTransition(int enterAnim,int exitAnim),这个方法必须在startActivity()之前或者finish()之后调用才生效
+* enterAnim -- Activity打开时候，所需要的资源id
+* exitAnim -- Activity关闭的时候，所需要的资源id
+
+```java
+intent.setClass(UserActivity.this, clz);
+overridePendingTransition(R.anim.enter_anim,R.anim.exit_anim);
+startActivity(intent);
+```
+```java
+@Override
+public void finish() {
+   super.finish();
+   overridePendingTransition(R.anim.enter_anim,R.anim.exit_anim);
+}
+```
+
+注意 Fragment也可以切换动画的，可以使用FragmentTransaction中的setCustomAnimation()来添加动画的。
 
 
 ---
