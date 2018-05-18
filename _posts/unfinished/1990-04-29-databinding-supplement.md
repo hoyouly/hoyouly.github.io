@@ -16,9 +16,3 @@ BaseObservable叫可观测，也可以简单的理解成我们常说的callback�
 
 ---
 搬运地址：
-
-
-
-Error:Another 'refresh project' task is currently running for the project:  /Users/hoyouly/Chrome_download/wraprecyclerview-master
-
-Consult IDE log for more details (Help | Show Log)
