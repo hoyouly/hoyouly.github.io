@@ -187,3 +187,18 @@ git config --global color.branch auto
  git reflog
 
  reflog： 记录所有的HEAD历史，也就是说当你rest ,checkout等操作，都会记录到reflog中，所以尽管你已经reset 之前的版本，但是想要再恢复过来，只要git reflog 就可以了
+
+### rest 命令
+* git reset —soft          只改变提交点，暂存区和工作目录的内容都不改变
+* git reset —mixed         改变提交点，同时改变暂存区的内容
+* git reset —hard          暂存区、工作区的内容都会被修改到与提交点完全一致的状态
+* git reset --hard HEAD    让工作区回到上次提交时的状态
+
+
+
+### Git diff ^M的消除
+git config --global core.whitespace cr-at-eol  
+
+搬运地址：
+https://blog.csdn.net/csfreebird/article/details/10448493   
+https://www.jianshu.com/p/15b8e6b7e3d7
