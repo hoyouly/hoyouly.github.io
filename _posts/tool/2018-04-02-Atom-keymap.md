@@ -24,8 +24,13 @@ tags: Atom  快捷键
 |	显示或隐藏目录树|cmd-\|Ctrl-\ |
 |	打开目录|cmd-shift-o|Ctrl-shift-o |
 
-
+## Atom在mac上崩溃
+产生原因：在mac上使用shadowsocks的PAC模式就会使atom闪退，全局模式就不会闪退
+解决方案：
+1. 关闭代理
+2. 打开设置 -> Core -> 往下拉， 取消Use Proxy Settings When Calling APM的勾选就可以了
 
 搬运地址：
 
-[Atom快捷键整理](https://www.jianshu.com/p/e33f864981bb)
+[Atom快捷键整理](https://www.jianshu.com/p/e33f864981bb)  
+[atom在mac上闪退](https://atom-china.org/t/topic/5735)
