@@ -253,6 +253,13 @@ public void finish() {
 ```
 
 注意 Fragment也可以切换动画的，可以使用FragmentTransaction中的setCustomAnimation()来添加动画的。
+# 属性动画
+ValueAnimator,ObjectAnimator 和 AnimatorSet, ObjectAnimator 继承ValueAnimator,
+AnimatorSet 是一组动画集合，可以定义一组动画。  
+属性动画的XML定义在res/animator/下面   
+如果想要object 对象的属性abc 做动画，必须满足两个条件：
+1. object 类必须提供setAbc方法，如果动画的时候没有传递初始值，你们还要求提供getAbc()方法，因为系统要去object中属性的初始值，如果不满足，直接crash
+2. object 类中setAbc()方法对属性abc所做的改变必须通过某种方法反映出来，比如带来UI的改变等，如果不满足这条，动画无效但是不会crash
 
 
 ---
