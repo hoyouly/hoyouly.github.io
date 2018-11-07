@@ -119,9 +119,9 @@ public class AlarmManagerWrapper {
     }
 }
 ```
-2. 在Activity中设置了两个点击事件，开始和结束
-```java
+2. 在Activity中设置了两个点击事件，开始和结束  
 
+```java
 public class TimerActivity extends AppCompatActivity {
     private static final String TAG = "hoyouly";
     private NetWork mNetWork;
@@ -179,10 +179,9 @@ public class NetWork {
     public void uploadData() {
     }
 }
-
 ```
 NetWork 类是随便写的，只是为了告诉读者这个要进行网络操作的。里面都是空的，   
-3. 在AndroidManifest.xml中注册该Service，
+3. 在AndroidManifest.xml中注册该Service
 
 ```java
 <service android:name=".TimerActivity$UploadService"/>
