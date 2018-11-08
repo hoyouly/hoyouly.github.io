@@ -218,7 +218,7 @@ public class TimerActivity extends AppCompatActivity {
 ```
 `注意内部类 加上了static 关键字，`   
 log 是打印出来了，
-```
+```java
 11-07 18:54:02.892 13581 13613 D hoyouly : onHandleIntent:
 11-07 18:55:32.467 13581 13660 D hoyouly : onHandleIntent:
 11-07 18:56:04.088 13581 13678 D hoyouly : onHandleIntent:
