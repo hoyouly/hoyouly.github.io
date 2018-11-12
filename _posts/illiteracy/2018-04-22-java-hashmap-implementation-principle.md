@@ -16,7 +16,7 @@ tags: Java HashMap
 
 ## HashMap 的数据结构
 Java中常见的两种结构是数组和模拟指针(引用)，几乎所有的数据结构都可以用这两种结构组合实现，HashMap也不例外，实际上HashMap是一个“链表散列”，结构如下
-![](https://github.com/hoyouly/BlogResource/blob/master/imges/20170209185858523.jpeg)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/20170209185858523.jpeg)
 
 从图中可以看出，HashMap底层还是数组，只是数组中每一项成为一个桶，即bucket，每一个桶只存一个元素，也就是一个Node对象,由于Node对象可以包含一个引用变量next用于指向另外一个Node,源码如下，因此可能出现，尽管桶里面只有一个Node对象，但是这个对象又指向另外一个Node对象，这样就形成了一条链，即Node链，而在JDK1.8 上，又添加了红黑树，当Node链的长度大于8的时候，就转换成一个红黑树，红黑树快速CRUD的特点提高了HashMap的效率
 每一个Node链中对应的Key的hash（hashCode）返回值相同。
