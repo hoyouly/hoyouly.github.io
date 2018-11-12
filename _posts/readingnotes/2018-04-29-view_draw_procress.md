@@ -106,7 +106,7 @@ performTraversals（）首次绘制的大致流程，会依次调用performMeasu
 和performMeasure同理，唯一不同的是，performDraw的传递过程是在draw方法中通过dispatchDraw来实现的。Draw过程则决定了View的显示，只有draw方法完成以后View的内容才能呈现在屏幕上。
 
 
-![performTraversals()流程图](http://p5sfwb51p.bkt.clouddn.com/performTraversals.png)
+![performTraversals()流程图](https://github.com/hoyouly/BlogResource/blob/master/imges/performTraversals.png)
 
 ```java
 private void performTraversals() {
@@ -599,7 +599,7 @@ FrameLayout 中的onMeaure()主要做两件事
     }
 ```
 代码换成表格形式就是如下。
-![](http://p5sfwb51p.bkt.clouddn.com/view_measurespce_parent_measurespce.png)
+![](https://github.com/hoyouly/BlogResource/blob/master/imges/view_measurespce_parent_measurespce.png)
 1. 如果子布局的LayoutParams是具体的值，那么子布局的MeasureSpce是EXACTLY，子布局的可用大小是自己的LayoutParams设置的的大小
 2. 如果子布局设置的match_parent,那么子布局的MeasureSpce是和父布局的一样，大小就是父布局可用的大小，UNSPECIFIED除外，这种情况下为0
 3. 如果子布局设置的是warp_conent,那么子布局的MeasureSpce就是AT_MOST,可用大小就是父布局最大的可用大小，UNSPECIFIED除外，这种情况下还是UNSPECIFIED，并且可用大小为0

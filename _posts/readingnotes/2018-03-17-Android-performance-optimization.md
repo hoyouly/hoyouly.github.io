@@ -26,7 +26,7 @@ include 主要用于布局的重用，merge一般和include配合使用，可以
 ### ViewStub
 基础View，是一个非常轻量级并且宽高都是0，因此本身不参与任何布局和绘制过程，存在的意义就是按需加载所需要的布局文件。在实际开发过程中，很多布局文件在正常情况下是不会显示的，这个时候就没有必要再整个界面初始化的时候加载进来，通过VIewStub就可以做到在使用的时候进行加载，提高程序的初始化的性能
 
-![Alt text](http://p5sfwb51p.bkt.clouddn.com/1465729201927.png)
+![Alt text](https://github.com/hoyouly/BlogResource/blob/master/imges/1465729201927.png)
 
 stub_import 是ViewStub的id，panel_import 是layout_network_error这个布局的根元素的id，如何进行按需加载ViewStub的布局呢，可以有两种方式
 ``` java
