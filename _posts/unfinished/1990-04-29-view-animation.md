@@ -25,7 +25,7 @@ Android 动画分三种
 
 使用View动画，创建创建XML文件，路径res/anim/filename.xml  
 View 动画的固定语法,既可以是单个动画，也可以是组合动画，
-![](https://github.com/hoyouly/BlogResource/raw/master/imgesanimation_all.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/animation_all.png)
 
 ###  `<set>` 标签
 表示动画集合，对应AnimationSet类，可以保护若干动画，并且内部可以嵌套其他动画集合，他的两个属性的含义如下

@@ -10,9 +10,9 @@ tags: jekyll  prismjs
 ## 代码块滑动
 使用现在这个模板后，一直对一个地方不满意，那就是代码显示这一块，他不能滚动，
 可以参照下面这个图片，这是我以前的代码块显示
-![](https://github.com/hoyouly/BlogResource/raw/master/imgesold_cold_block.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/old_cold_block.png)
 主要是在红框那一段，我很不喜欢原本一行的代码给我折行的，特别喜欢那种带有滑块的效果，怎么处理呢，怎么才能不让折行。大学学的那点HTML，CSS，JS早考试完都物归原主，还给老师了，那就先看看网上有没有现成的能滑动博客吧，然后就找到了我之前用的那个模板中发现还真是这样的，
-![](https://github.com/hoyouly/BlogResource/raw/master/imgesyansu_code.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/yansu_code.png)
 这个代码块就能滑动，而且看上去比我的代码块好看，他是怎么做呢，然后发现他自己的博客中有关于代码块高亮的记录 [Jekyll的中的代码高亮](http://yansu.org/2013/04/22/highlight-of-jekyll.html) 可是我看完后发现还是找到怎么让代码块滑动的，至于高亮显示，我也没弄出来，因为我在他的整个项目搜prettify关键字，结果发现为null，不知道他是怎么实现的，给他留言了，希望他能看到给我解惑。既然他这个能实现滑动，那我就二分查找，在本地jekyll 服务器运行，也发现了点苗头
 在main.scss中有这些设置
 ```CSS
@@ -80,12 +80,12 @@ pre {
 <script>!window.jQuery && document.write("<script src=\"jquery.js\">"+"</scr"+"ipt>");</script>
 ```
 那就在我的项目中搜关键字“jquery.js”把，发现还真没有，没事，引用上就可以了，于是我就在我的default.html 上引用上了
-![](https://github.com/hoyouly/BlogResource/raw/master/imgesdefault_html.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/default_html.png)
 红框里面的就是我改动的部分，然后再次运行，完美    
 看效果图，红框里面就是主要的修改，显示行号，可以滑动，而且当鼠标落到这个区域的时候，右上角显示copy,点击copy就可以一键复制了，简直爽歪歪啊，
-![](https://github.com/hoyouly/BlogResource/raw/master/imgesnew_cold_block.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/new_cold_block.png)
 接下来再看看之前的样式吧，没有对比就没有伤害，
-![](https://github.com/hoyouly/BlogResource/raw/master/imgesold_cold_block.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imges/old_cold_block.png)
 是不是高亮我就不知道了，看着顺眼就行，主题想换可以随时换，终于达到自己想要的效果了。忙了一天终于忙点效果。
 
 ---
