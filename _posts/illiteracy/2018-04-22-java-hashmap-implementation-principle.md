@@ -101,7 +101,7 @@ HashMap 采用方法二计算该对象应该保存到table数组中哪一个索�
 
 ## HashMap 的put方法，
 这里说的是JDK1.8的put方法流程
-![](https://github.com/hoyouly/BlogResource/blob/master/imges/hashMap%20put%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
+![](https://github.com/hoyouly/BlogResource/raw/master/imgeshashMap%20put%E6%96%B9%E6%B3%95%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
 1. 判断键值对数组table[i]是否为null或者为空，是的话就执行resize进行扩容
 2. 根据键key计算hash值得到插入数组的索引。如果table[i]为null，直接新建节点插入，转向 6.否则转向3
 3. 判断table[i]的首个元素是否和key一样，如果相同（hashcode 和equals()都相等）则直接覆盖，否则转向4
