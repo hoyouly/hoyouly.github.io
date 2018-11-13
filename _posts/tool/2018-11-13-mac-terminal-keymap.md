@@ -8,7 +8,7 @@ tags: Mac  terminal 快捷键
 * content
 {:toc}
 
-# terminal 使用快捷键
+# Terminal 使用快捷键
 * 行首ctrl + a
 * 行尾ctrl + e
 * 单词为单位移动：option + 方向键
@@ -62,3 +62,8 @@ tags: Mac  terminal 快捷键
 4. 选中当前位置到所在单词末尾的文字 – Shift + Option + 右方向键→
 5. 选中当前位置到整个文档开头的文字 – Shift + Command + 上方向键↑
 6. 选中当前位置到整个文档末尾的文字 – Shift + Command + 下方向键↓
+
+
+---
+搬运地址：   
+因为这是之前记录的，搬运地址忘记保存了，如有介意我抄袭的，留言我会补充上去的。Â
