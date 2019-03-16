@@ -1,4 +1,4 @@
-**博客访问地址：[http://hoyouly.top](http://hoyouly.top)**。
+**博客访问地址：[http://hoyouly.fun](http://hoyouly.fun)**。
 
 以下内容是 [http://gaohaoyang.github.io/](http://gaohaoyang.github.io/) 的，是关于这个主题的一些介绍。只是把他的一些私人信息替换成了我自己的，
 
@@ -137,7 +137,7 @@ gem install jekyll
 
 在 mac OS X El Capitan 系统下安装可能会出现问题，解决方案详情见 jekyll 官网: [ https://jekyllrb.com/docs/troubleshooting/#jekyll-amp-mac-os-x-1011]( https://jekyllrb.com/docs/troubleshooting/#jekyll-amp-mac-os-x-1011)
 
-在Ubuntu 14.04 上安装jekyll,可以参考我的blog : [ubuntu 14.04 安装 jeklly](http://hoyouly.top/2018/03/27/ubuntu-jeklly-install/)
+在Ubuntu 14.04 上安装jekyll,可以参考我的blog : [ubuntu 14.04 安装 jeklly](http://hoyouly.fun/2018/03/27/ubuntu-jeklly-install/)
 
 对 jekyll 本身感兴趣的同学可以看看 jekyll 源码: [https://github.com/jekyll/jekyll](https://github.com/jekyll/jekyll)
 

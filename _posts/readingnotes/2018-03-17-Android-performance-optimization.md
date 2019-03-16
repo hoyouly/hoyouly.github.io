@@ -46,7 +46,7 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 2. 通过分析工具比如MAT来找出潜在的内存泄露继而解决
 
 ### 内存泄露的例子
-参照： [Android 内存泄漏总结](http://hoyouly.top/2018/03/17/android-memory-leak/)
+参照： [Android 内存泄漏总结](http://hoyouly.fun/2018/03/17/android-memory-leak/)
 
 ### 使用的检测工具
 * LeakCanary
