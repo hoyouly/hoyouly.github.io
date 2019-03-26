@@ -9,7 +9,7 @@
 title: hoyouly
 brief-intro: 我要用自己的双手，敲出一个美好未来
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://hoyouly.top" # the base hostname & protocol for your site
+url: "http://hoyouly.fun" # the base hostname & protocol for your site
 
 permalink: /:year/:month/:day/:title/
 
