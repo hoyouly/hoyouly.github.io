@@ -16,11 +16,11 @@ description: Bitmap的加载和Cache处理
 3. 采用采样率的规则并结合目标View的所需要大小计算出采样率inSampleSize
 4. BitmapFactory.Options的inJustDecodeBounds=false，重新加载图片
 
-**inJustDecodeBounds 设置为true的时候，BitmapFactory值会解析图片的原始宽高信息，并不会正在的加载图片 所以这个操作是轻量级的，BitmapFactory 获取宽信息和图片的位置已经程序运行的设备有关，比如同一张图片放在不同的drawable目录下或者程序运行在不同屏幕设备上，这都可能导致BitmapFactory获取到不同的结果，这个Android的资源加载机制有关**
+**inJustDecodeBounds 设置为true的时候，BitmapFactory值会解析图片的原始宽高信息，并不会正在的加载图片 所以这个操作是轻量级的，BitmapFactory 获取宽信息和图片的位置已经程序运行的设备有关，比如同一张图片放在不同的drawable目录下或者程序运行在不同屏幕设备上，这都可能导致BitmapFactory获取到不同的结果，这和Android的资源加载机制有关**
 # Android 中的缓存策略
 一般来说，缓存策略主要包括缓存的添加，获取和删除这三类操作。目前常用的缓存算法就是LRU（least Recently Used,近期最少使用算法），他的核心思想是当缓存满时，优先淘汰那些近期最少使用的缓存对象，采用LRU算的缓存有两种，LruCache（实现内存缓存）和DiskLruCache（存储设备缓存）,二者结合，就可以很方便的实现一个完美的ImageLoader
 ## LruCache
-全程Least Recently Used,即最近最少使用，一种非常常用的置换算法，即淘汰最长时间未使用的对象，
+全称Least Recently Used,即最近最少使用，一种非常常用的置换算法，即淘汰最长时间未使用的对象，
 1. android 3.1 提供的缓存类，v4包中也有，兼容之前的版本，使用v4 包
 2. 属于一个泛型类，内部采用LinkedHashMap，以强引用的方式存储外界的缓存对象。
 	* 强引用：直接的对象引用
@@ -32,7 +32,7 @@ description: Bitmap的加载和Cache处理
 5. remove(key) 删除一个指定的缓存对象
 
 ### 实现原理
-**核心：** 存在一种数据结构能够基于访问顺序保存访问对象，这种数据结构就是LinkedHashMap,双向循环列表，在构造函数中，通过boolean值来指定LinkedHashMap的保存方式，
+**核心：** 存在一种数据结构能够基于访问顺序保存访问对象，这种数据结构就是LinkedHashMap,双向循环列表，在构造函数中，通过boolean值来指定LinkedHashMap的保存方式。
 ```java
 /*
 * 初始化LinkedHashMap
@@ -88,7 +88,7 @@ public LruCache(int maxSize) {
 2. 初始化核心数据结构LinkedHashMap，并设置accessOrder=true，基于访问顺序排序
 
 #### sizeOf()和safeSizeOf()
-safeSizeOf() 是非sizeOf()的进一步封装，其实就是计算sizeOf()的大小，而由于数据结构不定，sizeOf()必须由使用者自己去定义，所以我们在创建LRUCache对象的时候复写sizeOf(),
+safeSizeOf() 是非sizeOf()的进一步封装，其实就是计算sizeOf()的大小，而由于数据结构不定，sizeOf()必须由使用者自己去定义，所以我们在创建LruCache对象的时候复写sizeOf(),
 ```java
 private int safeSizeOf(K key, V value) {
     int result = sizeOf(key, value);
@@ -99,7 +99,7 @@ private int safeSizeOf(K key, V value) {
 }
 ```
 #### put方法缓存数据
-根据对应的key缓存Value，并且将该Value移动到链表的尾部，返回的是如果key对应之前的前一个value
+根据对应的key缓存Value，并且将该value移动到链表的尾部，返回的是如果key对应之前的前一个value
 ```java
 public final V put(K key, V value) {
     if (key == null || value == null) {
@@ -113,7 +113,6 @@ public final V put(K key, V value) {
         // 通过键值对，计算出要保存对象value的大小，并更新当前缓存大小
         size += safeSizeOf(key, value);
         // 如果 之前存在key，用新的value覆盖原来的数据， 并返回 之前key 的value，用previous保存
-
         previous = map.put(key, value);
         // 如果之前存在key，并且之前的value不为null
         if (previous != null) {
@@ -129,11 +128,11 @@ public final V put(K key, V value) {
     }
     //裁剪缓存容量（在当前缓存数据大小超过了总容量maxSize时，才会真正去执行LRU）
     trimToSize(maxSize);
-      return previous;
+    return previous;
 }
 ```
 主要进行了以下几步：
-1. 判断key和Value 是否为null，如果一个为null，直接抛出空指针异常，这也就是说明了LRUCache中不允许key或者value为null
+1. 判断key和Value 是否为null，如果一个为null，直接抛出空指针异常，这也就是说明了LruCache中不允许key或者value为null
 2. 通过safeSizeOf()方法获得要保存数据的大小，并更新当前缓存数据的大小（增加）
 3. 将当前数据放到缓存中，即调用LinkHashMap的put方法，如果返回的值不为null，所以该key之前已经保存，那么替换原来的value值，并返回原来的value，得到之前value的大小，再次更新当前缓存数据的大小（减小）
 4. 清理缓存空间
@@ -158,7 +157,7 @@ public void trimToSize(int maxSize) {
                 break;
             }
             // 执行到这，表示当前缓存数据已超过了总容量，需要执行LRU，即将最近最少使用的数据清除掉，直到数据所占缓存空间没有超标;
-             // 根据前面的原理分析，知道，在链表中，链表的头结点是最近最少使用的数据，因此，最先清除掉链表前面的结点
+            // 根据前面的原理分析知道，在链表中，链表的头结点是最近最少使用的数据，因此，最先清除掉链表前面的结点
             Map.Entry<K, V> toEvict = map.entrySet().iterator().next();
             key = toEvict.getKey();
             value = toEvict.getValue();
@@ -198,7 +197,8 @@ public final V get(K key) {
 
     /*
      * 官方解释：
-     * 尝试创建一个值，这可能需要很长时间，并且Map可能在create()返回的值时有所不同。如果在create()执行的时候，用这个key执行了put方法，那么此时就发生了冲突，我们在Map中删除这个创建的值，释放被创建的值，保留put进去的值。
+     * 尝试创建一个值，这可能需要很长时间，并且Map可能在create()返回的值时有所不同。
+		 * 如果在create()执行的时候，用这个key执行了put方法，那么此时就发生了冲突，我们在Map中删除这个创建的值，释放被创建的值，保留put进去的值。
      */
     V createdValue = create(key);
     if (createdValue == null) {
@@ -241,10 +241,10 @@ public final V get(K key) {
 ```
 主要进行了功能
 1. 先尝试从map中根据key取得对应的value，如果得到说明有缓存对象，直接返回，
-2. 如果value==null，需要看是否重写了creat()方法，因为creat()方法默认是返回null，如果重写了creat()方法，并且不为null，那么就会在没有缓存的时候就自己创建一个，然后继续往下走，因为这个时候还需要解决冲突问题
+2. 如果value==null，需要看是否重写了creat()方法，因为creat()方法默认是返回null，如果重写了creat()方法，并且不为null，那么就会在没有缓存的时候就自己创建一个，然后继续往下走，这个时候还需要解决冲突问题
 3. 通过LinkHashMap进行get()或者put操作的结点会被调整到链表尾部
 
-` 疑问：`为什么重写了creat()后，还会有冲突，换句话说，什么情况下，mapValue = map.put(key, createdValue);中的mapValue 值会不为null呢，
+` 疑问：`为什么重写了creat()后，还会有冲突，换句话说，什么情况下，mapValue = map.put(key, createdValue)中的mapValue 值会不为null呢，
 如果不为null，那么是什么时候存放进去的呢，因为在get()方法一开始执行的时候，根据key从map集合中是得不到value的，中间没有对集合进行任何操作啊
 `解答：`在get中，使用create()尝试创建一个值，这可能需要很长时间，同时在get中调用create()时还没有进行synchronized同步，因此此时也是线程不安全的，可能在create()执行的时候，另一个线程用这个key执行了put方法，那么此时这个key中就有对应的值了，当前面调用get的线程执行完create之后，进行put()操作，此时mapValue是不为null的，也就发生了冲突，我们就把通过create创建的这个createdValue作为一个“脏数据”丢弃它，即释放被创建的值，保留另一个线程已经put进去的值。
 
@@ -266,7 +266,7 @@ protected void entryRemoved(boolean evicted, K key, V oldValue, V newValue) {
 ```
 在LruCache中有四个地方进行了调用：put()、get()、trimToSize()、remove()中进行了调用。
 #### 线程安全
-由于在put、get、trimToSize、remove的方法中都加入synchronized进行同步控制。所以LRUCache是线程安全的
+由于在put、get、trimToSize、remove的方法中都加入synchronized进行同步控制。所以LruCache是线程安全的
 ### 总结
 #### 使用注意
 1. 在构造函数中需要提供一个总的缓存大小
@@ -275,7 +275,7 @@ protected void entryRemoved(boolean evicted, K key, V oldValue, V newValue) {
 4. 使用LruCache中的put方法和get方法进行数据的缓存
 
 #### 小结
-1. LRUCache本身没有释放内存，只是LinkedHashMap把数据移除了，如果数据在其他地方被引用，还是会引起内存泄露，还需要手动释放内存
+1. LruCache本身没有释放内存，只是LinkedHashMap把数据移除了，如果数据在其他地方被引用，还是会引起内存泄露，还需要手动释放内存
 2. 重写 entryRemoved()方法能知道LruCache数据是否发送了冲突，也可以手动释放资源
 ## DiskLruCache
 用于实现储存设备缓存，即磁盘缓存，通过将缓存写文件系统从而实现缓存的效果。不属于Android SDK的一部分，并没有继承到Android源码中
@@ -301,7 +301,7 @@ private final class Entry {
         ...
 }
 ```
-在LruCache 中数据是直接缓存到内存中的，但是在DiskLruCache中，由于数据是保存到本地上的，相当于永久保存的文件，即使程序退出也还存在，因此，`在获取DiskLRUCahce实例的时候，会读取journal这个日志文件，根据这个日志文件中的信息，建立map的初始信息，同时会根据journal这个日志文件，维护本地缓存文件`
+在LruCache 中数据是直接缓存到内存中的，但是在DiskLruCache中，由于数据是保存到本地上的，相当于永久保存的文件，即使程序退出也还存在，因此，`在获取DiskLruCahce实例的时候，会读取journal这个日志文件，根据这个日志文件中的信息，建立map的初始信息，同时会根据journal这个日志文件，维护本地缓存文件`
 
 ```java
  /**
@@ -334,18 +334,18 @@ public static DiskLruCache open(File directory, int appVersion, int valueCount, 
     return cache;
 }
 ```
-其中，
-cache.readJournal();
- cache.processJournal();
- 这两个方法正是读取journal文件，建立map的初始数据，维护缓存文件
+其中，   
+cache.readJournal();   
+cache.processJournal();   
+这两个方法正是读取journal文件，建立map的初始数据，维护缓存文件
 ### journal文件
 一个标准的journal文件信息如下
 ```
 libcore.io.DiskLruCache    //第一行，固定内容，声明
-1                                        //第二行，cache的版本号，恒为1
-1                                        //第三行，APP的版本号
-2                                        //第四行，一个key，可以存放多少条数据valueCount    
-                                           //第五行，空行分割行
+1                          //第二行，cache的版本号，恒为1
+1                          //第三行，APP的版本号
+2                          //第四行，一个key，可以存放多少条数据valueCount    
+                           //第五行，空行分割行
 DIRTY 335c4c6028171cfddfbaae1a9c313c52
 CLEAN 335c4c6028171cfddfbaae1a9c313c52 3934
 REMOVE 335c4c6028171cfddfbaae1a9c313c52
@@ -407,5 +407,5 @@ new Thread(new Runnable() {
 2. 使用DiskLruCache时，由于需要对本地文件进行操作，需要在另外一个线程中执行，在子线程中检测磁盘缓存、保存缓存数据，磁盘操作从来不应该在UI线程中实现；
 3. LruCache内存缓存的核心是LinkedHashMap，而DiskLruCache的核心是LinkedHashMap和journal日志文件，相当于把journal看作是一块“内存”，LinkedHashMap的value只保存文件的简要信息，对缓存文件的所有操作都会记录在journal日志文件中。
 
-### DiskLruCache可能的优化方案：
-    DiskLruCache是基于日志文件journal的，这就决定了每次对缓存文件的操作都需要进行日志文件的记录，我们可以不用journal文件，在第一次构造DiskLruCache的时候，直接从程序访问缓存目录下的缓存文件，并将每个缓存文件的访问时间作为初始值记录在map的value中，每次访问或保存缓存都更新相应key对应的缓存文件的访问时间，这样就避免了频繁的IO操作，这种情况下就需要使用单例模式对DiskLruCache进行构造了，
+### DiskLruCache可能的优化方案
+DiskLruCache是基于日志文件journal的，这就决定了每次对缓存文件的操作都需要进行日志文件的记录，我们可以不用journal文件，在第一次构造DiskLruCache的时候，直接从程序访问缓存目录下的缓存文件，并将每个缓存文件的访问时间作为初始值记录在map的value中，每次访问或保存缓存都更新相应key对应的缓存文件的访问时间，这样就避免了频繁的IO操作，这种情况下就需要使用单例模式对DiskLruCache进行构造了，
