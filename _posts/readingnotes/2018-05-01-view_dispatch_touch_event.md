@@ -439,4 +439,5 @@ opOnTouch->e;
 
 ---
 搬运地址：   
-Android 开发艺术探索   
+Android 开发艺术探索    
+[Android中View的Clickable和Enabled的区别与原理](https://blog.csdn.net/weixin_37077539/article/details/54895485) 

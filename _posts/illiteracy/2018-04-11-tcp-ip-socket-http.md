@@ -150,8 +150,8 @@ HTTPS 是通过SSL或者TLS加密处理数据，更安全
 
 ---
 搬运地址：  
-[HTTP和HTTPS协议，看一篇就够了](https://blog.csdn.net/xiaoming100001/article/details/81109617)
+[HTTP和HTTPS协议，看一篇就够了](https://blog.csdn.net/xiaoming100001/article/details/81109617)   
 [Android中的TCP/IP协议，Socket，Http协议间的关系](https://blog.csdn.net/u010618194/article/details/62439168)   
-[Android客户端面试基础(四)-TCP/IP](https://blog.csdn.net/johnWcheung/article/details/72835044)
+[Android客户端面试基础(四)-TCP/IP](https://blog.csdn.net/johnWcheung/article/details/72835044)   
 [用信鸽来解释 HTTPS](https://www.oschina.net/translate/https-explained-with-carrier-pigeons)   
 [深入浅出HTTPS基本原理](https://blog.csdn.net/kobejayandy/article/details/52433660)   
