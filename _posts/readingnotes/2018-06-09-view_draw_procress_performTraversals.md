@@ -1,16 +1,13 @@
 ---
 layout: post
-title: View 的绘制流程 --- performTraversals 过程
+title: View 的绘制 --- 概览
 category: 读书笔记
 tags: view  Android开发艺术探索
 ---
 * content
 {:toc}
-
-我们先从ViewRootImpl的setView 方法开始
-
-# ViewRootImpl
-ViewRoot对应于ViewRootImpl,他是链接WindowManager和Decorview的纽带，View的三大流程都是通过ViewRoot完成，在ActivityThread中，当Activity对象被创建成功后，会将DecorView添加到Window中，同时创建ViewRootImpl对象，并将ViewRootImpl和DecorView关联起来。
+## ViewRootImpl
+View的绘制，离不开ViewRootImpl.他是链接WindowManager和Decorview的纽带，View的三大流程都是通过ViewRootImpl完成，在ActivityThread中，当Activity对象被创建成功后，会将DecorView添加到Window中，同时创建ViewRootImpl对象，并通过ViewRootImp的setView()将ViewRootImpl和DecorView关联起来。
 先说几个结论，这个以后会详细讲的。
 * 每一个Activity对应一个Window，
 * 每一个Window 会有一个DecorView，
@@ -102,14 +99,14 @@ void doTraversal() {
 在scheduleTraversals 方法中，通过mHandle发送一个runnable对象，在run方法中处理绘制流程，这一点和ActivityThread中的H类相似，因为我们知道ViewRootImpl中的W类是Binder的Native端，用来接收WMS处理的操作，W类的方法是发生线程池中的，所以我们需要 <font color="#ff0000">
 通过Handler将事件处理切换到主线程中。也就是说doTraversal(),以及接下来的performTraversals()都是在主线程中进行的</font>
 ### 总结  
-**ViewRootImpl在其创建过程中，通过requestLayout向主线程发送了一条触发遍历操作的消息，遍历操作是perforTraversals()方法，这是一个包罗万象的方法，ViewRootImpl中接收到的各种变化，如来自WMS的窗口属性变化，来自控件树的尺寸变化以及重绘都引发performTraversals()的调用，并在其中处理完成，View类及其子类中的onMeasure()、onLayout()、onDraw()等回调也都是在performTraversals()的执行过程中直接或间接的引发。也正是如此，一次次的performTraversals()调用驱动着控件树有条不紊的工作，一旦此方法无法正常执行，整个控件树都将处于僵死状态。<span style="border-bottom:1px solid red;">因此 performTraversals() 函数可以说是ViewRootImpl的心脏。</span>**
-流程图如下
+**ViewRootImpl在其创建过程中，通过requestLayout向主线程发送了一条触发遍历操作的消息，遍历操作是perforTraversals()方法，这是一个包罗万象的方法，ViewRootImpl中接收到的各种变化，如来自WMS的窗口属性变化，来自控件树的尺寸变化以及重绘都引发performTraversals()的调用，并在其中处理完成，View类及其子类中的onMeasure()、onLayout()、onDraw()等回调也都是在performTraversals()的执行过程中直接或间接的引发。也正是如此，一次次的performTraversals()调用驱动着控件树有条不紊的工作，一旦此方法无法正常执行，整个控件树都将处于僵死状态。<span style="border-bottom:1px solid red;">因此 performTraversals() 函数可以说是ViewRootImpl的心脏。</span>**   
+流程图如下  
 ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/ViewRootImpl_setView.png)
-
 
 ## ViewRootImpl # performTraversals()
 
-performTraversals()首次绘制的大致流程，会依次调用performMeasure()，performLayout()，performDraw()三个方法，这三个方法分别完成顶级View的measure，layout和draw这三大流程。
+performTraversals()首次绘制的大致流程，会依次调用performMeasure()，performLayout()，performDraw()三个方法，这三个方法分别完成顶级View的measure，layout和draw这三大流程。如下图。
+![performTraversals()流程图](https://github.com/hoyouly/BlogResource/raw/master/imges/performTraversals.png)
 ### performMeasure()
 调用measure方法，在measure方法中又会调用onMeasure方法，在onMeasure方法中则会对所有的子元素进行measure过程，这个时候measure流程就从父容器传到子元素中了，这样就完成了一次measure过程。接着子View又会重复父容器的操作，如此往复，就完成了View的遍历。<span style="border-bottom:1px solid red;">Measure 决定了View的宽和高。 Measure完成以后，可以通过getMeasuredWidth和getMeasureHeight方法来获取到View测量后的宽高。</span>
 ### performLayout()
@@ -117,38 +114,59 @@ performTraversals()首次绘制的大致流程，会依次调用performMeasure()
 ### performDraw()
 和performMeasure同理，唯一不同的是，performDraw()的传递过程是在draw()方法中通过dispatchDraw()来实现的。<span style="border-bottom:1px solid red;">Draw过程则决定了View的显示，只有draw方法完成以后View的内容才能呈现在屏幕上。</span>
 
+再贴一份更详细的流程图
+![performTraversals()流程图](https://github.com/hoyouly/BlogResource/raw/master/imges/performTraversals_1.png)
 
-![performTraversals()流程图](https://github.com/hoyouly/BlogResource/raw/master/imges/performTraversals.png)
-
+下面是源码
 ```java
 private void performTraversals() {
-    final View host = mView;
-    int desiredWindowWidth;//decorView宽度
-    int desiredWindowHeight;//decorView高度
-    if (mFirst) {//为true的情况就是第一个添加view的时候，也就是创建ViewRootImpl对象的时候
-        if (shouldUseDisplaySize(lp)) {
-            //窗口的类型中有状态栏，所以高度需要减去状态栏
-            //获取屏幕的分辨率
-            Point size = new Point();
-            mDisplay.getRealSize(size);
-            desiredWindowWidth = size.x;
-            desiredWindowHeight = size.y;
+	...
+	if (layoutRequested) {
+		 ...
+			//创建了DecorView的MeasureSpec，并调用performMeasure
+			 measureHierarchy(host, lp, res,desiredWindowWidth, desiredWindowHeight);
+    ...
+		final boolean didLayout = layoutRequested && !mStopped;
+		        boolean triggerGlobalLayoutListener = didLayout || mAttachInfo.mRecomputeGlobalAttributes;
+		     if (didLayout) {
+		            //控件树中的控件对于自己的尺寸显然已经了然于胸。而且父控件对于子控件的位置也有了眉目，所以经过测量过程后，布局阶段会把测量结果转化为控件的实际位置与尺寸。
+		            // 控件的实际位置与尺寸由View的mLeft，mTop，mRight，mBottom 等4个成员变量存储的坐标值来表示。
+		            performLayout(lp, desiredWindowWidth, desiredWindowHeight);
+					}
+
+		...
+		boolean cancelDraw = mAttachInfo.mTreeObserver.dispatchOnPreDraw() || viewVisibility != View.VISIBLE;
+        if (!cancelDraw && !newSurface) {
+            if (!skipDraw || mReportNextDraw) {
+                if (mPendingTransitions != null && mPendingTransitions.size() > 0) {
+                    for (int i = 0; i < mPendingTransitions.size(); ++i) {
+                        mPendingTransitions.get(i).startChangingAnimations();
+                    }
+                    mPendingTransitions.clear();
+                }
+                performDraw();
+            }
         } else {
-            //窗口的宽高即整个屏幕的宽高
-            Configuration config = mContext.getResources().getConfiguration();
-            desiredWindowWidth = dipToPx(config.screenWidthDp);
-            desiredWindowHeight = dipToPx(config.screenHeightDp);
+            if (viewVisibility == View.VISIBLE) {
+                // Try again
+                scheduleTraversals();
+            } else if (mPendingTransitions != null && mPendingTransitions.size() > 0) {
+                for (int i = 0; i < mPendingTransitions.size(); ++i) {
+                    mPendingTransitions.get(i).endChangingAnimations();
+                }
+                mPendingTransitions.clear();
+            }
         }
-        //在onCreate中view.post(runnable)和此方法有关
-        host.dispatchAttachedToWindow(mAttachInfo, 0);
-    }
-    boolean layoutRequested = mLayoutRequested && (!mStopped || mReportNextDraw);
-    if (layoutRequested) {
-       ...
-        //创建了DecorView的MeasureSpec，并调用performMeasure
-         measureHierarchy(host, lp, res,desiredWindowWidth, desiredWindowHeight);
 }
 ```
 后面会详细讲这三大流程。
+perforMeasure() 是经由measureHierarchy() 调用的.这个会在下一篇讲
+
+
+[View 的绘制 --- 概览](http://hoyouly.fun/2018/04/29/view_draw_procress_performTraversals/)   
+[View 的绘制 --- Measure 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_measure/)   
+[View 的绘制 --- Layout 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_layout/)   
+[View 的绘制 --- Draw 流程，invalidate的流程 以及 requestLayout 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_draw/)
+
 ---
 搬运地址：   
