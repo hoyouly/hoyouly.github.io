@@ -63,15 +63,41 @@ mIntent = new Intent(context, TimerActivity.UploadService.class);
 ```
 
 ### 3. 创建相应的PendingIntent
-这个说是简单，主要是这几个参数的意思，不懂的自己Google吧。
+这个说是简单，主要是这几个参数的意思。
 ```java
-mPendingIntent = PendingIntent.getService(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+mPendingIntent = PendingIntent.getService(context,
+                  0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 ```
+#### PendingIntent 的 补充
+1. 典型的使用场景就是给RemoteView添加点击事件。
+2. 通过send /cancel 发送或者取消特定的Intent.
+3. PendingIntent 和Intent 的区别
+  * PendingIntent :将来的某个不确定时间发生
+  * Intent: 立刻发生
+4. PendingIntent的 匹配规则
+  * PendingIntent 的 匹配规则: 如果两个PendingIntent 内部的Intent相同并且requestCode 也相同，那么这两个PendingIntent 就是相同。
+  * Intent 相同的规则：如果两个Intent的ComponetName和intent-filter 都相同，那么这两个Intent就相同。
+    **注意： Extras不参与Intent的匹配过程。只要Intent的ComponetName和intent-filter 相同，即使他们的Extras不相同，那么这两个Intent也会匹配成功的。**
+5. PendingIntent支持三种特定的意图，启动Activity，启动Service，发送Broadcast。如下图所示
+      ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/pendingintent_main_method.png)
+6.  参数中的 requestCode 和 flags的意思
+  * requestCode PendingIntent 发送方的请求码，多数情况下为0，会影响到flags的效果
+  * flags  常见的类型有四种
+        1. FLAG_ONE_SHOT   
+        当前描述的PendingIntent 只能被使用一次，然后就会被自动cancel。如果后续还有相同的PendingIntent，那么后续的send方法就会发送失败。对于通知栏来说，采用这种个标记，那么同类通知只能出现一次，后续的通知单击后将无法打开
+        2. FLAG_NO_CREATE   
+        当前描述的PendingIntent不会主动创建，如果当前的PendingIntent不存在，那么getActivity(),getService(),getBroadcast() 就会返回null，即获取PendingIntent失败，这个很少使用。
+        3. FLAG_CANCEL_CURRENT     
+        如果当前描述的PendingIntent已经存在，那么他们都会被取消，然后系统会自动创建一个新的PendingIntent，对于通知栏来说，那些被cancel的消息将无法打开。后续的通知单击后将无法打开
+        4. FLAG_UPDATE_CURRENT  
+        当前描述的PendingIntent 如果已经存在，那么他们都会被更新，即他们的intent中的Extras会被更新。
+
 
 ### 4. 设置定时器
 好久不用mAlarmManager了，第一次直接使用的 set方法，后来发现这个只能使用一次，不能重复，要使用setRepeating()方法才行。坑又来了，后面会说道这个坑。
 ```java
-mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),TIME_INTERVAL, mPendingIntent);
+mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+              SystemClock.elapsedRealtime(),TIME_INTERVAL, mPendingIntent);
 ```
 思路理清了，开始写代码吧。
 ## 写代码
@@ -92,7 +118,8 @@ public class AlarmManagerWrapper {
     private AlarmManagerWrapper(Context context) {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mIntent = new Intent(context, TimerActivity.UploadService.class);
-        mPendingIntent = PendingIntent.getService(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mPendingIntent = PendingIntent.getService(context,
+                              0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static AlarmManagerWrapper getInstance(Context context) {
@@ -117,7 +144,8 @@ public class AlarmManagerWrapper {
      * 开启定时
      */
     public void startAlarm() {
-        mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),TIME_INTERVAL, mPendingIntent);
+        mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                      SystemClock.elapsedRealtime(),TIME_INTERVAL, mPendingIntent);
     }
 }
 ```
@@ -168,7 +196,8 @@ public class TimerActivity extends AppCompatActivity {
 `adb logcat -b crash` 查看崩溃日志吧,然后就看到了
 
 ```java
-java.lang.InstantiationException: java.lang.Class<***.TimerActivity$UploadService> has no zero argument constructor
+java.lang.InstantiationException:
+java.lang.Class<***.TimerActivity$UploadService> has no zero argument constructor
 ```
 第一个坑出现了。
 ### 坑一：内部类的组件必须得是static
@@ -231,7 +260,7 @@ log 是打印出来了，
 public class AlarmManagerWrapper {
     private static AlarmManagerWrapper mInstance;
 
-    //循环上报的间隔，先定12秒，方便自测。
+    //循环上报的间隔，先定10秒，方便自测。
     private static final long TIME_INTERVAL = 10 * 1000;
 
     private PendingIntent mPendingIntent;
@@ -241,7 +270,8 @@ public class AlarmManagerWrapper {
     private AlarmManagerWrapper(Context context) {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mIntent = new Intent(context, TimerActivity.UploadService.class);
-        mPendingIntent = PendingIntent.getService(context, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mPendingIntent = PendingIntent.getService(context,
+                              0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static AlarmManagerWrapper getInstance(Context context) {
@@ -265,14 +295,17 @@ public class AlarmManagerWrapper {
      * 开启定时
      */
     public void startAlarm() {
-        mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), mPendingIntent);
+        mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP
+                            , SystemClock.elapsedRealtime(), mPendingIntent);
     }
 
     /**
-     * 由于Android 6.0  对低电耗模式和应用待机模式进行针对性优，所以需要再接受到执行定时任务的时候，再次开启，保证在低电耗模式下的也能正常执行
+     * 由于Android 6.0  对低电耗模式和应用待机模式进行针对性优，
+     * 所以需要再接受到执行定时任务的时候，再次开启，保证在低电耗模式下的也能正常执行
      */
     public void startAgain() {
-        mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + TIME_INTERVAL, mPendingIntent);
+        mAlarmManager.setExact(AlarmManager.ELAPSED_REALTIME_WAKEUP
+                      , SystemClock.elapsedRealtime() + TIME_INTERVAL, mPendingIntent);
     }
 }
 
@@ -293,7 +326,7 @@ public static class UploadService extends IntentService {
 
 这样log 看起来就正常了，每10秒打印一次。
 ```java
-1-07 19:02:36.930 14109 14138 D hoyouly : onHandleIntent:
+11-07 19:02:36.930 14109 14138 D hoyouly : onHandleIntent:
 11-07 19:02:46.938 14109 14145 D hoyouly : onHandleIntent:
 11-07 19:02:56.945 14109 14154 D hoyouly : onHandleIntent:
 11-07 19:03:06.955 14109 14161 D hoyouly : onHandleIntent:
@@ -309,8 +342,10 @@ public static class UploadService extends IntentService {
 public void startAlarm(Trip data) {
      mIntent = new Intent(mContext, TimerActivity.UploadService.class);
      mIntent.putExtra("trip",data);
-     mPendingIntent = PendingIntent.getService(mContext, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-     mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), mPendingIntent);
+     mPendingIntent = PendingIntent.getService(mContext, 0, mIntent
+                                  , PendingIntent.FLAG_UPDATE_CURRENT);
+     mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP
+                                  , SystemClock.elapsedRealtime(), mPendingIntent);
  }
 ```
 
@@ -329,7 +364,7 @@ public void start(View view) {
 protected void onHandleIntent(@Nullable Intent intent) {
    Trip trip = intent.getParcelableExtra("trip");
    Log.d(TAG, "onHandleIntent: " + trip);
-   AlarmManagerWrapper.getInstance(getApplicationContextstartAgain();
+   AlarmManagerWrapper.getInstance(getApplicationContextstartAgain().startAgain();
     //TODO  上传数据
 }
 ```
@@ -356,13 +391,17 @@ protected void onHandleIntent(@Nullable Intent intent) {
 
 ### 坑三：Android 7.0 后通过PendingIntent传递Parcelable类型数据为null
 
-继续Google，PendingIntent 参数为null，网上说了一大堆，和什么创建PendingIntent的时候的requestCode 或者flags有关，可是按照他们说的做了，还是为null。最后无意间发现了，原来是一个bug ,可以参照  [Android 7.0 pendingIntent bug(AlarmManager通过PendingIntent传递数据（跨进程数据传递](https://blog.csdn.net/m190607070/article/details/78492887) 上面的解释，按照上面的方法做，不传递Parcelable类型的对象，而是把对象转换成String。
+继续Google，PendingIntent 参数为null，网上说了一大堆，和什么创建PendingIntent的时候的requestCode 或者flags有关，可是按照他们说的做了，还是为null。
+
+最后无意间发现了，原来是一个bug ,可以参照  [Android 7.0 pendingIntent bug(AlarmManager通过PendingIntent传递数据（跨进程数据传递)](https://blog.csdn.net/m190607070/article/details/78492887) 上面的解释，按照上面的方法做，不传递Parcelable类型的对象，而是把对象转换成String。
 ```java
 public void startAlarm(String data) {
        mIntent = new Intent(mContext, TimerActivity.UploadService.class);
        mIntent.putExtra("trip",data);
-       mPendingIntent = PendingIntent.getService(mContext, 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-       mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), mPendingIntent);
+       mPendingIntent = PendingIntent.getService(mContext, 0, mIntent
+                                  , PendingIntent.FLAG_UPDATE_CURRENT);
+       mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP
+                                  , SystemClock.elapsedRealtime(), mPendingIntent);
    }
 ```
 再传递，结果正常了
@@ -378,6 +417,9 @@ public void startAlarm(String data) {
 11-07 22:56:28.524  9151  9205 D hoyouly : onHandleIntent: {"time":1,"name":"hello"}
 ```
 目前为止，坑终于平晚了，主要还是Android 新版本的一些问题，原本熟悉的正常的代码到了新版本，尤其是Android 6.0 以后，就会遇到各种坑。不过总算解决了，唯一美中不足的是，要把Service变成静态内部类，这样他使用的所有外部类的变量都得成静态的，可是我又没办法把Service变成单独的类，如果这样，需要创建的变量会更麻烦，所以只能这样了。
+
+
+
 
 ---
 搬运地址：  
