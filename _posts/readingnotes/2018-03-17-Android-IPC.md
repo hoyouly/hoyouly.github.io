@@ -83,7 +83,7 @@ Android为每个应用分配了一个独立的虚拟机，或者说每一个进�
 3. SharedPreferences的可靠性下降，因为不支持两个进程同时执行写操作，可能会导致一定几率的数据丢失，这是因为SharedPreferences底层是通过读写XML文件来实现的，并发写显然可能出问题
 4. Application多次创建。一个组件跑在一个新的进程的时候，由于系统要创建新的进程同时分配独立的虚拟机，所以这一个过程其实就是启动一个应用的过程，因此开启一个进程相当于重新启动一遍应用。既然重新启动，Application自然会新建一个。**运行在同一个进程中的组件属于同一个虚拟机和Application，同理，运行在不同的进程中的组件是属于不同的虚虚拟机和Application的**
 
-### 跨进程通信的方式：
+### 跨进程通信的方式
 * 通过Intent来传递数据
 * 共享文件
 * SharedPreferences
@@ -118,7 +118,7 @@ try {
 }
 ```
 反序列化和序列化的过程，恢复后的newUser对象和user的内容完全一样，但是二者并不是同一个对象
-#### serialVersionUID 是个毛线
+#### serialVersionUID
 serialVersionUID 是用来辅助序列化和反序列化过程的，原则上序列化后的数据中的serialVersionUID只有和当前类的serialVersionUID相同才能够正常被反序列化，
 
 **serialVersionUID工作机制：** 序列化的时候系统会把当前类的serialVersionUID写入序列化的文件中。当反序列化的时候系统会去检测文件中的serialVersionUID，看它是否和当前类的serialVersionUID 一致，如果一致就说明序列化的类的版本和当前类的版本相同，这个时候可以成功反序列化。否则说明当前类和序列化的类发生某些变化，比如成员变量的数量，类型等等，这个时候回无法正常反序列化，程序 crash，如下图所示
@@ -179,14 +179,14 @@ Android开发中，Binder主要用于在Service中，包括AIDL和Messager，其
 
 
 ## Android中的IPC方式
-### 使用Bundle
+### Bundle
 四大组件中的三个（Activity，Service，Receiver）都支持在Intent中传递Bundle数据，由于Parcelable接口，可以方便在不同进程之间传输，
 A进程需要把计算的结果传递给B进程中的一个组件，可是这个结果不支持Bundle，可以使用曲线救国方式。
 通过Intent启动进程B点一个Service组件，然后在这个组件中计算，计算后再启动B进行真正要启动的目标组件，由于Service也在B进程中，所以目标组件可以直接获取计算结果。这种方式的核心思想：将原本属于A进程的计算任务转移到B进程的后台Service中执行。这样就成功避免进程通信的问题，而且代价很小
 ### 文件共享
 共享数据是对文件格式没有具体要求的，只要是读写双方约定的数据格式即可。文件共享局限性：比如并发读写问题，适合在对数据同步要求不高的进程之间进行通信，并且要妥善处理并发读写问题
 不建议在进程通信中使用SharedPreference，因为面对高并发的读写，SharedPreference有很大的几率会丢失数据。
-### 使用Messager
+### Messager
 信使。通过它可以在不同进程中传递Message对象，在Message中存放我们需要传递的数据，这样就可以轻松实现进程传递过程。轻量级的IPC方案，底层实现是AIDL，由于它一次处理一个请求，不需要考虑线程同步问题。
 实现步骤：
 1. 服务端进程
@@ -200,8 +200,7 @@ A进程需要把计算的结果传递给B进程中的一个组件，可是这个
 在Messenger中进行数据传递必须将数据放入到Message中，而Messenger和Message都实现了Parcelable接口，因此可以跨进程传输，
 Messenger是以串行方式处理客户端发来的消息，如果大量的消息同事发送到服务器，服务器任然只能一个个处理，这样就不适合大量并发请求。主要作用是为了传递消息，不能夸进程调用服务端的方法，
 ### AIDL
-Messenger底层是AIDL，AIDL可以实现夸进程的方法调用。
-详情请看 []()
+详情点击  [Android AIDL 总结](http://hoyouly.fun/2019/07/17/Android-AIDL/)
 ### ContentProvider
 Android中专门用于不同应用程序间进行数据共享的方式，天生适合进程通信，底层实现Binder，
 
