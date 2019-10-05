@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Android 四大组件 记录
+title: Android 四大组件 概况
 category: 读书笔记
 tags: Android开发艺术探索 Activity Service ContentProvider Broadcast
 ---
