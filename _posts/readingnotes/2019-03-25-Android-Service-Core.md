@@ -2,7 +2,7 @@
 layout: post
 title: Android 四大组件之 Service
 category: 读书笔记
-tags: Android开发艺术探索 Activity Service ContentProvider Broadcast
+tags: Android开发艺术探索  Service 
 ---
 * content
 {:toc}
