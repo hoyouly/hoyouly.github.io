@@ -2,7 +2,7 @@
 layout: post
 title: Android 四大组件 概况
 category: 读书笔记
-tags: Android开发艺术探索 Activity Service ContentProvider Broadcast IntentService 
+tags: Android开发艺术探索 Activity Service ContentProvider Broadcast IntentService
 ---
 
 * content
@@ -49,90 +49,7 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
 1. onCreat()始终只会调用一次
 2. 停止服务需要 unbindService()和stopService()同时调用才行，不论先后
 
-### IntentService
-是继承Service，在被创建的时候，就已经创建了一个HandlerThread和ServiceHandler，有了他，就可以利用IntentService执行一些优先级较高的task,因为它不会被轻易杀死，
-使用方法
-1. 创建一个IntentService的子类。复写其中的onHandleIntent()方法，在这里进行耗时的操作
-2. startService(intent)
-这样就行了，简单。可是为啥IntentService就能直接处理耗时操作呢，普通的Service还需要在onStartCommand()中再开线程才行。
 
-IntentService NB到哪里了，这就说到另外一个类了，HanderThread
-
-#### HandlerThread
-继承 Thread，在其run()方法中为自己创建了Looper,
-```java
-public class HandlerThread extends Thread {
-		@Override
-    public void run() {
-        mTid = Process.myTid();
-        Looper.prepare();
-        synchronized (this) {
-            mLooper = Looper.myLooper();
-            notifyAll();
-        }
-        Process.setThreadPriority(mPriority);
-        onLooperPrepared();
-        Looper.loop();
-        mTid = -1;
-    }
-}
-```
-是个Thread不假，但是在run()方法中，竟然Looper.prepare()，还Looper.loop()，新建一个Looper对象，并且已经启动loop开始循环。这就有点意思了。
- <span style="border-bottom:1px solid red;">所以使用上HandlerThread和普通的Thread不一样,无法执行后台常见的操作，只能处理新消息。因为Looper.loop()是一个死循环</span>
-
-有了HanderThread 这个奇怪的类，就可以实现IntentService的功能了。因为 <font color="#ff000" >IntentService可以看做是 Service和HanderThread的结合体。</font>
-
-还是看IntentService的源码吧
-
-```java
-public abstract class IntentService extends Service {
-
-	private final class ServiceHandler extends Handler {
-         public ServiceHandler(Looper looper) {
-             super(looper);
-         }
-
-         @Override
-         public void handleMessage(Message msg) {
-             onHandleIntent((Intent)msg.obj);
-             stopSelf(msg.arg1);
-         }
-     }
-	@Override
-  public void onCreate() {
-     super.onCreate();
-     HandlerThread thread = new HandlerThread("IntentService[" + mName + "]");
-     thread.start();
-     mServiceLooper = thread.getLooper();
-     mServiceHandler = new ServiceHandler(mServiceLooper);
-  }
-
-	@Override
-	public void onStart(Intent intent, int startId) {
-		 Message msg = mServiceHandler.obtainMessage();
-		 msg.arg1 = startId;
-		 msg.obj = intent;
-		 mServiceHandler.sendMessage(msg);
-	}
-
-	 @Override
-	 public int onStartCommand(Intent intent, int flags, int startId) {
-			 onStart(intent, startId);
-			 return mRedelivery ? START_REDELIVER_INTENT : START_NOT_STICKY;
-	 }
-	 protected abstract void onHandleIntent(Intent intent);
-}
-```
-1. 在onCreate()的时候，就创建一个HandlerThread对象，然后启动，拿到这个HandlerThread的Looper对象，这才是关键。<span style="border-bottom:1px solid red;">创建一个继承Handler的类 ServiceHandler，把得到的子线程的Looper对象传进去。</span>
-2. 是Service，startService()后，肯定就会执行到了onStartCommand()方法，里面执行了onStart()的。这个时候关键来了，<span style="border-bottom:1px solid red;">把intent封装成Message然后通过ServiceHandler 送出去。</span> 之前我们讲过，<font color="#ff000" >创建Handler的时候需要一个Looper对象，这个Looper对象属于哪个线程，那么Handler就会把消息发送给那个线程。</font> ServiceHandler 创建的时候传递的是子线程的Looper对象，那么会把消息发送到这个子线程中去。所以handleMessage()就肯定是在HanderThread这个线程中执行的。
-3. handleMessage()中调用了 onHandleIntent(),这个是需要我们实现的方法，可以进行执行耗时操作的方法。因为它就是执行在子线程的。
-4. handleMessage() 最后会 stopSelf(msg.arg1)，把自己停掉。这么智能啊。
-
-所以IntentService有以下特点：
-* 继承Service，所以优先级笔记高
-* 内创建了一个HandlerThread 和ServiceHandler，可以做一些耗时操作
-* 当任务执行完成后，IntentService自动停止，不需要我们手动结束
-* 如果多次启动IntentService，使用串行方式，依次执行onHandlerIntent(),执行完自动结束。那么每个耗时的操作都会消息的形式发生到消息队列中。
 
 ### BroadcastReceiver  消息型组件
 用于在不同组件乃至不同应用直接传递消息，广播注册有两种方式，

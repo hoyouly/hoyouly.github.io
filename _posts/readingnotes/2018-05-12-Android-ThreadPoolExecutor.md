@@ -91,17 +91,16 @@ Android中最常见的四类不同功能特性的线程池。他们都是直接�
 ### FixedThreadPool 线程数量固定的线程池
 1. 通过 Executors 的 newFixedThreadPool(int nThreads) 创建
 2. 线程数量固定的线程池，当线程处于空闲状态，不会被回收，除非线程池被关闭
-3. 当所有线程都处于活动状态时，新任务会处于等待状态，知道有空闲出来，
+3. 当所有线程都处于活动状态时，新任务会处于等待状态，直到有空闲出来，
 4. 只有核心线程并且不会被回收，这意味着它能够更加快速的相应外界的请求
 5. 任务队列没有大小限制。
 
 ```java
- public static ExecutorService newFixedThreadPool(int nThreads) {
-        return new ThreadPoolExecutor(nThreads, nThreads,
-                                      0L, TimeUnit.MILLISECONDS,
-                                      new LinkedBlockingQueue<Runnable>());
-    }
-
+public static ExecutorService newFixedThreadPool(int nThreads) {
+    return new ThreadPoolExecutor(nThreads, nThreads,
+                                  0L, TimeUnit.MILLISECONDS,
+                                  new LinkedBlockingQueue<Runnable>());
+}
 ```
 ### CachedTheadPool 线程数量不定的线程池
 
@@ -115,9 +114,9 @@ Android中最常见的四类不同功能特性的线程池。他们都是直接�
 
 ```java
 public static ExecutorService newCachedThreadPool() {
-      return new ThreadPoolExecutor(0, Integer.MAX_VALUE,//
-                                    60L, TimeUnit.SECONDS,//
-                                    new SynchronousQueue<Runnable>());
+  return new ThreadPoolExecutor(0, Integer.MAX_VALUE,//
+                                60L, TimeUnit.SECONDS,//
+                                new SynchronousQueue<Runnable>());
 }
 
 ```
