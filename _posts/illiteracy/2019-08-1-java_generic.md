@@ -9,8 +9,8 @@ tags: 泛型
 # 泛型
 作用： 编译时期做类型检查以及自动转型。
 ## 泛型类
-静态成员变量不能是参数化类型，因为静态成员变量属于一个类，所有的对象持有一份，如果静态成员变量能够使用参数类型，那么不同的对象造成不同的类型，这样就造成了冲突
 包括泛型类，泛型接口，泛型方法
+
 ## 泛型方法
 
 ```java
@@ -27,14 +27,18 @@ public <T> String getString(T parm) {
 ```java
 List<Object> objectList=new ArrayList<String>(); //错误，
 
-List<?> list=new ArrayList<String>(); //正确   ？表示可以是任何类型但是不能确定是什么类型，
+List<?> list=new ArrayList<String>(); //正确   
+//？表示可以是任何类型但是不能确定是什么类型，
 
-list.add("hello");//错误   list.add(T t)这个方法的参数是T，声明list的时候传入的参数化类型是"?",而？表示不确定是什么类型，不知道是什么类型所以不能使用这个方法。
+list.add("hello");//错误   
+//list.add(T t)这个方法的参数是T，声明list的时候传入的参数化类型是"?",
+//而？表示不确定是什么类型，不知道是什么类型所以不能使用这个方法。
 
-Object o = list.get(0);//正确，？表示不确定是什么类型，但是所有的类型都继承Object
+Object o = list.get(0);//正确，
+//？表示不确定是什么类型，但是所有的类型都继承Object
 ```
 ### 带有下边界的通配符
-`<?extends Number>  ? 只能是Number的类或者子类 `
+`<? extends Number>  ? 只能是Number的类或者子类 `
 ```java  
 List<? extends Number> list1;
 list1=new ArrayList<Integer>(); //正确 Integer 继承 Number
@@ -54,7 +58,9 @@ list2=new ArrayList<Number>(); //正确 Number是父类
 
 list2.add(new Integer(0)); //正确 ， Integer 是子类，
 
-Integer object = list2.get(0); //错误 因为只能确定返回的是Integer或者父类，但是不能确定是哪个父类，所以使用Integer接受就错误，只能使用Object接受
+Integer object = list2.get(0); //错误
+//因为只能确定返回的是Integer或者父类，但是不能确定是哪个父类，所以使用Integer接受就错误，只能使用Object接受
+
 Object object1 = list2.get(0); //正确  
 ```
 `不能取(get)，只能添加(add)`
@@ -112,8 +118,11 @@ public void test() {
 }
 ```
 为啥 MyData<RedApple> data1 = null编译失败了呢
+
 前面已经定义了 MyData<T extends Comparable<T>>，RedApple 就是T，那么替换就是
+
 MyData<RedApple extends Comparable<RedApple>>
+
 虽然RedApple 继承了Apple，Apple 又实现 Comparable 接口，也就相当于 RedApple 实现了Comparable 可是Comparable 中的泛型却是 Apple，而不是RedApple，所以编译失败
 当我们在RedApple中重写compareTo()就知道了
 ```java
@@ -126,16 +135,21 @@ class RedApple extends Apple  {
 ```
 
 ### 为啥不能创建泛型数组
-因为java使用擦除实现的泛型，在运行的时候类型参数会被擦除。无法知道确切的类型，而对于java数组来说，必须知道它持有的所有对象的类型，因此不能创建泛型数组，但是能不能曲线救国呢？
+因为java使用擦除实现的泛型，在运行的时候类型参数会被擦除。无法知道确切的类型，而对于java数组来说，必须知道它持有的所有对象的类型，因此不能创建泛型数组.
+
+但是能不能曲线救国呢？
 ```java
 String[] strings = new String[9]; // 正常
 List[] arr0 = new ArrayList[9]; //正常
 
 List<String>[] arr=new ArrayList<String>[9];//错误，
 
-List<String>[] arr1 = (ArrayList<String>[]) new ArrayList[9]; //正确，通过强转，绕过编译器实例化检查
+List<String>[] arr1 = (ArrayList<String>[]) new ArrayList[9]; //正确，
+//通过强转，绕过编译器实例化检查
+
 arr1[0]=new ArrayList<String>();//正确
-arr1[1]=new ArrayList<Integer>(); //错误，类型不合法，因为通过强转，java已经获悉这个数组在运行时要应持有的具体数据类型，
+arr1[1]=new ArrayList<Integer>(); //错误，
+//类型不合法，因为通过强转，java已经获悉这个数组在运行时要应持有的具体数据类型，
 ```
 参数化数组本身的类型，
 不在参数化数组持有的类型，而是将数组应该存储的对象进行参数化。
@@ -155,11 +169,13 @@ public static void main(String[] args) {
 虽然能通过参数化本身的类型，但是也不能直接创建泛型数组，只能通过强转
 ```java
 public static <T> T[] creatArr(int size) {
-       return (T[]) new Object[size];
-   }
+   return (T[]) new Object[size];
+}
 ```
 ### 静态变量不能是泛型类型
-泛型在创建的时候才知道是什么类型，而对象创建的代码执行先后顺序是 先static，后才是构造函数，所以在对象初始化之前，static部分已经执行了，如果在静态变量中设置泛型，java虚拟机就不知道是什么鬼东西了，因为这个时候对象还没创建呢，因此在静态方法、数据域或初始化语句中，为了类而引用泛型类型参数是非法的。
+解释一: 泛型在创建的时候才知道是什么类型，而对象创建的代码执行先后顺序是 先static，后才是构造函数，所以在对象初始化之前，static部分已经执行了，如果在静态变量中设置泛型，java虚拟机就不知道是什么鬼东西了，因为这个时候对象还没创建呢，因此在静态方法、数据域或初始化语句中，为了类而引用泛型类型参数是非法的。
+
+解释二：因为静态成员变量属于一个类，所有的对象持有一份，如果静态成员变量能够使用参数类型，那么不同的对象造成不同的类型，这样就造成了冲突
 
 ---
 搬运地址：   
