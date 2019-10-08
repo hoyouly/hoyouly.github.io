@@ -2,7 +2,7 @@
 layout: post
 title: View 的绘制 --- Draw 流程，invalidate的流程 以及 requestLayout 流程
 category: 读书笔记
-tags: view  Android开发艺术探索
+tags: View  Android开发艺术探索
 ---
 * content
 {:toc}

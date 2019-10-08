@@ -2,7 +2,7 @@
 layout: post
 title: 免输密码登录服务器的Shell 脚本
 category: 工具
-tags: 免输密码 服务器 Shell脚本
+tags: Shell
 ---
 * content
 {:toc}

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: java基础夯实--泛型
-category: 基础夯实
-tags: 泛型
+title: 扫盲系列之---Java 泛型
+category: 扫盲系列
+tags: 泛型 Java
 ---
 * content
 {:toc}

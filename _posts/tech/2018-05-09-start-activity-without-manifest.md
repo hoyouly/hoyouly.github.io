@@ -2,7 +2,7 @@
 layout: post
 title: 启动一个不在AndroidManifest中注册的Activity
 category: 技术
-tags: AndroidManifest startActivity
+tags: AndroidManifest 
 ---
 * content
 {:toc}

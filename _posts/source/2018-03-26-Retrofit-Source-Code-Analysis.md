@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Retrofit 源码分析
-category: 技术
-tags: Android Retrofit 源码分析
+category: 源码分析
+tags: Android Retrofit
 ---
 
 * content

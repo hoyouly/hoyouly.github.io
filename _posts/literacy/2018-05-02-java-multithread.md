@@ -2,7 +2,7 @@
 layout: post
 title: 扫盲系列之---Java 多线程和锁机制
 category: 扫盲系列
-tags: java 多线程
+tags: Java 多线程
 ---
 * content
 {:toc}
