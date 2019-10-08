@@ -253,12 +253,18 @@ public abstract class IntentService extends Service {
 			 return mRedelivery ? START_REDELIVER_INTENT : START_NOT_STICKY;
 	 }
 	 protected abstract void onHandleIntent(Intent intent);
+
+   @Nullable
+   public IBinder onBind(Intent intent) {
+       return null;
+   }
 }
 ```
 1. 在onCreate()的时候，就创建一个HandlerThread对象，然后启动，拿到这个HandlerThread的Looper对象，这才是关键。<span style="border-bottom:1px solid red;">创建一个继承Handler的类 ServiceHandler，把得到的子线程的Looper对象传进去。</span>
 2. 是Service，startService()后，肯定就会执行到了onStartCommand()方法，里面执行了onStart()的。这个时候关键来了，<span style="border-bottom:1px solid red;">把intent封装成Message然后通过ServiceHandler 送出去。</span> 之前我们讲过，<font color="#ff000" >创建Handler的时候需要一个Looper对象，这个Looper对象属于哪个线程，那么Handler就会把消息发送给那个线程。</font> ServiceHandler 创建的时候传递的是子线程的Looper对象，那么会把消息发送到这个子线程中去。所以handleMessage()就肯定是在HanderThread这个线程中执行的。
 3. handleMessage()中调用了 onHandleIntent(),将Intent对象传递给onHandleIntent()处理，这个Intent的内容和外界的startService（Intent）的内容是完全一致，onHandleIntent()是需要我们实现的方法，可以进行执行耗时操作的方法。因为它就是执行在子线程的。并
 4. handleMessage() 最后会 stopSelf(msg.arg1)，把自己停掉。这么智能啊。
+5. <span style="border-bottom:1px solid red;">onBind()中返回null，所以不适合使用bindService()的方式使用IntentService()</span>
 
 所以IntentService有以下特点：
 * 继承Service，所以优先级比较高
