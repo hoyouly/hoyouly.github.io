@@ -7,7 +7,7 @@ tags: Android  ListView的优化  性能优化
 * content
 {:toc}
 
-## ListView优化方案
+## Listview优化方案
 1. 复用contentView,减少重新分配缓存造成的内存频繁分配回收
 2. ViewHolder的使用，主要是因为findViewById()消耗时间太大，使用setTag(),getTag()得到view
 3. 图片加载优化 监听Listview的滑动状态，滑动的时候（SCROLL_STATE_TOUCH_SCROLL）和惯性滑动的时候（SCROLL_STATE_FLING）不加载，停止滑动的时候再加载。listView.setOnScrollListener();
@@ -113,22 +113,13 @@ IntentService和Service都是一个服务，区别在于IntentService使用队�
 
 * 代码混淆。使用proGuard 代码混淆器工具，它包括压缩、优化、混淆等功能。
 * 资源优化。比如使用 Android Lint 删除冗余资源，资源文件最少化等。
-* 图片优化。比如利用 AAPT 工具对 PNG 格式的图片做压缩处理，降低图片色彩位数等。或者使用 WebP图片格式
-* 避免重复功能的库
-* 插件化。比如功能模块放在服务器上，按需下载，可以减少安装包大小。
-* 清理assert文件夹下无用的文件
-* 根据实际情况进行多分辨率的支持，如果APP只是针对某种特定的机型，只需要一套图片即可
-* 如果引用第三方aar,使用到了他们的资源，但是如果我们只想使用mdpi,那么可以根据情况剔除其他的，在
-  ```
-  defaultConfig{
-    resConfigs "mdpi"
-  }
-  ```
+* 图片优化。比如利用 AAPT 工具对 PNG 格式的图片做压缩处理，降低图片色彩位数等。
+* 避免重复功能的库，使用 WebP图片格式等。
+*  插件化。比如功能模块放在服务器上，按需下载，可以减少安装包大小。
 
----   
-搬运地址：    
+摘抄：
 
-[Android优化】最强ListView优化方案](http://blog.csdn.net/gs12software/article/details/51173392)
+[ 【Android优化】最强ListView优化方案](http://blog.csdn.net/gs12software/article/details/51173392)
 
 [Android APP性能优化(最新总结)](http://blog.csdn.net/csdn_aiyang/article/details/74989318)
 
