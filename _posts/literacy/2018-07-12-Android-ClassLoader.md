@@ -11,14 +11,17 @@ tags:  Android ClassLoader
 主要包括
 * BootClassLoader
 * URLClassLoader
+* BaseDexClassLoader
 * PathClassLoader
 * DexClassLoader
-* BaseDexClassLoader
+* InMemoryDexClassLoader
+* DelegateLastClassLoader
+
 
 这些最终都继承自java.lang.ClasssLoader
 
 关系图如下：
-![Android 平台的ClassLoader](http://upload-images.jianshu.io/upload_images/260671-024394df0814f32d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![Android 平台的ClassLoader](https://github.com/hoyouly/BlogResource/raw/master/imges/android_classloader.png)
 
 ###  BootCLassLoader  
 和JVM不同的是，BootClassLoader是ClassLoader的内部类，由Java代码实现而不是C++
@@ -93,6 +96,60 @@ public class DexClassLoader extends BaseDexClassLoader {
 2. 虽然说dalivk不能直接识别JAR，但却说DexClassLoader能加载JAR文件，其实这个不矛盾，因为在BaseDexClassLoader里面对“.jar”,".apk",".zip",".dex"后缀的文件最后都会生成对应的dex文件，所以最终处理的还是dex文件，而URLClassLoader却没有做这样的处理，所以我们<font color="#ff000" > 一般都是用DexClassLoader来作为动态加载的加载器</font>
 3. 可以从包含classes.dex的JAR或者APK 中加载类的加载器，用于执行动态加载，但必须是app私有可写目录来缓存ODEX 文件，能够加载系统没按照的apk或者JAR文件，因此很多插件化方案都是用DexClassLoader
 
+### InMemoryDexClassLoader
+在API 26 (Android 8.0 )时新增的一个类加载器
+
+```java
+public final class InMemoryDexClassLoader extends BaseDexClassLoader {
+    public InMemoryDexClassLoader(ByteBuffer[] dexBuffers, ClassLoader parent) {
+        super(dexBuffers, parent);
+    }
+    public InMemoryDexClassLoader(ByteBuffer dexBuffer, ClassLoader parent) {
+        this(new ByteBuffer[] { dexBuffer }, parent);
+    }
+}
+```
+由代码可知：
+1. 继承BaseDexClassLoader。
+2. 构造函数调用父类的构造函数，ByteBuffer数组构造一个DesPathList,可用于内存的DEX文件
+
+### DelegateLastClassLoader
+在API 27 (Android 8.1)新增的类加载器,继承 PathClassLoder.
+
+```java
+public final class DelegateLastClassLoader extends PathClassLoader {
+    public DelegateLastClassLoader(String dexPath, ClassLoader parent) {
+        super(dexPath, parent);
+    }
+		@Override
+		protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+    	Class<?> cl = findLoadedClass(name);
+    	if (cl != null) {
+        	return cl;
+    	}
+    	try {
+        	return Object.class.getClassLoader().loadClass(name);
+    	} catch (ClassNotFoundException ignored) {
+    	}
+      	ClassNotFoundException fromSuper = null;
+      	try {
+          	return findClass(name);
+      	} catch (ClassNotFoundException ex) {
+          	fromSuper = ex;
+      	}
+      	try {
+          	return getParent().loadClass(name);
+      	} catch (ClassNotFoundException cnfe) {
+          	throw fromSuper;
+      	}
+  	}
+}
+```
+实行的是最后查找策略。使用DelegateLastClassLoader来加载每个类或者资源。使用一下查找顺序
+1. 首先判断是否已经加载过该类
+2. 然后搜索此类的类加载器是否加载过这个类
+3. 最后，搜索与此类加载器的dexPath关联的dex文件列表，委托给指定的父对象加载
+
 
 ## 双亲委托模型
 我们知道，每一个加载器都有一个父加载器，这个双亲委托模型就和这个父加载器有关：如果一个加载器收到了加载类的请求，他首先不会自己尝试去加载这个类，而是把这个请求交给他的父类加载器完成，父类加载器也有父类加载器的，每个加载器都是如此，只有当父加载器在自己搜索范围内找不到指定的类时( ClassNotFoundException),子加载器才会尝试自己去加载。
@@ -140,8 +197,16 @@ public class DexClassLoader extends BaseDexClassLoader {
     }
 ```
 
+一个ClassLoader可以有多个DEX文件，每个Dex文件是一个Element,多个Dex文件排成一个有序的dexElements,当找类的时候，会按照顺序遍历Dex文件，然后从当前的Dex文件中找类，由于双亲委托模型机制，只要找到就会停止并且返回，如果找不到就从下一个Dex文件中继续寻找，知道我们先加载修复好的DEX文件，那么就不会加载有bug的Dex文件了。
+
+另外，假设APP引用的类A，再其内部引用的类B，如果类A和类B在同一个DEX文件中，那么类A上就会被打上 CLASS_ISPREVERIFIED标记，被标记的这个类不能引用其他dex文件中的类，否则会报错。A类如果还引用了一个C类，而C类在其他dex中，那么A类并不会被打上标记。换句话说，只要在static方法，构造方法，private方法，override方法中直接引用了其他dex中的类，那么这个类就不会被打上CLASS_ISPREVERIFIED标记。
+
+解决方案就是 让所有类都引用其他dex中的某个类就可以了。
+
+
 - - - -
 搬运地址：   
 [Android动态加载之ClassLoader详解](https://www.jianshu.com/p/a620e368389a)   
 [Android类加载器ClassLoader](http://gityuan.com/2017/03/19/android-classloader/)    
-[热修复入门：Android 中的 ClassLoader](https://jaeger.itscoder.com/android/2016/08/27/android-classloader.html)
+[热修复入门：Android 中的 ClassLoader](https://jaeger.itscoder.com/android/2016/08/27/android-classloader.html)   
+[Android热补丁动态修复技术（二）：实战！CLASS_ISPREVERIFIED问题！](https://blog.csdn.net/u010386612/article/details/51077291)
