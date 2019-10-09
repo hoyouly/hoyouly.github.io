@@ -20,6 +20,31 @@ tags:
 [百度网址](http://www.baidu.com)  
 
 ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/tcp_three_hand.png)
+
+
+<style>
+table th:first-of-type {
+	width: 80px;
+}
+table th:nth-of-type(2) {
+  	width: 80px;
+}
+</style>
+
+| 类型 | 强引用 | 软引用 | 弱引用 | 虚引用 |
+|:----|:------|:------| :------|:------|
+|引用级别|最高|较高|较低|无|
+
+
+
+首先 <th> 存在于 <table> 中；   
+其次 th:first-of-type 的意思是每个 <th> 为其父级的第一个元素，   
+这里指的就是围绕着【名称】的 <th>。   
+同理第二、三个使用 th:nth-of-type(2)、th:nth-of-type(3) 就可以了，以此类推。  
+th:first-of-type 等于 th:nth-of-type(1)。
+[Markown 表格之调整宽度技巧](https://blog.csdn.net/maxsky/article/details/54666998)
+
+
 ---
 搬运地址：
 
