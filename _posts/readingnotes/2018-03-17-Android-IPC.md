@@ -169,20 +169,18 @@ Parcel 内部包装了可序列化的数据，可以在Binder中自由传输，
 3. 使用Parcelable 将对象序列化到存储设备中或者将对象序列化后通过网络传输，过程复杂，建议在这种情况下使用Serializable
 
 ### Binder
-* 是Android的一个类，实现了IBinder接口
-* 从IPC角度说，是Android的一种跨进程通信方式，在Linux中没有
-* 还可以理解为一种虚拟的物理设备，设备驱动在/dev/binder,
-* 从Android Framework角度来说，是ServiceManager连接各种Manager（ActivityManager，WindowManager等）和形影的ManagerService的桥梁
-* 从Android应用层来说，是客户端和服务端进行通信的媒介，当bindService的时候，服务端会返回一个包含了服务端业务调用的Binder对象，通过这个Binder对象，客户端就可以获取服务器提供的服务或者数据了，这里的服务包括普通的服务和基于AIDL的服务
-
-Android开发中，Binder主要用于在Service中，包括AIDL和Messager，其中普通服务中的Binder不涉及到进程通信，而Messager底层是AIDL技术。
+详情点击  [Android Binder 总结](http://hoyouly.fun/2018/03/17/Android-Binder/)  和   [从一个小例子理解Binder整个流程](http://hoyouly.fun/2019/10/01/Binder-Demo/)
 
 
 ## Android中的IPC方式
 ### Bundle
-四大组件中的三个（Activity，Service，Receiver）都支持在Intent中传递Bundle数据，由于Parcelable接口，可以方便在不同进程之间传输，
-A进程需要把计算的结果传递给B进程中的一个组件，可是这个结果不支持Bundle，可以使用曲线救国方式。
-通过Intent启动进程B点一个Service组件，然后在这个组件中计算，计算后再启动B进行真正要启动的目标组件，由于Service也在B进程中，所以目标组件可以直接获取计算结果。这种方式的核心思想：将原本属于A进程的计算任务转移到B进程的后台Service中执行。这样就成功避免进程通信的问题，而且代价很小
+&#8195;&#8195;四大组件中的三个（Activity，Service，Receiver）都支持在Intent中传递Bundle数据，因为Bundle 实现了 Parcelable接口，所以可以方便在不同进程之间传输.
+
+&#8195;&#8195;A进程需要把计算的结果传递给B进程中的一个组件，可是这个结果不支持Bundle，可以使用曲线救国方式。
+
+&#8195;&#8195;通过Intent启动进程B点一个Service组件，然后在这个组件中计算，计算后再启动B进行真正要启动的目标组件，由于Service也在B进程中，所以目标组件可以直接获取计算结果。
+
+&#8195;&#8195;这种方式的核心思想：将原本属于A进程的计算任务转移到B进程的后台Service中执行。这样就成功避免进程通信的问题，而且代价很小
 ### 文件共享
 共享数据是对文件格式没有具体要求的，只要是读写双方约定的数据格式即可。文件共享局限性：比如并发读写问题，适合在对数据同步要求不高的进程之间进行通信，并且要妥善处理并发读写问题
 不建议在进程通信中使用SharedPreference，因为面对高并发的读写，SharedPreference有很大的几率会丢失数据。
@@ -200,27 +198,6 @@ A进程需要把计算的结果传递给B进程中的一个组件，可是这个
 在Messenger中进行数据传递必须将数据放入到Message中，而Messenger和Message都实现了Parcelable接口，因此可以跨进程传输，
 Messenger是以串行方式处理客户端发来的消息，如果大量的消息同事发送到服务器，服务器任然只能一个个处理，这样就不适合大量并发请求。主要作用是为了传递消息，不能夸进程调用服务端的方法，
 ### AIDL
-详情点击  [Android AIDL 总结](http://hoyouly.fun/2019/07/17/Android-AIDL/)
-### ContentProvider
-Android中专门用于不同应用程序间进行数据共享的方式，天生适合进程通信，底层实现Binder，
-
-#### 创建ContentProvider
-继承ContentProvider,并实现六个抽象方法，onCreate,query,update,insert,delete和getType
-* onCreate 代表ContentProvider的创建，一般是需要我们做一些初始化工作
-* getType用来返回一个Uri请求对应的MIME类型，比如图片，视频等，如果应用程序不关心这个选项，可以返回null或者`*/*`,
-* 剩下的四个对应着CRUD的操作
-
-除了onCreate又系统调用并运行在主线程中，其他五个方法都是由外界调用，并运行在Binder线程池中
-虽然ContentProvider底层数据看起来像是一个SQLite数据库，但是ContentProvider对底层的数据存储方式没有任何要求。我们即可以使用SQLite数据库，也可以使用普通文件，绳子可以采用内存中的一个对象进行数据的存储。
-
-注册ContentProvider，其中`android:authorities是Contentprovider的唯一标识,因此android:authorities必须唯一，`建议命名的时候加上包名前缀，
-
-ContentProvider 通过Uri来区分外界要访问的数据集合，为了知道外界要访问的是哪个表，我们需要为他们定义单独的Uri和Uri_code,并将Uri和Uri_Code想关联，可以使用UriMatcher的addURI方法将Uri和Uri_code 关联到一起，
-### Socket
-* TCP协议 面向连接的协议，提供稳定的双向通信功能，建立连接需要经过`三次握手`才能完成,
-* UDP 协议，无连接，提供不稳定的单项通行功能，效率更好，但是不能保证数据一定能够正确传输。
-
-## Binder连接池
 如何使用AIDL
 1.  创建一个Service和一个AIDL接口
 2.  创建一个类继承AIDL接口中的Stub类并实现Stub中的抽象方法
@@ -228,35 +205,34 @@ ContentProvider 通过Uri来区分外界要访问的数据集合，为了知道�
 4.  客户端绑定服务端Service。
 5.  建立连接后就可以访问远程服务端的方法了
 
+详情点击  [Android AIDL 总结](http://hoyouly.fun/2019/07/17/Android-AIDL/)
+
+### ContentProvider
+Android中专门用于不同应用程序间进行数据共享的方式，天生适合进程通信，底层实现Binder。
+
+继承ContentProvider,并实现六个抽象方法，onCreate(),query(),update(),insert(),delete()和getType()
+* onCreate() 代表ContentProvider的创建，一般是需要我们做一些初始化工作
+* getType()用来返回一个Uri请求对应的MIME类型，比如图片，视频等，如果应用程序不关心这个选项，可以返回null或者`*/*`,
+* 剩下的四个对应着CRUD的操作
+
+<span style="border-bottom:1px solid red;"> 除了onCreate()由系统调用并运行在主线程中，其他五个方法都是由外界调用，并运行在Binder线程池中</span>
+
+虽然ContentProvider底层数据看起来像是一个SQLite数据库，但是ContentProvider对底层的数据存储方式没有任何要求。我们即可以使用SQLite数据库，也可以使用普通文件，甚至可以采用内存中的一个对象进行数据的存储。
+
+注册ContentProvider，其中<font color="#ff000" > android:authorities是Contentprovider的唯一标识，因此android:authorities必须唯一</font>，建议命名的时候加上包名前缀.
+
+ContentProvider 通过Uri来区分外界要访问的数据集合，为了知道外界要访问的是哪个表，我们需要为他们定义单独的Uri和Uri_code,并将Uri和Uri_Code想关联，可以使用UriMatcher的addURI方法将Uri和Uri_code 关联到一起，
+
+### Socket
+* TCP协议 面向连接的协议，提供稳定的双向通信功能，建立连接需要经过`三次握手`才能完成,
+* UDP 协议，无连接，提供不稳定的单项通行功能，效率更好，但是不能保证数据一定能够正确传输。
+
+## Binder连接池
+
 Binder连接池的主要作用：将每个业务模块的Binder请求统一转发到远程Service中执行。从而避免了重复创建Service的过程。
 ## 选用合适的IPC方式
 ![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/ipc_method.png)
 
-
-
-Client中的Binder也可以看作是Server Binder的‘代理’，在本地代表远端Server为Client提供服务。
-面向对象思想的引入**将进程间通信转化为通过对某个Binder对象的引用调用该对象的方法**，而其独特之处在于**Binder对象是一个可以跨进程引用的对象，它的实体位于一个进程中，而它的引用却遍布于系统的各个进程之中。**
-最诱人的是，这个引用和java里引用一样既可以是强类型，也可以是弱类型，而且可以从一个进程传给其它进程，让大家都能访问同一Server，就象将一个对象或引用赋值给另一个引用一样。Binder模糊了进程边界，淡化了进程间通信过程，整个系统仿佛运行于同一个面向对象的程序之中。
-
-Binder框架定义了四个角色：Server，Client，ServiceManager（以后简称SMgr）以及Binder驱动。其中Server，Client，SMgr运行于用户空间，驱动运行于内核空间。这四个角色的关系和互联网类似：Server是服务器，Client是客户终端，SMgr是域名服务器（DNS），驱动是路由器。
-尽管名叫‘驱动’，实际上和硬件设备没有任何关系，只是实现方式和设备驱动程序是一样的：
-
-SMgr的作用是**将字符形式的Binder名字转化成Client中对该Binder的引用，使得Client能够通过Binder名字获得对Server中Binder实体的引用。注册了名字的Binder叫实名Binder，**
-
-Server创建了Binder实体，为其取一个字符形式，可读易记的名字，将这个Binder连同名字以数据包的形式通过Binder驱动发送给SMgr，
-
-Binder基于Client-Server通信模式，传输过程只需一次拷贝，为发送发添加UID/PID身份，既支持实名Binder也支持匿名Binder，安全性高。
-要想实现Client-Server通信据必须实现以下两点：
-1. server必须有确定的访问接入点或者说地址来接受Client的请求，并且Client可以通过某种途径获知Server的地址；
-2. 制定Command-Reply协议来传输数据。例如在网络通信中Server的访问接入点就是Server主机的IP地址+端口号，传输协议为TCP协议。
-
-对Server而言，Binder可以看成Server提供的实现某个特定服务的访问接入点， Client通过这个‘地址’向Server发送请求来使用该服务；对Client而言，Binder可以看成是通向Server的管道入口，要想和某个Server通信首先必须建立这个管道并获得管道入口。
-
-Client通过Binder的引用访问Server
-
-
 ---
-搬运地址：
-[Android 深入浅出AIDL（一）](https://blog.csdn.net/qian520ao/article/details/78072250)  
-
-[Android 深入浅出AIDL（二）](https://blog.csdn.net/qian520ao/article/details/78074983)  
+搬运地址：    
+Android 开发艺术探索

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  小例子再理解Binder过程
+title:  从一个小例子理解Binder整个流程
 category: 读书笔记
 tags:  Binder
 ---
@@ -8,7 +8,7 @@ tags:  Binder
 * content
 {:toc}
 
-之前已经写了一篇关于 [Android Binder 总结](http://hoyouly.fun/2018/03/17/Binder/)的文章，但是总感觉还是不太明白，于是就又想了一个感觉还不错的例子再来理解Binder原理。
+之前已经写了一篇关于 [Android Binder 总结](http://hoyouly.fun/2018/03/17/Binder/)的文章，但是总感觉还是不太明白，于是就又想了一个感觉还不错的例子再来理解Binder流程。
 
 我们来看个例子。
 

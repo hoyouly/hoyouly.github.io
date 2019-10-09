@@ -23,16 +23,15 @@ tags:  Android Binder
 内核空间： kernel space，kernel 是Linux操作的核心，独立于普通程序，可以访问受保护的内存空间，也有访问底层硬件设备的所有权限。
 对于Kernel这么一个高安全级别的东西，显然是不容许其它的应用程序随便调用或访问的，所以需要对Kernel提供一定的保护机制，这个保护机制用来告诉那些应用程序，你只可以访问某些许可的资源，不许可的资源是拒绝被访问的，于是就把Kernel和上层的应用程序抽像的隔离开，分别称之为Kernel Space和User Space。
 
-所以这里有两个隔离，一个进程间是相互隔离的，二是进程内有用户和内核的隔离。 即然有隔离，那么它们之前要相互配合时就得有合作（交互）。进程间的交互就叫进程间通信（或称跨进程通信，简称IPC），而进程内的用户和内核的交互就是系统调用。
+所以这里有两个隔离，<span style="border-bottom:1px solid red;">一个进程间是相互隔离的，二是进程内有用户和内核的隔离。</span> 即然有隔离，那么它们之前要相互配合时就得有合作（交互）。<span style="border-bottom:1px solid red;">进程间的交互就叫进程间通信（或称跨进程通信，简称IPC），而进程内的用户和内核的交互就是系统调用。</span>
 
 通过系统调用，用户空间可以访问内核空间，可是如果一个用户空间想要访问另外一个用户空间呢，这就需要用到进程间通信了，我们知道Android是基于Linux内核的，为啥Android系统没有使用Linux中已有的IPC手段，例如管道，system V IPC，socket，却要重复造轮子，自己重新写一套IPC机制呢，即Binder，可以参照知乎上的回答，[为什么 Android 要采用 Binder 作为 IPC 机制？](https://www.zhihu.com/question/39440766/answer/93550572)。
 
-主要有以下方面。
 ## Binder 的优点
-1. 性能方面
-在移动设备上（性能受限制的设备，比如要省电），广泛地使用跨进程通信对通信机制的性能有严格的要求，Binder相对出传统的Socket方式，更加高效。Binder数据拷贝只需要一次，而管道、消息队列、Socket都需要2次，共享内存方式一次内存拷贝都不需要，但实现方式又比较复杂。
-2. 安全方面
-传统的进程通信方式对于通信双方的身份并没有做出严格的验证，比如Socket通信ip地址是客户端手动填入，很容易进行伪造，而Binder机制从协议本身就支持对通信双方做身份校检，因而大大提升了安全性。
+1. 性能方面      
+  在移动设备上（性能受限制的设备，比如要省电），广泛地使用跨进程通信对通信机制的性能有严格的要求，Binder相对出传统的Socket方式，更加高效。Binder数据拷贝只需要一次，而管道、消息队列、Socket都需要2次，共享内存方式一次内存拷贝都不需要，但实现方式又比较复杂。
+2. 安全方面   
+  传统的进程通信方式对于通信双方的身份并没有做出严格的验证，比如Socket通信ip地址是客户端手动填入，很容易进行伪造，而Binder机制从协议本身就支持对通信双方做身份校检，因而大大提升了安全性。
 3. 调用方式，使用Binder时就和调用一个本地实例一样方便。
 
 那么到底什么是Binder呢？
@@ -43,7 +42,6 @@ tags:  Android Binder
 * Android系统的开放式很大程度上得益于这种极其方便的跨进程通信机制
 * 理解Binder对于理解整个Android系统有着重要的作用，Android系统的四大组件，AMS，PMS等系统服务无一不与Binder挂钩。可以说`无Binder不Android`
 
-Binder的框架采用C/S架构，包含四个角色： Server，Client，ServiceManager(SM)以及Binder驱动。其中Server，Client，SM 运行用户空间，而Binder驱动运行在内核空间。
 
 # Binder 分类
 Binder分为 **Binder对象** 和 **Binder驱动**。
@@ -51,11 +49,22 @@ Binder分为 **Binder对象** 和 **Binder驱动**。
 Binder驱动就是主要的内核模块，而整个Binder对象就是通讯载体。可以自由的通过Binder驱动穿梭任意进程。所以客户端或者服务器可以把数据放入Binder对象里，然后进行调用和通讯。
 
 ## Binder 驱动
-我们知道用户空间访问内核空间的唯一方式就是系统调用；虽然Binder不是Linux内核的一部分，它可以访问内核空间是因为Linux的动态可加载内核模块（Loadable Kernel Module，LKM）机制。模块是具有独立功能的程序，它可以被单独编译，但不能独立运行。它在运行时被链接到内核作为内核的一部分在内核空间运行。这样，Android系统可以通过添加一个内核模块运行在内核空间，用户进程之间的通信通过这个模块作为桥梁，就可以完成了。
-在Android系统中，这个运行在内核空间的，负责各个用户进程通过Binder通信的内核模块叫做Binder驱动;Binder驱动虽然默默无闻，却是通信的核心，尽管名叫驱动，实际上和硬件设备没有任何关系，只是实现方式和设备驱动程序是一样的。
+我们知道用户空间访问内核空间的唯一方式就是系统调用。
+
+虽然Binder不是Linux内核的一部分，它可以访问内核空间是因为Linux的动态可加载内核模块（Loadable Kernel Module，LKM）机制。该模块是具有独立功能的程序，它可以被单独编译，但不能独立运行。它在运行时被链接到内核作为内核的一部分在内核空间运行。
+
+这样，Android系统可以通过添加一个内核模块运行在内核空间，用户进程之间的通信通过这个模块作为桥梁，就可以完成了。
+
+<span style="border-bottom:1px solid red;"> 在Android系统中，这个运行在内核空间的，负责各个用户进程通过Binder通信的内核模块叫做Binder驱动</span>
+
+Binder驱动虽然默默无闻，却是通信的核心，尽管名叫驱动，实际上和硬件设备没有任何关系，只是实现方式和设备驱动程序是一样的。
 
 ## Binder 对象
-Binder对象是一个可以夸进程引用的对象，它的实现位于一个进程中，而它的引用却遍布与系统的各个进程之中。最诱人的是，这个引用和java引用一样，既可以是强类型，也可以是弱类型，而且可以从一个进程传递给其他进程，让大家都能访问同一个Server，就像将一个对象或引用赋值给另一个引用一样。分为本地对象和代理对象
+Binder对象是一个可以夸进程引用的对象，它的实现位于一个进程中，而它的引用却遍布与系统的各个进程之中。
+
+最诱人的是，这个引用和java引用一样，既可以是强类型，也可以是弱类型，而且可以从一个进程传递给其他进程，让大家都能访问同一个Server，就像将一个对象或引用赋值给另一个引用一样。
+
+分为本地对象和代理对象
 1. Binder 本地对像：AIDL接口实现端的对象
 2. Binder 代理对象： 它只是Binder本地对象的一个远程代理；对这个Binder代理对象的操作，会通过Binder驱动最终转发到Binder本地对象上去完成
 
@@ -72,32 +81,37 @@ Binder驱动是主要的内核模块，而整个Binder对象就是通讯载体�
 * 对于Client来说，Binder指的是Binder代理对象，**对于一个拥有Binder对象的使用者而言，它无须关心这是一个Binder代理对象还是Binder本地对象；对于代理对象的操作和对本地对象的操作对它来说没有区别。**
 * 对于传输过程而言，Binder是可以进行跨进程传递的对象；Binder驱动会对具有跨进程传递能力的对象做特殊处理：自动完成代理对象和本地对象的转换。
 
-面向对象思想的引入讲进程间通信转化为通过某个Binder对象的引用调用该对象的方法，而其独特之处在于Binder对象是一个可以夸进程引用的对象，它的实现位于一个进程中，而它的引用却遍布与系统的各个进程之中。最诱人的是，这个引用和java引用一样，既可以是强类型，也可以是弱类型，而且可以从一个进程传递给其他进程，让大家都能访问同一个Server，就像将一个对象或引用赋值给另一个引用一样。Binder模糊了进程边界，淡化了进程间通信过程，整个系统仿佛运行与同一个面向对象的程序之中，形形色色的Binder对象以及星罗棋布的引用仿佛粘是结整个应用程序的胶水，这也是Binder在英文中的原意。
+面向对象思想的引入将进程间通信转化为通过某个Binder对象的引用调用该对象的方法。
 
+Binder模糊了进程边界，淡化了进程间通信过程，整个系统仿佛运行与同一个面向对象的程序之中，形形色色的Binder对象以及星罗棋布的引用仿佛粘是结整个应用程序的胶水，这也是Binder在英文中的原意。
 
 # Binder框架
 
 虽然很多人都用访问网络来解释 Binder，但是总感觉不太好。不过还是把这个图贴上了。
 ![Binder关系图](https://github.com/hoyouly/BlogResource/raw/master/imges/Binder_1.png)
 
-在Binder框架中，也定义了四个角色。Server，Client，ServiceManager(SMgr)以及Binder驱动。
+Binder的框架采用C/S架构，也包含四个角色： Server，Client，ServiceManager以及Binder驱动。其中Server，Client，SM 运行用户空间，而Binder驱动运行在内核空间。
 
 ![Binder关系图](https://github.com/hoyouly/BlogResource/raw/master/imges/Binder_2.png)
-* Server，Client，SMgr 运行用户空间，而Binder驱动运行在内核空间。
+* Server，Client，ServiceManager 运行用户空间，而Binder驱动运行在内核空间。
 * Binder驱动和Service Manager可以看做是Android平台的基础架构，而Client和Server是Android的应用层，
 * 开发人员只需自定义实现client、Server端，借助Android的基本平台架构便可以直接进行IPC通信
-1. 和DNS类似，SMgr的作用是将字符形式的Binder转化为Client中对Binder的引用，使得Client能够通过Binder名字获得对Server中的Binder实体的引用。
+1. 和DNS类似，ServiceManager的作用是将字符形式的Binder转化为Client中对Binder的引用，使得Client能够通过Binder名字获得对Server中的Binder实体的引用。
 2. 注册了名字的Binder叫实名Binder，就像每个网站出来有IP地址，还有自己的网址，
 3. Server创建了Binder实体，为其取一个字符形式，可读易记的名字(例如张三)，
-4. 将这个Binder连同名字以数据的形式通过Binder驱动发送给 SMgr,通知SMgr注册了一个名叫张三的Binder，它位于某个Server中，Binder驱动为了这个穿过进程边界的Binder创建位于内核中的实体节点以及SMgr对实体的引用。将名字以及新建的应用打包传递给SMgr
-5. SMgr获得数据包后，从中取出名字和引用填入一张查找表，
-6. Server向SMgr注册了Binder的引用以及其名字后，Client就可以通过名字获得该Binder的引用了。
+4. 将这个Binder连同名字以数据的形式通过Binder驱动发送给 ServiceManager,通知ServiceManager注册了一个名叫张三的Binder，它位于某个Server中，Binder驱动为了这个穿过进程边界的Binder创建位于内核中的实体节点以及ServiceManager对实体的引用。将名字以及新建的应用打包传递给ServiceManager
+5. ServiceManager获得数据包后，从中取出名字和引用填入一张查找表，
+6. Server向ServiceManager注册了Binder的引用以及其名字后，Client就可以通过名字获得该Binder的引用了。
 
 # Binder 原理
 Binder采用C/S架构，从组件视角来说，包含Client，Server，ServiceManager以及Binder驱动，其中ServiceManager用于管理系统中的各种服务。架构图如下所示：
 ![](https://github.com/hoyouly/BlogResource/raw/master/imges/Binder_3.jpg)
 
-可以看出，无论是注册服务还是获取服务，都需要SMgr,这里的SMgr是Native层的SMgr,而不是framework层的SMgr，SMgr是整个Binder通信机制的大管家，是Android进程间通信机制Binder的守护进程。要掌握Binder机制，首先需要了解系统是如何首次启动Service Manager。当Service Manager启动之后，Client端和Server端通信时都需要先获取Service Manager接口，才能开始通信服务。
+可以看出，无论是注册服务还是获取服务，都需要ServiceManager,这里的ServiceManager是Native层的ServiceManager,而不是framework层的ServiceManager。
+
+<font color="#ff000" > ServiceManager是整个Binder通信机制的大管家，是Android进程间通信机制Binder的守护进程。</font>
+
+要掌握Binder机制，首先需要了解系统是如何首次启动ServiceManager。当ServiceManager启动之后，Client端和Server端通信时都需要先获取ServiceManager接口，才能开始通信服务。
 
 图中Client/Server/ServiceManage之间的相互通信都是基于Binder机制。既然基于Binder机制通信，那么同样也是C/S架构，则图中的3大步骤都有相应的Client端与Server端。
 1. 注册服务(addService)：Server进程要先注册Service到ServiceManager。该过程：Server是客户端，ServiceManager是服务端。
@@ -150,8 +164,6 @@ Binder基于Client-Server通信模式，传输过程只需一次拷贝，为发�
 2. 制定Command-Reply协议来传输数据。例如在网络通信中Server的访问接入点就是Server主机的IP地址+端口号，传输协议为TCP协议。
 
 对Server而言，Binder可以看成Server提供的实现某个特定服务的访问接入点， Client通过这个‘地址’向Server发送请求来使用该服务；对Client而言，Binder可以看成是通向Server的管道入口，要想和某个Server通信首先必须建立这个管道并获得管道入口。
-
-Client通过Binder的引用访问Server
 
 ---
 参考链接：

@@ -9,6 +9,20 @@ description: Android AIDL
 * content
 {:toc}
 
+
+## 名词解释
+### IInterface
+自定义AIDL接口需要继承了 IInterface 接口，只有一个asBinder(),用来返回AIDL中Stub类的对象。如果是同进程的本地接口，则返回this，否则，返回BinderProxy代理对象。
+
+### IBinder
+* IBinder是一个接口，它代表了一种跨进程传输的能力；只要实现了这个接口，就能将这个对象进行跨进程传递；这是驱动底层支持的；在跨进程数据流经驱动的时候，驱动会识别IBinder类型的数据，从而自动完成不同进程Binder本地对象以及Binder代理对象的转换。
+* IBinder负责数据传输，那么client与server端的调用契约（这里不用接口避免混淆）呢？这里的IInterface代表的就是远程server对象具有什么能力。具体来说，就是aidl里面的接口。
+
+### Java层的Binder类
+Java层的Binder类，代表的其实就是Binder本地对象。BinderProxy类是Binder类的一个内部类，它代表远程进程的Binder对象的本地代理；这两个类都继承自IBinder, 因而都具有跨进程传输的能力；实际上，在跨越进程的时候，Binder驱动会自动完成这两个对象的转换。
+
+在使用AIDL的时候，编译工具会给我们生成一个Stub的静态内部类；这个类继承了Binder, 说明它是一个Binder本地对象。它实现了IInterface接口，表明它具有远程Server承诺给Client的能力；Stub是一个抽象类，具体的IInterface的相关实现需要我们手动完成，这里使用了策略模式。
+
 ## AIDL
 1. Android 接口定义语言。Android Interface Definition Language
 2. 方便系统为我们生成代码从而实现跨进程通信。说白了就是一个快速跨进程的工具。
@@ -39,8 +53,8 @@ description: Android AIDL
 AIDL方法在服务端的Binder线程池中执行，因此当多个客户端同时连接的时候，会存在多个线程同时访问的情形，所以我们要在AIDL方法中处理线程同步问题，而使用CopyOnWriteArrayList 可以进行自动的线程同步
 
 ### 权限验证
-1. 在onBind中进行，验证不通过就直接返回null，这样验证失败的客户端直接无法连接服务，验证方式： 可以使用permission 验证。
-2. 在服务端的onTransace 方法中进行权限验证，如果验证失败就返回false，这样服务端就不会终止执行AIDL的方法从而达到保护服务端的效果，验证方式：可以通过使用Permission 验证，还可以通过Uid和Pid来验证，
+1. 在onBind()中进行，验证不通过就直接返回null，这样验证失败的客户端直接无法连接服务，验证方式： 可以使用permission 验证。
+2. 在服务端的onTransace() 方法中进行权限验证，如果验证失败就返回false，这样服务端就不会终止执行AIDL的方法从而达到保护服务端的效果，验证方式：可以通过使用Permission 验证，还可以通过Uid和Pid来验证，
 
 ### 创建AIDL文件
 1. AndroidStudio的aidl文件默认放在src/main/aidl目录下，aidl目录和java目录同级别。
@@ -70,12 +84,14 @@ public static abstract class Stub extends android.os.Binder
                     }
 }
 ```
+
 ## Stub类
 ### DESCRIPTOR
 Binder的唯一标示，一般用当前Binder的类名标示，比如
 ```java
 private static final java.lang.String DESCRIPTOR = "com.hoyouly.android_art.IBookManager";
 ```
+
 ### asInterface()
 用于将服务端的Binder对象转换成客户端所需要的AIDL接口类型的对象，这种转换就是区分进程的。   
 如果客户端和服务端唯一同一个进程，那么此方法返回的就是服务端的Stub对象本身，否则返回的是系统封装后的Stub.Proxy对象
@@ -98,7 +114,7 @@ public static com.hoyouly.android_art.IBookManager asInterface(android.os.IBinde
 
 也就是asInterface()方法返回的是一个远程接口具备的能力（有什么方法可以调用）
 
-而我们知道，在客户端绑定服务bindService()的时候，onServiceConnected()中会调用该方法
+而我们知道，在客户端绑定服务bindService()的时候，onServiceConnected()中会调用该方法。点击 [Android 四大组件之 Service](http://hoyouly.fun/2019/03/25/Android-Service-Core/) 了解更多详情。
 
 ```java
 private ServiceConnection mConnection = new ServiceConnection() {
@@ -139,7 +155,7 @@ public android.os.IBinder asBinder() {
 ### onTransact()
 在`服务端的Binder线程池`中，当客户端发起跨进程请求的时，远程请求会通过系统底层封装后交由此方法来处理，如果此方法返回false,那么客户端的请求就会失败。我们可以利用这个特性来做权限验证，
 
-当客户端和服务端都位于同一个进程的时候，该方法调用不会走跨进程的transact()方法，而当两者位于不同的进程时，该方法调用执行transact()方法，而这个逻辑由Stub的内部代理类Proxy来完成，所以，**这个接口的核心实现就是内部类stub和Stub的内部代理类Proxy**：
+当客户端和服务端都位于同一个进程的时候，该方法调用不会走跨进程的transact()方法，而当两者位于不同的进程时，该方法调用执行transact()方法，而这个逻辑由Stub的内部代理类Proxy来完成，所以，**这个接口的核心实现就是内部类Stub和Stub的内部代理类Proxy**：
 ```java
 public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int flags)
 ```
@@ -147,36 +163,45 @@ public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel re
 * code : 确定客户端请求的目标方法是什么。（IBookManager 里面的方法）
 * data : 如果目标方法有参数的话，就从data取出目标方法所需的参数。
 * reply : 当目标方法执行完毕后，如果目标方法有返回值，就向reply中写入返回值。
-* flag : Additional operation flags. Either 0 for a normal RPC, or FLAG_ONEWAY for a one-way RPC.（暂时还没有发现用处，先标记上英文注释）
-服务端通过code可以确定客户端所请求的目标方法，接着从data中取出目标方法所需要的参数（如果有的话），然后执行目标方法，当执行完毕，就向reply中写入返回值（如果有返回值）。
+* flag : Additional operation flags. Either 0 for a normal RPC, or FLAG_ONEWAY for a one-way RPC.（暂时还没有发现用处，先标记上英文注释）   
+
+总结就是：<span style="border-bottom:1px solid red;">服务端通过code可以确定客户端所请求的目标方法，接着从data中取出目标方法所需要的参数（如果有的话），然后执行目标方法，当执行完毕，就向reply中写入返回值（如果有返回值）。</span>
 
 ```java
 @Override
-public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply, int flags) throws android.os.RemoteException {
+public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply
+									, int flags) throws android.os.RemoteException {
    switch (code) {
-     ...
-    case TRANSACTION_getCorrectResult: {
-        data.enforceInterface(DESCRIPTOR);
-        cn.okay.recognition.CoordinateValues _arg0;
-        if ((0 != data.readInt())) {//读取所需要的参数
-            _arg0 = cn.okay.recognition.CoordinateValues.CREATOR.createFromParcel(data);
-        } else {
-            _arg0 = null;
-        }
-        //执行目标方法 getCorrectResult(),得到返回结果
-        java.util.List<cn.okay.recognition.CorrectionResult> _result = this.getCorrectResult(_arg0);
-        reply.writeNoException();
-        reply.writeTypedList(_result);//把结果写入reply中。
-        return true;
-    }
-  }
+		 ...
+		 case TRANSACTION_getBookList: {
+			 	data.enforceInterface(DESCRIPTOR);
+			 	//执行目标方法 getBookList(),得到返回结果
+			 	java.util.List<com.hoyouly.android_art.Book> _result = this.getBookList();
+			 	reply.writeNoException();
+			 	reply.writeTypedList(_result);//把结果写入reply中。
+			 	return true;
+	 	}
+	 	case TRANSACTION_addBook: {
+		    	data.enforceInterface(DESCRIPTOR);
+		    	com.hoyouly.android_art.Book _arg0;
+		    	if ((0 != data.readInt())) {//读取所需要的参数
+		        	_arg0 = com.hoyouly.android_art.Book.CREATOR.createFromParcel(data);
+		    	} else {
+		        	_arg0 = null;
+		    	}
+		    	this.addBook(_arg0);
+		    	reply.writeNoException();
+		    	return true;
+				}
+				...			 
+  	}
   return super.onTransact(code, data, reply, flags);
 }
 ```
 
 ## Stub.Proxy类
 主要是用做客户端跨进去调用的。
-有一个mRemote对象，这个就是在onServiceConnected()中的IBinder对象iBinder，传递给了Stub的asInterface(),然后在asInterface()中创建Proxy对象，又赋值给了mRemote
+有一个mRemote对象，这个就是在onServiceConnected()中的IBinder对象iBinder，传递给了Stub的asInterface()，然后在asInterface()中创建Proxy对象，又赋值给了mRemote
 ```java
 private android.os.IBinder mRemote;
 
@@ -219,7 +244,7 @@ public java.util.List<com.hoyouly.android_art.Book> getBookList() throws android
 2. Stub 使用策略模式调用的是虚函数（待子类实现），而Proxy则使用组合模式，
     * Stub本身是一个IBinder（Binder），也就是一个能跨越进程边界传输的对象，所以它得继承IBinder实现transact()这个函数从而得到跨越进程的能力（这个能力由驱动赋予）
     * Proxy类使用组合，是因为他不关心自己是什么，它也不需要跨越进程传输，它只需要拥有这个能力即可，要拥有这个能力，只需要保留一个对IBinder的引用
-3. Proxy中 IInterface 的方法只是把参数包装然后交给驱动
+3. Proxy中 接口的方法只是把参数包装然后交给驱动
 
 就算是到这里，还是没解释清楚，本地服务怎么和Stub关联起来啊。
 
@@ -251,7 +276,9 @@ public static abstract class Stub extends android.os.Binder implements com.hoyou
     ...
 }
 ```
+
 #### Binder # attachInterface()
+
 先看看 attachInterface()  Stub 继承Binder，但是并没有重写 attachInterface()方法，所以我们需要去Binder中查找。
 ```java
 //Binder.java
@@ -312,37 +339,16 @@ public IInterface queryLocalInterface(String descriptor) {
     return null;
 }
 ```
-之前在attachInterface() 方法中已经传递过来descriptor了，而这个descriptor是Binder的唯一标识，一般用当前Binder的类名表示。
-`private static final java.lang.String DESCRIPTOR = "com.hoyouly.android_art.IBookManager";`，
+之前在attachInterface() 方法中已经传递过来descriptor了，而这个descriptor是Binder的唯一标识，一般用当前Binder的类名表示。即
+```Java
+private static final java.lang.String DESCRIPTOR = "com.hoyouly.android_art.IBookManager";
+```
 queryLocalInterface() 得到的就是我们本地服务中创建的Binder对象，这样就可以直接调用本地服务中实现Binder对象的方法
-
-### 进程通信原理
-
-进程之间通信的数据都会经过运行在内核空间里面的驱动，驱动在数据流过的时候做了一点手脚，它并不会给Client进程返回一个真正的object对象，而是返回一个看起来跟object一模一样的代理对象objectProxy`即Proxy`，这个objectProxy也有一个add方法，但是这个add方法没有Server进程里面object对象的add方法那个能力；objectProxy的add只是一个傀儡，`它唯一做的事情就是把参数包装然后交给驱动。`
-但是Client进程并不知道驱动返回给它的对象动过手脚，毕竟伪装的太像了，如假包换。Client开开心心地拿着objectProxy对象然后调用add方法；我们说过，这个add什么也不做，直接把参数做一些包装然后直接转发给Binder驱动。
-
-驱动收到这个消息，发现是这个objectProxy；一查表就明白了：我之前用objectProxy替换了object发送给Client了，它真正应该要访问的是object对象的add方法；于是Binder驱动通知Server进程，调用你的object对象的add方法，然后把结果发给我，Sever进程收到这个消息，照做之后将结果返回驱动，驱动然后把结果返回给Client进程；于是整个过程就完成了。
-
-**由于驱动返回的objectProxy与Server进程里面原始的object是如此相似，给人感觉好像是直接把Server进程里面的对象object传递到了Client进程；因此我们可以说Binder对象是可以进行跨进程传递的对象**
-
-Binder跨进程传输并不是真的把一个对象传输到了另外一个进程；传输过程好像是Binder跨进程穿越的时候，它在一个进程留下了一个真身，在另外一个进程幻化出一个影子（这个影子可以很多个）；Client进程的操作其实是对于影子的操作，影子利用Binder驱动最终让真身完成操作。
-**Client进程只不过是持有了Server端的代理；代理对象协助驱动完成了跨进程通信。**
-
-### IBinder
-* IBinder是一个接口，它代表了一种跨进程传输的能力；只要实现了这个接口，就能将这个对象进行跨进程传递；这是驱动底层支持的；在跨进程数据流经驱动的时候，驱动会识别IBinder类型的数据，从而自动完成不同进程Binder本地对象以及Binder代理对象的转换。
-* IBinder负责数据传输，那么client与server端的调用契约（这里不用接口避免混淆）呢？这里的IInterface代表的就是远程server对象具有什么能力。具体来说，就是aidl里面的接口。
-
-### Java层的Binder类
-Java层的Binder类，代表的其实就是Binder本地对象。BinderProxy类是Binder类的一个内部类，它代表远程进程的Binder对象的本地代理；这两个类都继承自IBinder, 因而都具有跨进程传输的能力；实际上，在跨越进程的时候，Binder驱动会自动完成这两个对象的转换。
-在使用AIDL的时候，编译工具会给我们生成一个Stub的静态内部类；这个类继承了Binder, 说明它是一个Binder本地对象，它实现了IInterface接口，表明它具有远程Server承诺给Client的能力；Stub是一个抽象类，具体的IInterface的相关实现需要我们手动完成，这里使用了策略模式。
-
-### IInterface
-自定义AIDL接口需要继承了 IInterface 接口，只有一个asBinder(),用来返回AIDL中Stub类的对象。如果是同进程的本地接口，则返回this，否则，返回BinderProxy代理对象。
 
 
 ## 总结
 AIDL 通过Stub 来接受并处理数据，Proxy代理类用来发送数据。这两个类只是对Binder的处理和调用而已。
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/stub_proxy_binder.jpeg)
+![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/stub_proxy_binder.jpeg)
 并且客户端和服务器是相对而言的，服务端不仅可以接收和处理消息，而且可以定时往客户端发送数据，与此同时服务端使用Proxy类跨进程调用，相当于充当了"Client"。
 
 ---
