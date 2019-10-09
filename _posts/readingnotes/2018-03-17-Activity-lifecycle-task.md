@@ -21,13 +21,16 @@ keywords: 关键字
 
 
 ## 启动模式
-* **standard  标准模式**，也是系统默认模式，每次启动都会创建一个新的 实例，不管该实例是否存在。被创建的实例的生命周期符合典型情况下的生命周期，谁启动这个Activity，那么该Activity就和这个在同一个栈里面
+* **Standard  标准模式**，也是系统默认模式，每次启动都会创建一个新的 实例，不管该实例是否存在。被创建的实例的生命周期符合典型情况下的生命周期，谁启动这个Activity，那么该Activity就和这个在同一个任务里面。如果启动者是出Activity之外的Context,这时如果没有任务栈，会报错。此时需要指定ACTIVITY_FLAG_NEW_TASK
 ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/standerd.png)
 
-* **singleTop  栈顶复用模式**，如果该Activity在栈顶，则再次启动的该Activity的时候，不创建，onCreate()和onStart()也不会执行，但是onNewIntent()方法会执行，通过此方法我们可以获得当前请求的信息。如果不在栈顶但是存在这个栈里面，那么就仍然创建新的实例，
+* **SingleTop  栈顶复用模式**，如果该Activity在栈顶，则再次启动的该Activity的时候，不创建，onCreate()和onStart()也不会执行，但是onNewIntent()方法会执行，通过此方法我们可以获得当前请求的信息。如果不在栈顶但是存在这个栈里面，那么就仍然创建新的实例，
 ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/singleTop.png)
 
-* **singleTask  栈内复用模式**  一种单实例模式，只要该Activity存在一个栈中，那么多次启动该Activity都不会重新创建该实例，也不会执行onCreat() 和onStart()方法，但是执行onNewIntent()，如果Activity A 是singleTask
+	<span style="border-bottom:1px solid red;">适合接受通知启动的内容显示界面。   
+	例如：当收到多条新闻推送的通知，用于展示新闻的Activity界面，可以设置SingleTop模式，根据传递过来的信息显示不同的新闻信息，不会启动多个Activity。</span>
+
+* **SingleTask  栈内复用模式**  一种单实例模式，只要该Activity存在一个栈中，那么多次启动该Activity都不会重新创建该实例，也不会执行onCreat() 和onStart()方法，但是执行onNewIntent()，如果Activity A 是singleTask
 ```java
 if(A 所在的栈不存在){
 	创建A所需的任务栈 taskA
@@ -50,8 +53,14 @@ if(taskA 中不存在A的实例){
 2. 如果D所需要的任务栈是S1,由于S1已经存在，那么就直接创建D的实例并将其压入到S1中
 3. 如果D所需要的任务栈是S1，并且S1内是ADBC，那么此时D不会创建，而是把BC移除栈，因为singleTask具有clearTop 的效果，最终S1的情况是AD 这两个   
 
-* **singleInstance  单实例模式**，是一种加强的singleTask模式，除了具有singleTask的模式的所有特性，还有一点就是此模式的Activity只能单独位于一个任务栈中。由于独自一个栈，就没有clearTop 一说了，
+		<span style="border-bottom:1px solid red;">适合做程序的主入口。   
+		例如浏览器主页面，不管多少应用启动浏览器，主界面只启动一次，其余情况都会执行onNewIntent(),并且会清空主界面信息。</span>
+
+* **SingleInstance  单实例模式**，是一种加强的singleTask模式，除了具有singleTask的模式的所有特性，还有一点就是此模式的Activity只能单独位于一个任务栈中。由于独自一个栈，就没有clearTop 一说了，
 ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/singleinstance.png)
+
+	<span style="border-bottom:1px solid red;">例如闹铃响铃界面，在你正在聊微信的时候，突然响铃，弹出一个对话框形式的Activity（名为AlarmAlertActivity），这个Activity就是以SingleInstance 模式加载出来的，当你按下返回键之后，返回的是微信界面，因为栈内只有这一个Activity，按下返回键，栈就为空了。如果设置SingleTask，那么按下返回键就应该是闹铃设置页面。</span>
+
 
 ### TaskAffinity 任务相关性
 * 标识了一个Activity所需要的任务栈的名字，默认情况下，所有的Activity所需要的任务栈的名字都为应用程序的包名，  
