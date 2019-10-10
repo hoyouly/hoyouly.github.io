@@ -2,7 +2,7 @@
 layout: post
 title: 水平方向的RecycleView嵌套竖直方向的RecycleView滑动冲突解决办法
 category: 技术
-tags: RecycleView 
+tags: RecycleView
 ---
 * content
 {:toc}
@@ -15,19 +15,27 @@ RecyclerView.java
 public boolean onInterceptTouchEvent(MotionEvent e) {
    ...
    switch (action) {
-               case MotionEvent.ACTION_DOWN:
+       case MotionEvent.ACTION_DOWN:
 
-               if (mScrollState == SCROLL_STATE_SETTLING) {
-                   getParent().requestDisallowInterceptTouchEvent(true);
-                   setScrollState(SCROLL_STATE_DRAGGING);
-               }
-               ...
-            }
-            return mScrollState == SCROLL_STATE_DRAGGING;
+       if (mScrollState == SCROLL_STATE_SETTLING) {
+           getParent().requestDisallowInterceptTouchEvent(true);
+           setScrollState(SCROLL_STATE_DRAGGING);
+       }
+       ...
+    }
+    return mScrollState == SCROLL_STATE_DRAGGING;
  }
 
 ```
-当处于滑行状态，即快速滑动后到滑动静止之间的时候，会在DOWN事件的时候拦截掉这个事件，外部的RecycleView拦截后，那么内部的RecycleView就收不到Touch事件，也就没办法响应滑动事件了，而且我们知道，一旦DOWN事件中被拦截，那么剩下的MOVE和UP等事件，也都会直接传递给该View，也就是说一旦外部的RecycleView 在拦截了DOWN事件，那么就剩下一系列事件就别想传递到内部的RecycleView了，内部的RecycleView接收不到事件，就没办法滑动了，所以第一步就是不能让外部RecycleView给拦截了，
+当处于滑行状态，即快速滑动后到滑动静止之间的时候，会在DOWN事件的时候拦截掉这个事件
+
+外部的RecycleView拦截后，那么内部的RecycleView就收不到Touch事件，也就没办法响应滑动事件了。
+
+而且我们知道，一旦DOWN事件中被拦截，那么剩下的MOVE和UP等事件，也都会直接传递给该View。
+
+也就是说一旦外部的RecycleView 在拦截了DOWN事件，那么就剩下一系列事件就别想传递到内部的RecycleView了，内部的RecycleView接收不到事件，就没办法滑动了。
+
+所以第一步就是不能让外部RecycleView给拦截了，起码不能拦截竖直方向的。
 然后我又做了一些处理，当滑动的时候，外部RecycleView只拦截水平方向的滑动事件，具体代码如下。
 
 ```java
@@ -41,6 +49,7 @@ public class OutRecyclerView extends RecyclerView {
 
     private int mTouchSlop;
     private ViewConfiguration mViewConfiguration;
+
     public OutRecyclerView(Context context) {
         this(context, null);
     }
@@ -73,19 +82,8 @@ public class OutRecyclerView extends RecyclerView {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
         final int action = e.getAction();
-        Log.d(TAG, getClass().getSimpleName() + "    action : " + action + "   getScrollState: " + getScrollState() + "  ");
         boolean intercepted = false;
         switch (action) {
-            case MotionEvent.ACTION_DOWN:
-                int state = getScrollState();
-                mScrollPointerId = e.getPointerId(0);
-                mInitialTouchX = (int) (e.getX() + 0.5f);
-                mInitialTouchY = (int) (e.getY() + 0.5f);
-                intercepted = super.onInterceptTouchEvent(e);
-                if (state == SCROLL_STATE_SETTLING || state == SCROLL_STATE_DRAGGING) {
-                    intercepted = false;
-                }
-                return intercepted;
             case MotionEvent.ACTION_MOVE: {
                 final int index = MotionEventCompat.findPointerIndex(e, mScrollPointerId);
                 if (index < 0) {
@@ -97,18 +95,27 @@ public class OutRecyclerView extends RecyclerView {
                 final int dy = y - mInitialTouchY;
                 final boolean canScrollHorizontally = getLayoutManager().canScrollHorizontally();
                 boolean startScroll = false;
+                //可以水平方向滑动并且滑动距离大于mToushSLop,并且水平方向滑动距离大于竖直方向的。
                 if (canScrollHorizontally && Math.abs(dx) > mTouchSlop && (Math.abs(dx) >= Math.abs(dy))) {
-                    startScroll = true;
+                    startScroll = true;//水平方向
                 }
                 intercepted = super.onInterceptTouchEvent(e);
-                Log.d(TAG, getClass().getSimpleName() +  "   ACTION_MOVE  : intercepted: " + intercepted + "   startScroll: " + startScroll);
+                //如果竖直方向，那么startScroll为false，
+                //那么不管super.onInterceptTouchEvent(e)true或者false，结果都是false，那么就不会拦截。
                 return startScroll && intercepted;
             }
             default:
-                return super.onInterceptTouchEvent(e);
+                int state = getScrollState();
+                mScrollPointerId = e.getPointerId(0);
+                mInitialTouchX = (int) (e.getX() + 0.5f);
+                mInitialTouchY = (int) (e.getY() + 0.5f);
+                intercepted = super.onInterceptTouchEvent(e);
+                if (state == SCROLL_STATE_SETTLING || state == SCROLL_STATE_DRAGGING) {
+                    intercepted = false;
+                }
+                return intercepted;
         }
     }
-}
 
 ```
 这样就保证在DOWN事件时候，外部RecycleView不会拦截掉，并且只拦截水平方向的事件，
@@ -116,9 +123,17 @@ public class OutRecyclerView extends RecyclerView {
 
 ```java
 public class InRecyclerView extends RecyclerView {
-    private static final String TAG = "InRecyclerView";
+    private static final String TAG = "HomePageRecyclerView";
+    //速度追踪
     private VelocityTracker mVelocityTracker;
 
+    private int mInitialTouchX;
+    private int mInitialTouchY;
+
+    //是否正在快速滑动
+    public boolean mIsFastScrolling = false;
+    //判定为快速滑动的速度阀值
+    private static final int SCROLL_THRESHOLD_SPEED = 6000;
 
     public InRecyclerView(Context context) {
         this(context, null);
@@ -135,18 +150,37 @@ public class InRecyclerView extends RecyclerView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        mVelocityTracker.addMovement(ev);//向velocityTracker对象添加action
-        mVelocityTracker.computeCurrentVelocity(1000);
-        float xVelocity = mVelocityTracker.getXVelocity();
-        float yVelocity = mVelocityTracker.getYVelocity();
-        Log.d(TAG, getClass().getSimpleName() + "        dispatchTouchEvent  ：   xVelocity : " + xVelocity + "   yVelocity: " + yVelocity + "  getScrollState:" + getScrollState());
-        if ((getScrollState() == SCROLL_STATE_SETTLING || getScrollState() == SCROLL_STATE_DRAGGING) && (Math.abs(xVelocity) > Math.abs(yVelocity))) {
-            getParent().requestDisallowInterceptTouchEvent(false);
-            Log.d(TAG, getClass().getSimpleName() + " 交由 父 View处理 : ");
-            return false;
+        int action = ev.getAction();
+        switch (action) {
+            case MotionEvent.ACTION_DOWN:
+                mInitialTouchX = (int) (ev.getX() + 0.5f);
+                mInitialTouchY = (int) (ev.getY() + 0.5f);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                //向velocityTracker对象添加action
+                mVelocityTracker.addMovement(ev);
+                mVelocityTracker.computeCurrentVelocity(1000);
+                float xVelocity = mVelocityTracker.getXVelocity();
+                float yVelocity = mVelocityTracker.getYVelocity();
+                final int x = (int) (ev.getX() + 0.5f);
+                final int y = (int) (ev.getY() + 0.5f);
+                final int dx = x - mInitialTouchX;
+                final int dy = y - mInitialTouchY;
+                //SCROLL_STATE_SETTLING：滑动后自然沉降的状态  SCROLL_STATE_DRAGGING 滑动状态
+                if ((getScrollState() == SCROLL_STATE_SETTLING || getScrollState() == SCROLL_STATE_DRAGGING)
+                        && (Math.abs(xVelocity) > Math.abs(yVelocity)) && (Math.abs(dx) > Math.abs(dy))) {
+                    //水平方向滑动的速度和距离都大于竖直方向，告诉父View，这种情况下，我不需要，事件交给父View
+                    getParent().requestDisallowInterceptTouchEvent(false);
+                    return false;
+                }
+                if (Math.abs(yVelocity) > SCROLL_THRESHOLD_SPEED) {
+                    mIsFastScrolling = true;
+                }
+                break;
+            default:
         }
         return super.dispatchTouchEvent(ev);
-    }
+    }    
 }
 ```
 
