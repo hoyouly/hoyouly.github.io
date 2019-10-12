@@ -227,9 +227,49 @@ if (a[j] > value) {
       =8*(T(x/16)+n/16)+3n=8*(T(x/16))+4n
       =...
       =2^k(T(k/2^k))+kn
-当
 
 ## 快速排序
+核心：找到在无序数组中找到一个数，然后将比他小的数字放在他的左边，比他大的数字放在他的右边。然后递归的对左右两边进行继续排序
+```java
+public void quickSort(int[] arr) {
+   quickSort(arr, 0, arr.length - 1);
+}
+
+private void quickSort(int[] arr, int low, int high) {
+   int pivor;
+   if (low < high) {
+       //将low high 一分为二，算出关键字，该值的位置固定，不需要变化
+       pivor = parition(arr, low, high);
+       quickSort(arr, low, pivor - 1);
+       quickSort(arr, pivor + 1, high);
+   }
+}
+
+//选择一个关键字，把他放到一个位置，使其左边 的值都小于这个值，右边的值都大于这个值
+private int parition(int[] arr, int low, int high) {
+   int privorKey;
+   privorKey = arr[low];
+   ////顺序很重要，要先从右边找
+   while (low < high) {
+       while (low < high && arr[high] >= privorKey) {////从后往前找到比key小的放到前面去
+           high--;
+       }
+       swap(arr, low, high);
+       while (low < high && arr[low] <= privorKey) {//从前往后找到比key大的 放到后面去
+           low++;
+       }
+       swap(arr, low, high);
+
+   }//遍历所有记录  low的位置即为 key所在位置, 且固定,不用再改变
+   return low;
+}
+
+private void swap(int[] arr, int i, int j) {
+   int temp = arr[i];
+   arr[i] = arr[j];
+   arr[j] = temp;
+}
+```
 
 
 
