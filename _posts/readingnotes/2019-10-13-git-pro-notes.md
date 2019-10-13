@@ -1,19 +1,21 @@
 ---
 layout: post
-title: Git Pro
-category:
-tags:
+title:  Pro  Git 笔记
+category: 读书笔记
+tags: Git
 ---
 * content
 {:toc}
 
 ## 远程仓库
 git remote -v  显示对应的克隆地址，如果有多个远程仓库，将会全部列出来
-git remote add pb 	git@github.com:hoyouly/LearnGit.git  添加一个远程仓库 ,pb 是远程仓库的地址，
+
+git remote add pb 	 添加一个远程仓库 ,pb 是远程仓库的地址，例如 git@github.com:hoyouly/LearnGit.git
 
 git remote show 查看某个远程仓库的详细信息
 
 git remote rename pb paul  修改某个仓库的简短名称，比如把pb改为paul
+
 git remote rm paul 移除对应的远程仓库
 
 
@@ -45,8 +47,8 @@ git commit --amend 重新编写提交说明，修正第一个提交的内容
   * short
   * full
   * fuller
-  * format  格式化输出
-  eg git log --pretty=format : "%h - %an ,%ar : %s"
+  * format  格式化输出   
+  eg: git log --pretty=format : "%h - %an ,%ar : %s"
     * %H 提交对象 commit的完整哈希子串
     * %h 提交对象的尖端哈希串
     * %T 树对象的完整哈希串
@@ -86,14 +88,17 @@ git reset HEAD ^ 撤销所有add 的操作
 
 git 使用HEAD 来代替不存在的（省略的）一边
 ## git 别名
-git config --global alias.co  checkout   git co  相当于 git checkout
-git config --global alias.br  branch     git br  相当于 git branch
-git config --global alias.ci  commit     git ci  相当于 git commit
-git config --global alias.st  status     git st  相当于 git status
+git config --global alias.co  checkout   git co  相当于 git checkout    
+git config --global alias.br  branch     git br  相当于 git branch    
+git config --global alias.ci  commit     git ci  相当于 git commit     
+git config --global alias.st  status     git st  相当于 git status     
+
+<span style="border-bottom:1px solid red;">  git config --global alias.logf  'log --pretty=format:"%h - %an ,%ar : %s"' </span> , 那么输入 git logf 相当于 git log --pretty=format:"%h - %an ,%ar : %s"
 
 
 ## 分支
 git branch -d 分支名  删除本地分支，如果该分支没有merge到当前分支，会删除失败
+
 git branch -D 分支名  强制删除本地分支
 
 
@@ -101,8 +106,6 @@ git branch -D 分支名  强制删除本地分支
 像是一个书签，提醒这你上次连接远程长裤时上面各个分支的为位置
 
 git fetch  同步，获取尚未拥有的数据，更新你本地的数据库，但是不会合并，
-
-
 
 
 ## git rebase
@@ -128,4 +131,6 @@ git blam simplegit.rb  显示文件中对没一行进行修改的最近一次提
 git blam -L 12,22 simplegit.rb 查看文件simplegit.rb 的每一次提交，使用-L 选项限制输出范围在第12行到22行
 
 ---
-搬运地址：
+
+搬运地址：   
+Pro  Git 简体中文版
