@@ -246,7 +246,7 @@ static <T> void validateServiceInterface(Class<T> service) {
 2. 这个Interface不能extend 其他的interface，
 
 这样就算是合法的接口，所以我们就在定义API中，使用的是Interface，而没有用class,就是这个原因   
-然后看到了这个 <span style="border-bottom:1px solid red;"> Proxy.newProxyInstance（），我擦，竟然使用的是动态代理技术.</span>
+然后看到了这个 <span style="border-bottom:1px solid red;"> Proxy.newProxyInstance()，我擦，竟然使用的是动态代理技术.</span>
 
 ## 动态代理
 动态代理其实已经封装的很简单了，
@@ -257,6 +257,17 @@ static <T> void validateServiceInterface(Class<T> service) {
 * 除了执行真正的逻辑（例如再次转发给真正的实现类对象），我们还可以进行一些有用的操作，例如统计执行时间、进行初始化和清理、对接口调用进行检查等。  
 
 <font color="#ff000" >  总结: create()方法实质是通过动态代理，生成一个API对象MovieService。当我们执行MovieService 中的方法（例如getTop250()）时候，会执行到 InvocationHandler类invoke()中。 </font>   
+
+
+前两天竟然被人问到了，说我们定义的是一个接口类，怎么create()方法就返回了这个接口类，接口类能实例化吗? 如果不能，那么这是怎么实现的：
+
+一下子就懵逼了。后来想想，其实就是通过动态代理，返回的并不是这个接口类，而是接口的实现类，并创建其实例对象。
+
+说到动态代理，就要多提一句静态代理了
+## 静态代理
+通过真实的实现类A和Proxy类代理实现同一个接口，然后在proxy类中有引用A对象的引用。
+这样做的目的就是可以实现一些其他的功能，但是不会让真实的类变得臃肿。
+AIDL中的proxy 就是典型的静态代理。它引用了Stub类对象，也实现了AIDL 接口。
 
 接下来就是 得到一个Call对象。那么我们就看看 Call<MovieObject> call=movieService.getTop250(0,20); 这个到底干了什么吧。
 # 得到Call对象
