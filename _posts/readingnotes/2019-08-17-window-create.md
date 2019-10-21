@@ -193,7 +193,7 @@ if (cb != null && !isDestroyed()) {
 ![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/setcontentview.png)
 
 虽然现在DecorView已经创建并且初始化，Activity的布局文件也添加到DecorView的mContentParent中，但这个时候DecorView还没有被WindowManager正式添加到Window中，而<span style="border-bottom:1px solid red;">真正完成DecorView添加和显示的是在ActivityThread的handleResumeActivity()方法中。
-handleResumeActivity会先执行Activity的onResume()，然后执行Activity的makeVisible()方法，正是在makeVisible()方法中，DecorView才会被添加到WindowManager中。</span>
+handleResumeActivity()会先执行Activity的onResume()，然后执行Activity的makeVisible()方法，正是在makeVisible()方法中，DecorView才会被添加到WindowManager中。</span>
 ```java
 void makeVisible() {
     if(!this.mWindowAdded) {
