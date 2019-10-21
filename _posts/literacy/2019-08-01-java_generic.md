@@ -47,7 +47,9 @@ list1=new ArrayList<String>(); //错误，因为String 不是Number的子类
 Number number = list1.get(0); //正确，因为返回的类型肯定是Number或者子类，使用父类接收是可以的
 list1.add(new Float(0)); //错误，泛型上界，只能取(get)，不能添加(add)。
 ```
-`只能取(get)，不能添加(add)。`    因为Java是强引用，所以任何变量在使用的时候，必须知道其类型，虽然list1.add(new Float(0)) 看起来放入的是FLoat 类型，但编译器它却不知道这个list到底放的是啥类型，有可能是ArrayList<Short>,ArrayList<Test> 等，因为不确定所以就不允许你add一个long或者short。
+<font color="#ff000" >只能取(get)，不能添加(add)。</font>
+
+因为Java是强引用，所以任何变量在使用的时候，必须知道其类型，虽然list1.add(new Float(0)) 看起来放入的是Float 类型，但编译器它却不知道这个list到底放的是啥类型，有可能是`ArrayList<Short>,ArrayList<Test>` 等，因为不确定所以就不允许你add一个long或者short。
 
 ### 带有上边界的通配符
 `<? super Integer>   ? 只能是Number或者Number的父类 `
@@ -63,7 +65,8 @@ Integer object = list2.get(0); //错误
 
 Object object1 = list2.get(0); //正确  
 ```
-`不能取(get)，只能添加(add)`
+<font color="#ff000" >不能取(get)，只能添加(add)</font>
+
 ### PECS原则总结
 - 如果要从集合中读取类型T的数据，并且不能写入，可以使用 ? extends 通配符；(Producer Extends)
 - 如果要从集合中写入类型T的数据，并且不需要读取，可以使用 ? super 通配符；(Consumer Super)
