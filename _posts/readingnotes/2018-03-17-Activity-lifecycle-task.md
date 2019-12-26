@@ -15,6 +15,10 @@ keywords: 关键字
 * onResume(),Activity可见，并且在前台，并且开始活动，可以和用户进行交互。
 * 当前 Activity的 onStop()方法是否执行，关键在于启动的Activity的主题，如果启动的Activity主题是透明的，那么当前Activity的onStop()就不会执行，如果不是透明的，当前Activity的onStop()就会执行。
 * onStart()  和onStop()是从Activity是否可见这个角度来回调的，随着用户操作或者设备屏幕的熄灭和点亮，这两个方法可能被调用多次。
+onStop()执行的时机
+1. home键返回，锁屏，关闭界面肯定会调用onStop的
+2. 但是开启另一个Activity并不一定会调用onStop方法，因为 当设置Activity的主题windowIsTranslucent属性为true是，窗口为半透明，虽然最后看着效果和直接开启一个Activity没有什么区别，但是当前Activity并不会调用onStop方法，只会调用onPause方法，当前Activity进入背景
+
 * onResume()和onPause()是从Activity是否位于前台这个角度来回调的，随着用户操作或者设备屏幕的熄灭和点亮，这两个方法被调用多次。
 * 不能在onPause()中做重量级操作，因为只有执行完onPause(),onResume()才会执行,onStop()中可以做一些稍微重量级的操作，但是不能太耗时，
 * onSaveInstanceState()方法是在onStop()之后，可能在onPause()之前，也可能在onPause()之后,只有Activity异常终止的时候，才会执行该方法
