@@ -108,9 +108,14 @@ void main(){
 可以类比class和对象这样理解：自己定义了一种数据类型，不过这种数据类型是一个函数类型，一个一个的具体实现的函数就相当于按照这种类型实例化的对象
 
 ```java
- typedef WidgetBuilder = Widget Function(BuildContext context);
+//声明参数为int,无返回值的callback函数 MenuCallBack
+typedef MenuCallBack = void Function(int position);
+//声明一个参数为 context 和int,返回值是Widget 的callback函数 IndexedWidgetBuilder
+typedef IndexedWidgetBuilder = Widget Function(BuildContext context, int index);
+
+//声明一个 参数为 BuildContext，返回值 Widget 的callback 函数 WidgetBuilder
+typedef WidgetBuilder = Widget Function(BuildContext context);
 ```
-定义了一个函数名是 Function，返回值是 Widget，参数是 BuildContext 的函数，使用 WidgetBuilder 表示
 
 ## 例子说明
 ```java
@@ -165,7 +170,7 @@ const FlatButton({
 我们可以得知
 * 因为有{} 包裹 onPressed和 child ,所以是可选命名参数
 * 因为签名有 @required注解，所以 onPressed 和 child 又是必填参数，
-* 因为 typedef VoidCallback = void Function(); 可知onPressed 的类型是 一个返回值是void，无参数的函数，
+* 因为 typedef VoidCallback = void Function(); 可知onPressed 的类型是 一个返回值是void，无参数的callback函数 VoidCallback，
 
 所以综上所述，onPressed  是一个必填的参数，类型是一个返回值是void，无参数的函数，  child 是一个类型是 Widget 的必填参数，这个后面说到，现在继续说onPressed
 onPressed: 后面是一个匿名函数，格式就是 (){}，参数无
@@ -192,7 +197,7 @@ MaterialPageRoute({
 final WidgetBuilder builder;
 typedef WidgetBuilder = Widget Function(BuildContext context);
 ```
-类型是WidgetBuilder,其实就是返回类型是Widget ，参数是BuildContext 的 Function ,既然他们要的是这样一个Function，那么就创建一个这样的，匿名函数
+类型是WidgetBuilder,其实就是返回类型是Widget ，参数是BuildContext 的 callBack 函数 ,既然他们要的是这样一个callback 函数，那么就创建一个这样的函数
 
 ### 匿名函数
 创建一个参数类型是BuildContext， 返回值是 Widget的 匿名函数，那么应该是
@@ -220,5 +225,5 @@ final String data;
 
 ---
 搬运地址：
-[Flutter和Dart系列四：Function]（https://blog.csdn.net/xlh1191860939/article/details/87895616）    
+[Flutter和Dart系列四：Function](https://blog.csdn.net/xlh1191860939/article/details/87895616)      
 [Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)
