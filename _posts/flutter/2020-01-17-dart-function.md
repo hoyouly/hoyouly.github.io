@@ -8,7 +8,9 @@ tags: Flutter  Dart
 {:toc}
 
 最近开始学习Flutter，然后学道了Dart的函数，发现挺有意思的。
-Dart里面所有的东西都是对象，包括 int,函数 这些对象的父类是Object，这倒是有意思，如果一个函数也是对象，那么类型是啥呢？ 答案是Function，这是Dart中的一种类型。
+1. Dart里面所有的东西都是对象，包括 int,函数 这些对象的父类是Object.
+2. 如果一个函数也是对象，那么类型是啥呢？ 答案是Function，这是Dart中的一种类型。这也就意味这函数可以被定义成一个变量，甚至可以可以被定义为一个参数传递给另外一个函数。
+
 Function 格式 ：  返回类型 函数名（参数列表）{函数体}
 ## 返回类型
 可以省略，因为返回值类型可以通过return的值类型推断出来的，如果没有return，那么返回类型自然就是void了，但是不建议这么做。
@@ -16,6 +18,7 @@ Function 格式 ：  返回类型 函数名（参数列表）{函数体}
 ## 函数名
 这个没啥好说的，符合命名规则就好，尽量名称能概括函数体的内容
 
+Dart 认为重载会导致混乱，因此从设计之初就不支持重载，而是提供了可选命名参数和可选参数。
 ## 参数
 分以下几种
 1. 正常的参数
@@ -32,6 +35,8 @@ Function 格式 ：  返回类型 函数名（参数列表）{函数体}
 ```java
 void sayHello({String name, String msg}) => print("$name: $msg");
 ```
+注意：如果函数体只有一行表达式，我们还可以像 JavaScript 语言那样用箭头函数来简化这个函数。但是 <span style="border-bottom:1px solid red;"> 在 => 和 ；之间只能是表达式，而不能是一条语句。 </span>   
+
 {}中的参数可传可不传，使用就如下了
 ```java
 void main() {
@@ -100,7 +105,6 @@ void main(){
     list.forEach((item) {
        print(item);
     });
-
 }
 ```
 ### typedef
@@ -224,6 +228,7 @@ final String data;
 
 
 ---
-搬运地址：
+搬运地址：    
 [Flutter和Dart系列四：Function](https://blog.csdn.net/xlh1191860939/article/details/87895616)      
-[Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)
+[Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)   
+极客时间《Flutter核心技术与实战》
