@@ -19,7 +19,7 @@ tags:
 <span style="border-bottom:1px solid red;"> 带有红色下划线 </span>   
 [百度网址](http://www.baidu.com)  
 
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/tcp_three_hand.png)
+![添加图片](../../../../images/tcp_three_hand.png)
 
 
 <style>

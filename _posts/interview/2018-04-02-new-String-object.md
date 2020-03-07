@@ -79,15 +79,15 @@ String 有两种赋值方式，
 
 ## JVM 结构图
 先看看下面这张虚拟机的结构图  
-![虚拟机的结构图](https://github.com/hoyouly/BlogResource/raw/master/imges/jvm.jpg)
+![虚拟机的结构图](../../../../images/jvm.jpg)
 其他先不管，主要看中间五彩叫运行时数据区（runtime data area） ,就是虚拟内存管理，也就是所谓的内存。一般讲虚拟机内存的主要是三块。
 * Heap Mermory: 堆  最大一块空间，存放对象的实例和数组。全局共享  "abc"在这个里面  new String()也在这里面，
 * Java Stacks : 栈  全称 JVM Stacks 虚拟机栈。存放基本数据类型，以及对象引用，线程私有  
 * Method Area： 方法区  类被加载后的信息，常亮，静态变量存放在这，全局共享。在hotSpot里面也叫“永生代”，
 ## Stacks 区
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/51f4a70e8f951c8c3d9c0eee21e2157c_r.jpg)
+![](../../../../images/51f4a70e8f951c8c3d9c0eee21e2157c_r.jpg)
 Stacks 区中的局部变量表（Local Variables）和操作数栈(Operand Stack),因为栈是私有的，每个方法被执行的时候都会创建栈帧（Stack Frame）,而每一个栈帧都维护着一个局部变量表和操作数栈，<span style="border-bottom:1px solid red;">我们经常说的基本数据类型和对象引用存在栈里，其实就是指的存在局部变量表中，而操作数栈是线程实际的操作台 </span>。看下图，做一个100+98的加法，局部变量表就是存数据的，一直不变，直到结果出来把和添加进去，而操作数栈就很忙了，先把两个数压进去，然后再求和，最后再弹出结果。
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/100add80.jpg)
+![](../../../../images/100add80.jpg)
 
 ## 非堆区  
 中间这个非堆（Non-heap） 可以粗略的理解非堆里面的包含了永生代，而永生代又包含了方法区。每个类加载完后，类的信息就存到了方法区，和String最相关的是 运行时常量池(Run-Time Constant Pool)，他是每个类私有的，每个class文件的常量池被类加载器加载进来后，就会映射在这个区域，另一个就是字符串常量池（String Pool）,和运行时常量池不是一个概念，字符串常量池是一个全局共享的，位置就在Non-heap 的Interned String 位置。可以理解在永生代上，方法区外，String.intern（）方法字符串驻留之后，引用就放到这里面。
@@ -106,14 +106,14 @@ Class Test{
 ```
 
 编译成Test.class 文件之后，如下图，除了版本，字段，方法，接口等描述信息之外，还有一个也叫常量池（Constant Pool Table）的东西，但是这个常量池和内存中的常量池不是一个。class文件中的常量池主要存两个东西，字面量（Literal）和符号引用量（Symoblic Reference）， 其中字面量就包括类定义的一些常量，因为Sting是final，所以代码里面的hello字符串，就是作为字面量写在class的常量池里面  
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/efe43f0a055aa7f36931ab417fb05811_hd.jpg)
+![](../../../../images/efe43f0a055aa7f36931ab417fb05811_hd.jpg)
 
 运行程序到Test类的时候，Test.class 文件的信息就被解析到了内存的方法区，class文件常量池大部分数据就被直接加载到了"运行时常量池"，但是String不是， 例子中的hello一个引用会被存到同样在Non Heap去的字符串常量池（Sting Pool）里，<span style="border-bottom:1px solid red;"> 而hello本身还是和所有的对象一样，创建在heap堆区</span>，R 大的文章里，测试的结果是在新生代的Eden区，但是因为一直有一个引用驻留在字符串常量池里面，所以不会被GC清理掉。这个hell对象从生存到整个线程结束，如下图所示，字符串常量池的具体位置是在过去说的永生代里，方法去外面，  
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/hello_object.jpg)
+![](../../../../images/hello_object.jpg)
 **注意：** <span style="border-bottom:1px solid red;"> 这只是Test类被类加载器加载时候的情形，主线程的str变量这个时候还没有创建，但是hello的实例已经在Heap里了，对它的引用也已经在字符串常量池里了</span>
 
 等主线程开始创建str变量的时候，JVM就会到字符串常量池里面去找，看有没有能equals("hello")的String，如果找打了，就在栈区当前栈帧的局部变量表里面创建str变量，然后把字符串常量池里对hello对像的引用复制给str变量，找不到的话，会在Heap堆重新创建一个对象，然后把引用驻留到字符串常量区，然后再把引用复制给栈帧区的局部变量表
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/20568a6ad0ef2860746533595e400716_r.jpg)
+![](../../../../images/20568a6ad0ef2860746533595e400716_r.jpg)
 
 ## 定义了多个值为Hello的字符串
 如果当我们定义了多个值为Hello的String，比如下面的代码，有三个变脸str1，str2,str3,也不会在堆上增加String实例，局部变量表中三个变量统一指向同一个堆内存地址。
@@ -130,7 +130,7 @@ Class Test{
 }
 
 ```
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/8e743518809bd37723a4b0e8bf35f332_r.jpg)
+![](../../../../images/8e743518809bd37723a4b0e8bf35f332_r.jpg)
 上图str1,str2,str3可以用== 链接的，但是如果用new 关键字创建字符串，情况就不一样了。
 ## new 关键字创建字符串
 ```java
@@ -147,7 +147,7 @@ Class Test{
 
 ```
 虽然str1 和str2 还是和之前一样，但是<span style="border-bottom:1px solid red;"> str3 因为new关键字会在Heap堆申请一块全新内存，来创建对象，</span> 虽然字面还是hello，却是完全不同的对象，有不同的内存地址。
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/fe6b27f35b5491eb562138eda573c238_r.jpg)
+![](../../../../images/fe6b27f35b5491eb562138eda573c238_r.jpg)
 当然，String #intern()方法让我们手动检查字符常量池，把有新字面量的字符串地址驻留到常量池里。
 ## 答案
 看上面划红线的地方，相信可以知道问题二的答案了： "abc" 和 new String() 都是放在Heap 堆里面，而 变量 s 是存放在 栈中的栈帧里面的局部变量表里面的。

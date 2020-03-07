@@ -65,11 +65,11 @@ AIDL方法在服务端的Binder线程池中执行，因此当多个客户端同�
 
 ## AIDL 的流程
 从客户端发起请求到服务器响应的工作流程。可以看出整体的核心就是Binder
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/aidl_binder.jpeg)
+![Alt text](../../../../images/aidl_binder.jpeg)
 
 AIDL文件生成的类。如下
 
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/IBookManager_method.png)
+![Alt text](../../../../images/IBookManager_method.png)
 由上图结构可以看出，
 1. IBookManager中有两个方法，也就是我们在AIDL中定义的那两个方法，addBook(),getBookList()
 2. 有一个内部类Stub，extends Binder , 这个就是Binder类，同时实现了IBookManager接口
@@ -150,7 +150,7 @@ public android.os.IBinder asBinder() {
 }
 ```
 这个Binder对象具有跨进程能力，在Stub类里面（也就是本进程）直接就是Binder本地对象，在Proxy类里面返回的是远程代理对象(Binder代理对象)。
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/asbinder.png)
+![Alt text](../../../../images/asbinder.png)
 
 ### onTransact()
 在`服务端的Binder线程池`中，当客户端发起跨进程请求的时，远程请求会通过系统底层封装后交由此方法来处理，如果此方法返回false,那么客户端的请求就会失败。我们可以利用这个特性来做权限验证，
@@ -348,7 +348,7 @@ queryLocalInterface() 得到的就是我们本地服务中创建的Binder对象�
 
 ## 总结
 AIDL 通过Stub 来接受并处理数据，Proxy代理类用来发送数据。这两个类只是对Binder的处理和调用而已。
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/stub_proxy_binder.jpeg)
+![Alt text](../../../../images/stub_proxy_binder.jpeg)
 并且客户端和服务器是相对而言的，服务端不仅可以接收和处理消息，而且可以定时往客户端发送数据，与此同时服务端使用Proxy类跨进程调用，相当于充当了"Client"。
 
 ---

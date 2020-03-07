@@ -27,9 +27,9 @@ key ,value,和hash 这三个属性就不多说了，主要是说说 next,befor,a
 * befor 和after是用于维护Entry 插入顺序的，LinkedHashMap能有顺序排列，全靠这两个属性帮忙  
 
 关系如下图：  
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/249993-20161215143120620-1544337380.png)
+![](../../../../images/249993-20161215143120620-1544337380.png)
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/249993-20161215143544401-1850524627.jpg)
+![](../../../../images/249993-20161215143544401-1850524627.jpg)
 图一是LinkedHashMap的整体结构图，图二是专门把循环双向链表抽取出来。使用的是循环双向链表，头部存放的是最久访问的节点或者最先插入的节点。末尾存放的是最近访问的节点或者最后插入的节点。迭代器的访问是从链表的头部开始到链表的尾部，在链表的尾部有一个空的header节点，该节点不存放key-value的内容，是LinkedHashMap的成员属性，循环双向链表的入口。
 
 ## init()

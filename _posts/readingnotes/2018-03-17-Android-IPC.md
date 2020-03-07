@@ -58,9 +58,9 @@ IPC ：Inter_Process Communication的缩写，含义进程间通信或者跨进�
 * 由于MainActivity没有指定process属性，那么她就运行在默认进程中，`默认进程名就是包名，即com.hoyouly.android_art`
 查看进程信息的两种方式
 1. 在DDMS试图中查看
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/ddms_proces.png)
+![Alt text](../../../../images/ddms_proces.png)
 2. adb 命令：**adb shell ps 或者adb shell ps | grep com.hoyouly**
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/adb_shell_process.png)
+![Alt text](../../../../images/adb_shell_process.png)
 
 **注意：** 必须是SecondActivity 或者ThridActivity界面启动，才能把进程启动起来，如果只是单纯的在AndroidManifest文件中注册，是开启不了多进程的
 
@@ -122,7 +122,7 @@ try {
 serialVersionUID 是用来辅助序列化和反序列化过程的，原则上序列化后的数据中的serialVersionUID只有和当前类的serialVersionUID相同才能够正常被反序列化，
 
 **serialVersionUID工作机制：** 序列化的时候系统会把当前类的serialVersionUID写入序列化的文件中。当反序列化的时候系统会去检测文件中的serialVersionUID，看它是否和当前类的serialVersionUID 一致，如果一致就说明序列化的类的版本和当前类的版本相同，这个时候可以成功反序列化。否则说明当前类和序列化的类发生某些变化，比如成员变量的数量，类型等等，这个时候回无法正常反序列化，程序 crash，如下图所示
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/serialVersionUID_error.png)
+![Alt text](../../../../images/serialVersionUID_error.png)
 
 一般来说需要手动指定serialVersionUID的值，如果不手动指定serialVersionUID的值，反序列化时当前类有所改变，那么系统会重新接收当前类的hash值并赋值给serialVersionUID。这个时候当前类的serialVersionUID就和序列化的数据serialVersionUID不一致，**手动指定serialVersionUID，可以避免反序列化过程的失败**
 
@@ -141,8 +141,8 @@ private void readObject(ObjectInputStream in)throws IOException,ClassNotFoundExc
 
 ### Parcelable 接口
 也是一个接口，只要实现这个接口，一个类的对象就可以实现序列化并可以通过Intent和Binder传递,如下图就是一个实现Parcelable接口的例子
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/Parcelable_1.png)
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/Parcelable_2.png)
+![](../../../../images/Parcelable_1.png)
+![](../../../../images/Parcelable_2.png)
 
 #### Parcal
 Parcel 内部包装了可序列化的数据，可以在Binder中自由传输，
@@ -231,7 +231,7 @@ ContentProvider 通过Uri来区分外界要访问的数据集合，为了知道�
 
 Binder连接池的主要作用：将每个业务模块的Binder请求统一转发到远程Service中执行。从而避免了重复创建Service的过程。
 ## 选用合适的IPC方式
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/ipc_method.png)
+![Alt text](../../../../images/ipc_method.png)
 
 ---
 搬运地址：    

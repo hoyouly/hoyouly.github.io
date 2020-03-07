@@ -27,7 +27,7 @@ tags: Fragment ViewPager
 
 ```
 原本挺简单的一个东西，可是只要我一改，就崩溃，原因就是 `java.lang.IllegalStateException: Fragment already added:`
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/fragment_alread_add.png)
+![添加图片](../../../../images/fragment_alread_add.png)
 
 我刚开始一直怀疑是因为布局嵌套太深了，因为这个Fragment 可以说是一个孙子辈Fragment。一个页面，最外层是一个ViewPager,中间层还有一个Viewpager，这个Fragment只是中间层Viewpager中的一个，然后各种查百度+Google，都说什么addFragement之前要判断，可是我使用的是Viewpager+ Fragment，就没有直接进行add啊，而且布局改过来就正常了。毛线啊。也查到了一些感觉靠谱的资料.比如 [修复一个ViewPager+Fragment报的java.lang.IllegalStateException Fragment already added问题](https://blog.csdn.net/newone_helloworld/article/details/88537285)  ，感觉说的有道理，然后就按照做了，可是还是照崩不误。
 还有这个 [Fragment already added问题解决方法，记录一下](https://www.jianshu.com/p/3c88629070bd)，依旧如此。
@@ -52,7 +52,7 @@ try {
 
 记录下来这个，主要是想说，你看到的并不一定是真相，可能你查了半天，一天，根本原因就不在哪里，例如这个 Fragment already added，这就需要自己看一全部log，而我一般崩溃了都会直接 adb logcat -b crash ,看崩溃信息，可是很不幸，真正关键的信息却被过滤了，然后查看所有log，就能查看出来。如下图
 
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/fragment_not_found.png)
+![添加图片](../../../../images/fragment_not_found.png)
 
 
 ---

@@ -55,7 +55,7 @@ public void draw(Canvas canvas) {
 }
 ```
 流程图如下：   
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/draw.png)
+![Alt text](../../../../images/draw.png)
 里面注释很详细，流程图也有，就不多解释了。但是里面涉及两个新名词。脏区域和实心控件，这个需要解释一下
 
 ## View的脏区域和实心控件
@@ -327,7 +327,7 @@ private void draw(boolean fullRedrawNeeded) {
 ```
 
 整个流程图如下
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/invalidate.png)
+![Alt text](../../../../images/invalidate.png)
 
 
 ## invalidate()  和 postInvalidate 区别
@@ -399,7 +399,7 @@ public void requestLayout() {
 ```
 看完代码我们就知道了，如果layout布局有变化，那么也会调用invalidate（）重绘的。
 整个流程图如下：
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/layout.png)
+![Alt text](../../../../images/layout.png)
 
 
 [View 的绘制 --- 概览](http://hoyouly.fun/2018/04/29/view_draw_procress_performTraversals/)   

@@ -50,7 +50,7 @@ O ：代码执行时间T(n)和f(n)成正比
 * O(n+m),O(n*m)   由两个数据规模决定的，
 
 随着n的变大，他们几个的关系图如下
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/n_logn_1.jpg)
+![](../../../../images/n_logn_1.jpg)
 
 ### 非多项式量级
 当数据规模n越大，非多项式量级的算法的执行时间会急剧增加，求解问题执行时间就会无限变大，所以，**非多项式时间复杂度的算法是一种非常低效的算法**

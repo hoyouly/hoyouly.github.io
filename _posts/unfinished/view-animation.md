@@ -25,7 +25,7 @@ Android 动画分三种
 
 使用View动画，创建创建XML文件，路径res/anim/filename.xml  
 View 动画的固定语法,既可以是单个动画，也可以是组合动画，
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/animation_all.png)
+![](../../../../images/animation_all.png)
 
 ###  `<set>` 标签
 表示动画集合，对应AnimationSet类，可以保护若干动画，并且内部可以嵌套其他动画集合，他的两个属性的含义如下
@@ -254,12 +254,29 @@ public void finish() {
 
 注意 Fragment也可以切换动画的，可以使用FragmentTransaction中的setCustomAnimation()来添加动画的。
 # 属性动画
+可以对任意对象的属性进行动画而不仅仅是View。动画的默认时间是300ms，默认帧率是10ms/帧，
+
+其可以达到的效果就是在一个时间间隔内，完成对象从一个属性值到另外一个属性值的改变，因此，属性动画几乎是无所不能的。
+
+只要对象有这个属性，就能实现动画效果。
+
+属性动画是从API11 开始的
+
 ValueAnimator,ObjectAnimator 和 AnimatorSet, ObjectAnimator 继承ValueAnimator,
 AnimatorSet 是一组动画集合，可以定义一组动画。  
 属性动画的XML定义在res/animator/下面   
 如果想要object 对象的属性abc 做动画，必须满足两个条件：
 1. object 类必须提供setAbc方法，如果动画的时候没有传递初始值，你们还要求提供getAbc()方法，因为系统要去object中属性的初始值，如果不满足，直接crash
 2. object 类中setAbc()方法对属性abc所做的改变必须通过某种方法反映出来，比如带来UI的改变等，如果不满足这条，动画无效但是不会crash
+
+
+
+
+
+
+
+
+
 
 
 ---

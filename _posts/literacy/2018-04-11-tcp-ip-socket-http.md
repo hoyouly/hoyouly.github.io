@@ -47,7 +47,7 @@ TCP标志：
 ## 建立连接 --> TCP/IP 三次握手
 三次握手的原因就是为了防止已经失效的连接请求报文段突然又传送到服务端，从而产生错误。
 流程如下：
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/tcp_three_hand.png)
+![](../../../../images/tcp_three_hand.png)
 
 * 第一次握手，客户端尝试连接服务器，向服务器发送SYN报文。     
 用恋爱过程 就是  男对女的说： 我爱你  
@@ -70,7 +70,7 @@ HTTP的报文有两种
 * 请求报文---从客户端向服务器发送的报文
 * 响应报文---从服务器到客户端的回答  
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/http_message_formate.png)
+![](../../../../images/http_message_formate.png)
 
 请求报文和响应报文都是由三部分组成
 * 开始行  用于区分请求报文还是响应报文，请求报文的开始行叫请求行（request-line）,响应报文的开始行叫状态行（status-line）,在开始行的三个字段都是以空格隔开，最后以CR和LF分别表示回车和换行
@@ -79,14 +79,14 @@ HTTP的报文有两种
 
 HTTP 通信的过程就是出栈和入栈的过程
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/http_commite.jpeg)
+![](../../../../images/http_commite.jpeg)
 报文从 应用层到传输层，传输层通过TCP三次握手建立连接，四次挥手释放连接
 
 ## 关闭连接 --> TCP四次挥手
 由于TCP是全双工模式，因此每个通道都必须单独进行关闭，这个原则是：当一方完成了他的数据发送任务后就发送一个FIN来终止这个方向的连接，收到一个FIN只意味着一方没有数据流通，一个TPC连接收到一个FIN后仍能发送数据，首先进行关闭的一方将主动关闭，另一方被动关闭
 TCP的连接的断开需要发送四个包,因此称为四次挥手（four-way handshake）,客户端和服务器均可发起挥手动作，在socket编程中，任何一方执行了close()操作即发起挥手操作
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/tcp_four_bye.png)
+![](../../../../images/tcp_four_bye.png)
 
 1. 客户端发送一个FIN，表示客户端已经没有数据要发送给服务器了，要断开与服务端的连接，但是这个时候，客户端是可以收到服务端的数据的。
 2. 服务端收到这个FIN，他发回一个ACK，表示服务端知道了客户端要断开连接。
@@ -141,7 +141,7 @@ HTTPS 是通过SSL或者TLS加密处理数据，更安全
 
 网上看了一些资料，例如信鸽解释HTTPS，还有其他的一些，最终自己画了一个类似的流程图，有请大名鼎鼎的小明同学登场。
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/https_flow.png)
+![](../../../../images/https_flow.png)
 
 小明同学 要和小红同学通信，
 1. 小明同学给小红同学寄一个信鸽，但是不带任何信息，

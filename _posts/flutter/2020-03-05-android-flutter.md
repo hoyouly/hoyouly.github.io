@@ -70,9 +70,11 @@ evaluate(new File(
 
 出现问题的代码是在 Flutter.java 中的第 99行，如图红框位置
 
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/flutter_quesioint_one.jpg)
+![添加图片](../../../../images/flutter_quesioint_one.jpg)
 
-查了好久不知道为啥，这命名是自动生成的文件，怎么会出现问题呢，搞不懂，但是问题解决了：<font color="#ff000" >直接注释掉改行代码即可。</font>   简单粗暴。但是好使。
+查了好久不知道为啥，这文件是自动生成的，怎么会出现问题呢，搞不懂，但是问题解决了：<font color="#ff000" >直接注释掉改行代码即可。</font>   简单粗暴。但是好使。
+
+原因不知道，先记录下来，没准后面学习中，就柳暗花明了。
 
 目前没发现有啥影响。试验在有序进行。然而在最后关头，又遇见坑了
 

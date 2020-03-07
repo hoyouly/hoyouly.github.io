@@ -21,7 +21,7 @@ tags: Android开发艺术探索  Service
 ### startService()
 都知道，startService()是Context中的方法，而ContextImpl 是Context的子类。所以流程图如下。
 
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/startservice.png)
+![Alt text](../../../../images/startservice.png)
 
 又看到AMS了，就知道和这个有关，startService()应该和startActivity()有很多类似的地方吧。
 两次IPC通信
@@ -35,7 +35,7 @@ tags: Android开发艺术探索  Service
 
 然后再详细看看handleCreateService()的流程吧
 #### ActivityThread # handleCreateService()
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/handleCreateService.png)
+![Alt text](../../../../images/handleCreateService.png)
 
 在handleCreateService（）
 * 创建了Service对象
@@ -51,7 +51,7 @@ tags: Android开发艺术探索  Service
 
 ### bindService()
 
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/bindService.png)
+![Alt text](../../../../images/bindService.png)
 
 关注的重点：
 1. 在 getServiceDispatcher()中，将ServiceConnection对象转换为ServiceDispatcher.InnerConnection，并添加到集合mService中。因为服务的绑定可能是夸进程的，因此ServiceConnection 必须得借助Binder才能让远程的服务端回调自己的方法。ServiceDispatcher.InnerConnection 正好充当Binder的角色。这样当Service和客户端建立连接后，系统就会通过InnerConnection来调用ServiceConnection的onServcieConnected()
@@ -62,7 +62,7 @@ tags: Android开发艺术探索  Service
 
 #### ActivityThread # handleBindService()
 流程图来一份
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/handleBindService.png)
+![Alt text](../../../../images/handleBindService.png)
 
 看到了熟悉的onBind()和onServiceConnected() 了
 

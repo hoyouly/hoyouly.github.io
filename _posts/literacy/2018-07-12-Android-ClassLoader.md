@@ -21,7 +21,7 @@ tags:  Android ClassLoader
 这些最终都继承自java.lang.ClasssLoader
 
 关系图如下：
-![Android 平台的ClassLoader](https://github.com/hoyouly/BlogResource/raw/master/imges/android_classloader.png)
+![Android 平台的ClassLoader](../../../../images/android_classloader.png)
 
 ###  BootCLassLoader  
 和JVM不同的是，BootClassLoader是ClassLoader的内部类，由Java代码实现而不是C++

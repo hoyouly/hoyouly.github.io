@@ -125,7 +125,7 @@ public static int getChildMeasureSpec(int spec, int padding, int childDimension)
 3. 如果子布局设置的是warp_conent,那么子布局的MeasureSpce就是AT_MOST,可用大小就是父布局最大的可用大小，UNSPECIFIED除外，这种情况下还是UNSPECIFIED，并且可用大小为0
 
 换成表格形式就是如下。
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/view_measurespce_parent_measurespce.png)
+![](../../../../images/view_measurespce_parent_measurespce.png)
 
 **MeasureSpce一旦确定，onMeasure()中就可以得到View的测量宽和高**
 

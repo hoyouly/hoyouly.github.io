@@ -88,11 +88,11 @@ Binder模糊了进程边界，淡化了进程间通信过程，整个系统仿�
 # Binder框架
 
 虽然很多人都用访问网络来解释 Binder，但是总感觉不太好。不过还是把这个图贴上了。
-![Binder关系图](https://github.com/hoyouly/BlogResource/raw/master/imges/Binder_1.png)
+![Binder关系图](../../../../images/Binder_1.png)
 
 Binder的框架采用C/S架构，也包含四个角色： Server，Client，ServiceManager以及Binder驱动。其中Server，Client，SM 运行用户空间，而Binder驱动运行在内核空间。
 
-![Binder关系图](https://github.com/hoyouly/BlogResource/raw/master/imges/Binder_2.png)
+![Binder关系图](../../../../images/Binder_2.png)
 * Server，Client，ServiceManager 运行用户空间，而Binder驱动运行在内核空间。
 * Binder驱动和Service Manager可以看做是Android平台的基础架构，而Client和Server是Android的应用层，
 * 开发人员只需自定义实现client、Server端，借助Android的基本平台架构便可以直接进行IPC通信
@@ -105,7 +105,7 @@ Binder的框架采用C/S架构，也包含四个角色： Server，Client，Serv
 
 # Binder 原理
 Binder采用C/S架构，从组件视角来说，包含Client，Server，ServiceManager以及Binder驱动，其中ServiceManager用于管理系统中的各种服务。架构图如下所示：
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/Binder_3.jpg)
+![](../../../../images/Binder_3.jpg)
 
 可以看出，无论是注册服务还是获取服务，都需要ServiceManager,这里的ServiceManager是Native层的ServiceManager,而不是framework层的ServiceManager。
 
@@ -120,7 +120,7 @@ Binder采用C/S架构，从组件视角来说，包含Client，Server，ServiceM
 
 图中的Client,Server,Service Manager之间交互都是虚线表示，是由于它们彼此之间不是直接交互的，而是都通过与Binder驱动进行交互的，从而实现IPC通信方式。
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/binder_4.png)
+![](../../../../images/binder_4.png)
 
 整个个通信步骤如下：
 1. SM 建立（通讯录建立）；首先有一个进程向驱动提出申请为SM，驱动同意后，SM进程负责管理Service（注意这里是Service而不是Server，因为如果通信过程反过来的话，那么原来的客户端Client也会称为服务端Server）不过这个时候通讯录还是空的，一个号码都没有。
@@ -145,7 +145,7 @@ Binder采用C/S架构，从组件视角来说，包含Client，Server，ServiceM
 # Binder使用场景
 Android开发中，Binder主要用于在Service中，包括AIDL和Messager，其中普通服务中的Binder不涉及到进程通信，另外，ContentProvider底层实现也是Binder，
 所以Binder的使用场景如下：
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/binder_5.png)
+![](../../../../images/binder_5.png)
 
 # 其他
 

@@ -43,14 +43,14 @@ public Handler(Callback callback, boolean async) {
 在我们创建Handler的时候，会有并且必须一个Looper对象，要么是创建的时候传递过来，要么就是通过Looper.myLooper()获得，这个从Looper对象中取得的MessageQueue，
 一个线程中Looper只有一个，相应的MessageQueue 也只有一个   
 如下图
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/creat_handler.png)
+![添加图片](../../../../images/creat_handler.png)
 这两种的区别后面会说道   
 
 
 注意： 我们在创建 Handler的时候，经常被Android Studio提示`The following Handler class should be static or leaks might occur: `。
 
 如下图所示   
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/handler_leank.png)
+![添加图片](../../../../images/handler_leank.png)
 看if() 语句，现在知道原因了吧，匿名类、内部类或本地类都必须申明为static，否则会警告可能出现内存泄露
 
 ## 发送消息
@@ -92,7 +92,7 @@ public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
 2. 执行到了 MessageQueue 的enqueueMessage()中。
 
 流程图如下
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/handlemessage_post.png)
+![添加图片](../../../../images/handlemessage_post.png)
 
 post()的时候，会把Runnable对象转成一个Message，
 ```java
@@ -102,7 +102,7 @@ private static Message getPostMessage(Runnable r) {
 		return m;
 	}
 ```
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/handler_post.png)
+![添加图片](../../../../images/handler_post.png)
 
 
 不知道有没有发现，为啥不用 SystemClock.currentTimeMillis()呢，而是用了 SystemClock.uptimeMillis()。区别在哪里呢？
@@ -171,7 +171,7 @@ boolean enqueueMessage(Message msg, long when) {
 	}
 ```
 转换成流程图如下
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/enqueuemessage.png)
+![添加图片](../../../../images/enqueuemessage.png)
 主要做了两件事
 1. 插入到消息队列中
 怎么插入队列中的，就是图中红框中的实现。主要包括两种
@@ -240,7 +240,7 @@ public static void prepareMainLooper() {
   static final ThreadLocal<Looper> sThreadLocal = new ThreadLocal<Looper>();
 ```
 其实主要的就是prepare()，就是我们经常说的，在子线程中创建Handler之前，必须先Looper.prepare()才行   如下图
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/looper_prepare.png)
+![添加图片](../../../../images/looper_prepare.png)
 注意创建Looper的同时，也就创建了一个MessageQueue ，ThreadLocal 后面会说到   
 Looper创建成功了，那么就开始干活吧，开启传送带。loop()方法。
 ## Looper # loop()
@@ -273,7 +273,7 @@ public static void loop() {
 	}
 ```
 再来一份流程图
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/looper_loop.png)
+![添加图片](../../../../images/looper_loop.png)
 这里面主要看两个地方
 1. 取消息  queue.next()
 2. 分发消息 msg.target.dispatchMessage()   
@@ -434,7 +434,7 @@ public void dispatchMessage(Message msg) {
 	}
 ```
 这个代码很短，可以直接看流程图
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/handler_dispatchmessage.png)
+![添加图片](../../../../images/handler_dispatchmessage.png)
 这几个if else 判断，就和创建handler 和handler发送消息有关
 1. msg.callback  就是 post()中创建的Runnable对象，最后执行到了run()方法中
 2. mCallback 就是创建Handler的时候传递的callback对象，如果mCallback.handleMessage(msg) 返回true，就不会执行handleMessage了，可是如果返回false，还是可以执行handleMessage()的。   
@@ -490,7 +490,7 @@ public static void main(String[] args) {
 Looper.loop() 在ActivityThread的main()中执行的，肯定是主线程，上面也说到。Looper.loop()会执行MessageQueue.next(),取得消息后执行Handler.handleMessage(),这两个也是在主线程中的。
 3. 在子线程中我们会执行 Handler# sendMessage()，所以Handler# sendMessage()在子线程，相应的，  MessageQueue# enqueueMessage()也就在子线程中。   
 如下图所示。  
-![添加图片](https://github.com/hoyouly/BlogResource/raw/master/imges/handler_thread.png)
+![添加图片](../../../../images/handler_thread.png)
 因为涉及到多线程，所以在enqueueMessage() 和next() 中我们都看到了 `synchronized (this) {}`这样的代码。this 就是MessageQueue对象，Looper只有一个，那么相应的MessageQueue也只有一个，锁对象只有一个，就能防止多线程对同一队列的同时操作。这样就保证了多线程数据的安全。
 
 

@@ -133,7 +133,7 @@ private void setChildFrame(View child, int left, int top, int width, int height)
 这样父元素在layout完成自己的定位后，然后通过onLayout()调用子元素的layout方法，子元素又会通过layout方法定位自己的位置。这样一层层传递下来就完成了整个View树的layout过程。
 
 这样layout 流程就结束了。补充一份流程图吧
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/perform_layout.png)
+![](../../../../images/perform_layout.png)
 
 ## getMeasuredWidth()和 getWidth()的区别
 getMeasuredWidth()： 得到的是测量宽度。 形成与measure（）过程中

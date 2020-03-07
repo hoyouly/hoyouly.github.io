@@ -69,7 +69,7 @@ description: Android 性能优化
 * 在实际开发过程中，很多布局文件在正常情况下是不会显示的，这个时候就没有必要再整个界面初始化的时候加载进来
 * 通过ViewStub就可以做到在使用的时候进行加载，提高程序的初始化的性能
 
-![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/1465729201927.png)
+![Alt text](../../../../images/1465729201927.png)
 
 stub_import 是ViewStub的id，panel_import 是layout_network_error这个布局的根元素的id，如何进行按需加载ViewStub的布局呢，可以有两种方式
 ``` java
@@ -87,9 +87,9 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 2. 在开发者选项中的<font color="#ff000" >GPU过度可视化工具</font>，查看界面渲染情况，
 3. 可以使用<font color="#ff000" > Layout Inspector </font>辅助分析。捕捉当前页面快照。生成一个.li文件，通过AndroidStudio查看页面视图层次结构
 4. 使用<font color="#ff000" >Profile GPU Rendering </font>也是在开发者选项中打开。打开后的界面如下
-    ![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/carsetting_1.png)
+    ![Alt text](../../../../images/carsetting_1.png)
    各个颜色的意思
-    ![Alt text](https://github.com/hoyouly/BlogResource/raw/master/imges/carsetting_2.png)
+    ![Alt text](../../../../images/carsetting_2.png)
 
 
 ## 绘制优化

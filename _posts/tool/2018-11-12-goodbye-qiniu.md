@@ -17,7 +17,7 @@ tags: GitHub  图床
 4. 提交到GitHub上。
 5. 网页浏览复制图片URL。   
 如 https://github.com/hoyouly/BlogResource/blob/master/imges/mvp.png    
-`将URL中blob替换为raw`,即 https://github.com/hoyouly/BlogResource/raw/master/imges/mvp.png  
+`将URL中blob替换为raw`,即 ../../../../images/mvp.png  
 注意：   
 `将URL中blob替换为raw`   
 `将URL中blob替换为raw`   
@@ -25,10 +25,10 @@ tags: GitHub  图床
 重要的事情说三遍，我刚开始就是因为不知道这个，所以弄了好长时间都显示不出来，还以为自己弄错了呢。   
 
 可是之前已经往七牛上弄了好多图片了，咋办啊，没办法，`有些人看不着前门就去找后门，得！一下撞到骗子的怀里了！`韩春明这话一点不错，好好的GitHub不用，干嘛非得去用七牛呢。折腾一下吧。全部下载，放到BlogResource/images下面。然后commit。
-至于替换之前的连接，这个就好办了，使用Atom，加载整个blog存放的目录，然后全局替换就行了，比如我之前的图片连接都是 以 http://p5sfwb51p.bkt.clouddn.com/ 开头的，那样全局替换成 https://github.com/hoyouly/BlogResource/raw/master/imges/ 就可以了，然后再提交，搞定。
+至于替换之前的连接，这个就好办了，使用Atom，加载整个blog存放的目录，然后全局替换就行了，比如我之前的图片连接都是 以 http://p5sfwb51p.bkt.clouddn.com/ 开头的，那样全局替换成 ../../../../images/ 就可以了，然后再提交，搞定。
 当然，如果你有好几个域名，那没办法了，慢慢折腾吧。生命贵在折腾。
 
-这样以后写blog的时候，想贴图片，就简单了，先弄张图片，扔到BlogResource/images下面，那么他最后的路径就是https://github.com/hoyouly/BlogResource/raw/master/imges/图片名， 路径有了，那就插入图片吧。 最后一块提交，齐活。  
+这样以后写blog的时候，想贴图片，就简单了，先弄张图片，扔到BlogResource/images下面，那么他最后的路径就是../../../../images/图片名， 路径有了，那就插入图片吧。 最后一块提交，齐活。  
 GitHub 才是王道，如果连GitHub都不能用了，那还敲个写个啥博客啊，直接回家种地不就行了。
 
 ---

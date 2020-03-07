@@ -239,7 +239,7 @@ Glide(...) {
 2. 传入的不是Application对象的时候，就会执行相应的方法，但是这三个方法都最终执行到了`fragmentGet(activity, fm,  null, isActivityVisible(activity));或者 supportFragmentGet(activity, fm,  null, isActivityVisible(activity))`
 3. 如果是在子线程中，默认就当Application处理
 
-![](https://github.com/hoyouly/BlogResource/raw/master/imges/glide_requestmanagerretriever_get.png)
+![](../../../../images/glide_requestmanagerretriever_get.png)
 
 如图，get()最终都会执行到fragmentGet（）和supportFragmentGet（）这两个方法中。
 那么就看看这两个方法的区别啊
