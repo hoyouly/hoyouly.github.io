@@ -95,7 +95,7 @@ public Builder baseUrl(HttpUrl baseUrl) {
 ## addConverterFactory()
 然后看addConverterFactory()方法，接收一个转换器工厂。
 
-它主要是对数据转化用的，请网络请求获取的数据，将会在这里被转化成我们所需要的数据类型，比如通过Gson将json数据转化成对象类型。
+它主要是对数据转化用的，请网络请求获取的数据，会在这里被转化成我们所需要的数据类型，比如通过Gson将json数据转化成对象类型。
 ```java
 public Builder addConverterFactory(Converter.Factory factory) {
      converterFactories.add(checkNotNull(factory, "factory == null"));
@@ -157,24 +157,19 @@ public Retrofit build() {
     if (baseUrl == null) {
       throw new IllegalStateException("Base URL required.");
     }
-
     okhttp3.Call.Factory callFactory = this.callFactory;
     if (callFactory == null) {
-     callFactory = new OkHttpClient();
+    		callFactory = new OkHttpClient();
     }
-
     Executor callbackExecutor = this.callbackExecutor;
     if (callbackExecutor == null) {
-     callbackExecutor = platform.defaultCallbackExecutor();
-     }
-
+     		callbackExecutor = platform.defaultCallbackExecutor();
+    }
       // Make a defensive copy of the adapters and add the default Call adapter.
-     List<CallAdapter.Factory> adapterFactories = new ArrayList<>(this.adapterFactories);
-     adapterFactories.add(platform.defaultCallAdapterFactory(callbackExecutor));
-
-      // Make a defensive copy of the converters.
-     List<Converter.Factory> converterFactories = new ArrayList<>(this.converterFactories);
-
+    List<CallAdapter.Factory> adapterFactories = new ArrayList<>(this.adapterFactories);
+    adapterFactories.add(platform.defaultCallAdapterFactory(callbackExecutor));
+    // Make a defensive copy of the converters.
+    List<Converter.Factory> converterFactories = new ArrayList<>(this.converterFactories);
     return new Retrofit(callFactory, baseUrl, converterFactories, adapterFactories,
  		callbackExecutor, validateEagerly);
 }
