@@ -21,7 +21,6 @@ Dart 是单线程的
 ![](../../../../images/event_loop.png)
 
 
-
 每一次事件循环，会先去微任务队列中查询，如果队列不为null，则执行微任务队列中的事件，直到为null，才会执行事件队列里面的任务。  不过很少有事件用在这个队列中。
 就连 Flutter 内部，也只有 7 处用到了而已（比如，手势识别、文本输入、滚动视图、保存页面效果等需要高优执行任务的场景）
 大多数情况下，我们使用的是 Event Queue ，比如，I/O、绘制、定时器这些异步事件，都是通过事件队列驱动主线程执行的。
@@ -33,10 +32,7 @@ Flutter为Event Queue 的任务建立提供了一个封装，就是Future
 
 Future对象表示异步操作结果，通常通过then()来处理返回的结果
 
-
-
 把一个函数放到Future中，就完成了从同步任务到异步任务的封装
-
 
 声明一个Future时，Dart会把异步任务的函数体放入到事件队列中，然后立即执行。
 后续的代码继续执行，而当同步执行的代码执行完毕后，事件队列会按照（FIFO），依次取出事件进行执行，最后同步执行Future的函数体以及后续的 then()
@@ -95,8 +91,10 @@ Hello 2019
 2 秒后，fetchContent 异步任务返回“Hello 2019”，于是 func 的 await 也被取出，打印“Hello 2019”
 
 await 与 async 只对调用上下文的函数有效，并不向上传递
+
+
 ---
-搬运地址：
-[Flutter和Dart系列四：Function](https://blog.csdn.net/xlh1191860939/article/details/87895616)
-[Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)
-极客时间《Flutter核心技术与实战》
+搬运地址：    
+[Flutter和Dart系列四：Function](https://blog.csdn.net/xlh1191860939/article/details/87895616)      
+[Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)        
+极客时间《Flutter核心技术与实战》      
