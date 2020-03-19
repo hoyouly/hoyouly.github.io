@@ -1,60 +1,77 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
-
 # Site settings
 title: hoyouly
-brief-intro: 我要用自己的双手，敲出一个美好未来
+subtitle: 积跬步，至千里。
+keywords: hoyouly
+description: 我要用自己的双手，敲出一个美好未来
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://hoyouly.fun" # the base hostname & protocol for your site
-
-permalink: /:year/:month/:day/:title/
-
-# other links
-#twitter_username: gaohaoyang126
-#facebook_username: gaohaoyang.water
-github_username:  hoyouly
+url: "http://hoyouly.fun" # 你的域名
+page_no_title: "hoyouly's blog" # 文章无标题时默认显示内容
+beian: # "备案号"
+author: hoyouly
 email: hoyouly@163.com
-weibo_username: hoyouly
-zhihu_username: hoyouly
-#linkedIn_username: gaohaoyang
-#dribbble_username:
-
-description_footer: 本站记录我的 Android 之旅的沿途风景！
-
-# comments
-# two ways to comment, only choose one, and use your own short name
-# 两种评论插件，选一个就好了，使用自己的 short_name
-duoshuo_shortname: #hygblog
-disqus_shortname: hoyouly
-
-# statistic analysis 统计代码
-# 百度统计 id，将统计代码替换为自己的百度统计id，即
-# hm.src = "//hm.baidu.com/hm.js?xxxxxxxxxxxx";
-# xxxxx字符串
-# baidu_tongji_id: cf8506e0ef223e57ff6239944e5d46a4
-google_analytics_id: UA-115937602-1 # google 分析追踪id
 
 # Build settings
-markdown: kramdown
+permalink: /:year/:month/:day/:title/
+exclude: ["README.md", "changelog.md", "server", "tools", "Pipfile"]
+plugins:
+  - jekyll-paginate
+  - jemoji
 
+
+# always get github's error email saying redcarpet is not supported,
+# so change it to kramdown.
+markdown: kramdown
+# highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter: rouge
 
-# port
-# port: 1234
 
-# url
-category_dir: category/
-tag_dir: tag/
+# Pageinate settings
+paginate: 6 # 分页大小
+paginate_path: "page/:num/"
 
-# excerpt
-excerpt_separator: "\n\n\n\n"
+# Search settings
+baidu_search: true
+google_search: # true
 
-# paginate
-gems: [jekyll-paginate]
-paginate: 6
+# Menu settings
+menu:
+  - page: 首页
+    directory: .
+    icon: icon-home
+  - page: 归档
+    directory: archives/
+    icon: icon-archive
+  - page: 标签
+    directory: tags/
+    icon: icon-tags
+  - page: 关于
+    directory: about/
+    icon: icon-about
+#  - page: 订阅
+#    directory: feed.xml
+#    icon: icon-rss
+
+# Google Analytics
+ga_track_id: 'UA-115937602-1'            # Format: UA-xxxxxx-xx
+ga_domain: www.hoyouly.fun              # 默认的是 auto, 这里我是自定义了的域名，你如果没有自己的域名，需要改成auto
+
+
+# Code hub settings
+codehub: # 代码仓库
+  - title: Github
+    url: https://github.com/hoyouly
+
+
+valine:
+  enable: true
+  app_id:  K1rbn2Oo0YMM04VuzdLS7Nzz-gzGzoHsz
+  app_key: AAsHbwVm8ofKFJ6ghGqqrXSU
+  notify: false # mail notifier , https://github.com/xCss/Valine/wiki
+  verify: false # Verification code
+  visitor: true
+  avatar: retro
+  placeholder: say something~~\n - 昵称 为你所要显示的评论的ID；\n - 邮箱 只有后台可见，仅供讨论过程中是否需要交流邮件而设置，请放心填写;\n - 网址 为你的评论的昵称的超链接。\n当然，以上都可以不写，评论依然会显示……
+  guest_info: nick,mail,link
+  pageSize: 10

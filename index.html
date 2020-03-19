@@ -1,160 +1,77 @@
 ---
-layout: default
+layout: base
 ---
 
-<div class="page clearfix" index>
-    <div class="left">
-        <h1>欢迎来到我的博客！</h1>
-        <small>这里记录着我的 Android 学习之路</small>
-        <hr>
-        <ul>
-            {% for post in paginator.posts %}
-              <li>
-                <h2>
-                  <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-                </h2>
-                <div class="label">
-                    <div class="label-card">
-                        <i class="fa fa-calendar"></i>{{ post.date | date: "%F" }}
-                    </div>
-                    <div class="label-card">
-                        {% if post.author %}<i class="fa fa-user"></i>{{ post.author }}
-                        {% endif %}
-                    </div>
-                    <div class="label-card">
-                        {% if page.meta %}<i class="fa fa-key"></i>{{ page.meta }}  {% endif %}
-                    </div>
-
-                    <div class="label-card">
-                    {% include category.html %}
-                    </div>
-
-                    <div class="label-card">
-                    {% include tag.html %}
-                    </div>
-                </div>
-                <div class="excerpt">
-                    {{post.excerpt}}
-                </div>
-                <div class="read-all">
-                    <a  href="{{ post.url | prepend: site.baseurl }}"><i class="fa fa-newspaper-o"></i>Read All</a>
-                </div>
-                <hr>
-              </li>
-            {% endfor %}
-        </ul>
+<!--valine comment function-->
+<script src="https://cdnjs.loli.net/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
 
 
+{% for post in paginator.posts %}
+<div class="post">
 
-        <!-- Pagination links -->
-        <div class="pagination">
-          {% if paginator.previous_page %}
-            <a href="/index.html" class="previous"><i class="fa fa-angle-double-left"></i></a>
-            <a href="{{ paginator.previous_page_path | prepend: site.baseurl }}" class="previous"><i class="fa fa-angle-left"></i></a>
-          {% else %}
-            <span class="previous disable"><i class="fa fa-angle-double-left"></i></span>
-            <span class="previous disable"><i class="fa fa-angle-left"></i></span>
-          {% endif %}
-          <span class="page_number ">{{ paginator.page }}/{{ paginator.total_pages }}</span>
-          {% if paginator.next_page %}
-            <a href="{{ paginator.next_page_path }}" class="next"><i class="fa fa-angle-right"></i></a>
-            <a href="{{ site.baseurl }}/page{{ paginator.total_pages }}" class="next"><i class="fa fa-angle-double-right"></i></a>
-          {% else %}
-            <span class="next disable"><i class="fa fa-angle-right"></i></span>
-            <span class="next disable"><i class="fa fa-angle-double-right"></i></span>
-          {% endif %}
-        </div>
+    <h2 class="post-title">
+        <a href="{{ post.url | prepend: site.baseurl }}">
+            {% if post.title %}
+            {{ post.title}}
+            {% else %}
+            {{ site.page_no_title }}
+            {% endif %}
+        </a>
+    </h2>
+<a href="{{ post.url | prepend: site.baseurl }}">
+    <div class="post-meta">
+        <span>
+        <i class="icon-post-date"> {{ post.date | date: "%Y年%m月%d日" }}
+        </i>
+            <!-- 显示每篇博客阅读量, id 将作为查询条件 -->
+                <span id={{post.url}} class="leancloud-visitors" data-flag-title={{post.title}}>
+                    <span class="post-meta-divider">|</span>
+                    <span class="post-meta-item-text">阅读量 </span>
+                    <span class="leancloud-visitors-count"></span>
+                </span>
+                &#x1F601
+        </span>
     </div>
-    <!-- <button class="anchor"><i class="fa fa-anchor"></i></button> -->
-    <div class="right">
-        <div class="wrap">
-            <div class="side">
-                <div>
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                    最近的博客
-                </div>
-                <ul class="content-ul" recent>
-                    {% for post in site.posts offset: 0 limit: 10  %}
-                        <li><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
 
-            <!-- Content -->
-            <div class="side ">
-                <div>
-                    <i class="fa fa-th-list"></i>
-                    类型
-                </div>
-                <ul class="content-ul" cate>
-                    {% for category in site.categories %}
-                    <li>
-                        <a href="{{ root_url }}/{{ site.category_dir }}#{{ category | first }}" class="categories-list-item" cate="{{ category | first }}">
-                            <span class="name">
-                                {{ category | first }}
-                            </span>
-                            <span class="badge">{{ category | last | size }}</span>
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-            <!-- 其他div框放到这里 -->
-            <div class="side">
-                <div>
-                    <i class="fa fa-tags"></i>
-                    标签
-                </div>
-                <div class="tags-cloud">
-                    {% assign first = site.tags.first %}
-                    {% assign max = first[1].size %}
-                    {% assign min = max %}
-                    {% for tag in site.tags offset:1 %}
-                      {% if tag[1].size > max %}
-                        {% assign max = tag[1].size %}
-                      {% elsif tag[1].size < min %}
-                        {% assign min = tag[1].size %}
-                      {% endif %}
-                    {% endfor %}
+    <div class="post-content">{{ post.content | strip_html | truncate:360 }}</div></a>
 
-                    {% if max == min %}
-                        {% assign diff = 1 %}
-                    {% else %}
-                        {% assign diff = max | minus: min %}
-                    {% endif %}
+    <p class="readmore"><a href="{{ post.url | prepend: site.baseurl }}">阅读更多</a></p>
 
-                    {% for tag in site.tags %}
-                      {% assign temp = tag[1].size | minus: min | times: 36 | divided_by: diff %}
-                      {% assign base = temp | divided_by: 4 %}
-                      {% assign remain = temp | modulo: 4 %}
-                      {% if remain == 0 %}
-                        {% assign size = base | plus: 9 %}
-                      {% elsif remain == 1 or remain == 2 %}
-                        {% assign size = base | plus: 9 | append: '.5' %}
-                      {% else %}
-                        {% assign size = base | plus: 10 %}
-                      {% endif %}
-                      {% if remain == 0 or remain == 1 %}
-                        {% assign color = 9 | minus: base %}
-                      {% else %}
-                        {% assign color = 8 | minus: base %}
-                      {% endif %}
-                      <a href="{{ root_url }}/{{ site.tag_dir }}#{{ tag[0] }}" style="font-size: {{ size }}pt; color: #{{ color }}{{ color }}{{ color }};">{{ tag[0] }}</a>
-                    {% endfor %}
-                </div>
-            </div>
-
-            <!-- <div class="side">
-                <div>
-                    <i class="fa fa-external-link"></i>
-                    Links
-                </div>
-                <ul  class="content-ul">
-
-                </ul>
-            </div> -->
-        </div>
-    </div>
 </div>
-<!-- <script src="{{ "/js/scroll.min.js " | prepend: site.baseurl }}" charset="utf-8"></script> -->
-<!-- <script src="{{ "/js/pageContent.js " | prepend: site.baseurl }}" charset="utf-8"></script> -->
+{% endfor %}
+
+<!--初始化Valine-->
+<script>
+    var notify = '{{site.valine.notify}}' === true;
+    var verify = '{{site.valine.verify}}.>' === true;
+    var visitor = '{{site.valine.visitor}}.>' === true;
+
+    new Valine({
+        av: AV,
+        el: '#valine_comment',
+        notify: notify,
+        verify: verify,
+        // smiles_url: '/smiles',
+        visitor: true,
+        app_id: '{{site.valine.app_id}}',
+        app_key: '{{site.valine.app_key}}',
+        placeholder: '{{site.valine.placeholder}}',
+        avatar: '{{site.valine.avatar}}',
+    });
+</script>
+
+<div class="page-navigator">
+    {% if paginator.previous_page %}
+    {% if paginator.page == 2 %}
+    <a href="/" class="previous">上一页</a>
+    {% else %}
+    <a href="/page/{{ paginator.previous_page }}/" class="previous">上一页</a>
+    {% endif %}
+    {% endif %}
+    <span class="page-number">第 {{ paginator.page }}/{{ paginator.total_pages }} 页</span>
+    {% if paginator.next_page %}
+    <a href="/page/{{ paginator.next_page }}/" class="next">下一页</a>
+    {% endif %}
+</div>
