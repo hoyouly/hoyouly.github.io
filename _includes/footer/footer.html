@@ -39,10 +39,10 @@
 
 
 <!-- Google Analytics -->
-{% if site.ga_track_id %}
+{% if site.google_analytics_id %}
 <script>
     // dynamic User by Hux
-    var _gaId = '{{ site.ga_track_id }}';
+    var _gaId = '{{ site.google_analytics_id }}';
     var _gaDomain = '{{ site.ga_domain }}';
 
     // Originial
@@ -62,6 +62,3 @@
     ga('send', 'pageview');
 </script>
 {% endif %}
-
-
-

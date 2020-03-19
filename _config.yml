@@ -54,9 +54,11 @@ menu:
 #    icon: icon-rss
 
 # Google Analytics
-ga_track_id: 'UA-115937602-1'            # Format: UA-xxxxxx-xx
+google_analytics_id: 'UA-115937602-1'            # Format: UA-xxxxxx-xx
 ga_domain: www.hoyouly.fun              # 默认的是 auto, 这里我是自定义了的域名，你如果没有自己的域名，需要改成auto
 
+# 百度统计
+baidu_tongji_id: 3dc2b6bcb95de72ae7a543091ad0539e
 
 # Code hub settings
 codehub: # 代码仓库
