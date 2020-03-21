@@ -12,6 +12,8 @@ tags: Mac  terminal 快捷键
 * 行首ctrl + a
 * 行尾ctrl + e
 * 单词为单位移动：option + 方向键
+* open src_code -a webStorm    使用 webStorm 打开 src_code文件夹
+* open config -a Sublime\ Text   使用sublime 打开 config
 
 
 # Vim 编辑快捷键
