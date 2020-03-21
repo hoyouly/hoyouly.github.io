@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  我的代码块也能显示行数，滑动，高亮和一键复制
+title: 我的代码块也能显示行数，滑动，高亮和一键复制
 category: 工具
 tags: jekyll  prismjs
 ---

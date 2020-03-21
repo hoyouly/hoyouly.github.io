@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Pro  Git 笔记
+title: Pro  Git 笔记
 category: 读书笔记
 tags: Git
 ---

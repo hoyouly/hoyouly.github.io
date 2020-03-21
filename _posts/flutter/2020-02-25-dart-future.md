@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Flutter学习之Dart 中的 Future
+title: Flutter学习之Dart 中的 Future
 category: Flutter 学习
 tags: Flutter  Dart  Future
 ---

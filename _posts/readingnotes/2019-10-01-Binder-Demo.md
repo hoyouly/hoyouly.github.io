@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  从一个小例子理解Binder整个流程
+title: 从一个小例子理解Binder整个流程
 category: 读书笔记
 tags:  Binder
 ---

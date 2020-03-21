@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Flutter学习之Dart 中的Function
+title: Flutter学习之Dart 中的Function
 category: Flutter 学习
 tags: Flutter  Dart
 ---
