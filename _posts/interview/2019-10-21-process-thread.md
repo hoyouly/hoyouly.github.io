@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 街题系列---进程和线程的区别
+title: 街题系列 - 进程和线程的区别
 category: 街题系列
 tags: 进程  线程
 ---

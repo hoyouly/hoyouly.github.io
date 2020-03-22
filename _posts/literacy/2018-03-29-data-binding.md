@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---Data Binding
+title: 扫盲系列 - Data Binding
 category: 扫盲系列
 tags: DataBinding
 ---

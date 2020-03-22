@@ -8,7 +8,7 @@ tags: Android开发艺术探索  Service
 {:toc}
 ## 类名解释
 ### AMS
-详情参照 [Android 四大组件之 Activity](http://hoyouly.fun/2019/03/15/Android-Activity-Core/)
+详情参照 [Android 四大组件之 Activity](../../../../2019/03/15/Android-Activity-Core/)
 
 ### ActivityService
 辅助AMS进行Service管理的的类，包括Service的启动，绑定和停止等

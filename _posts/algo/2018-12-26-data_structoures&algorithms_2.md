@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 数据结构和算法之美--复杂度分析
+title: 数据结构和算法之美 - 复杂度分析
 category: 数据结构和算法
 tags: 数据结构 算法
 ---

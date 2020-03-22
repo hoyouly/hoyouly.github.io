@@ -1,6 +1,6 @@
 ---
 layout: post
-title: View 的绘制 --- Measure 流程
+title: View 的绘制 - Measure 流程
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
@@ -459,11 +459,11 @@ measure()的流程就说完了，但是如果有这样一个任务，在Activity
 整体的流程图如下
 ![Alt text](https://note.youdao.com/yws/public/resource/b0933b37ddd8ac810ca1d341288bbaa7/xmlnote/WEBRESOURCE751f50bcba2207aab617f8ca29d9083e/2444)
 
-[
-[View 的绘制 --- 概览](http://hoyouly.fun/2018/04/29/view_draw_procress_performTraversals/)   
-[View 的绘制 --- Measure 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_measure/)   
-[View 的绘制 --- Layout 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_layout/)   
-[View 的绘制 --- Draw 流程，invalidate的流程 以及 requestLayout 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_draw/)
+
+[View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
+[View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
+[View 的绘制 - Layout 流程](../../../../2018/06/20/view_draw_procress_layout/)   
+[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
 
 ---
 搬运地址：   

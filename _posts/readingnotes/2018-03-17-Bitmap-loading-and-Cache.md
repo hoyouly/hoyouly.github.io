@@ -1,9 +1,9 @@
 ---
 layout: post
-title: Bitmap的加载和Cache处理
+title: Bitmap 的加载和 Cache 处理
 category: 读书笔记
 tags: Bitmap  Android开发艺术探索 LruCache LinkedHashMap
-description: Bitmap的加载和Cache处理
+description: Bitmap 的加载和 Cache 处理
 ---
 
 * content

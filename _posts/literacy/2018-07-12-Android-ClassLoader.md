@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---Android 类加载器 ClassLoader
+title: 扫盲系列 - Android 类加载器 ClassLoader
 category: 扫盲系列
 tags:  Android ClassLoader
 ---

@@ -114,7 +114,7 @@ public static com.hoyouly.android_art.IBookManager asInterface(android.os.IBinde
 
 也就是asInterface()方法返回的是一个远程接口具备的能力（有什么方法可以调用）
 
-而我们知道，在客户端绑定服务bindService()的时候，onServiceConnected()中会调用该方法。点击 [Android 四大组件之 Service](http://hoyouly.fun/2019/03/25/Android-Service-Core/) 了解更多详情。
+而我们知道，在客户端绑定服务bindService()的时候，onServiceConnected()中会调用该方法。点击 [Android 四大组件之 Service](../../../../2019/03/25/Android-Service-Core/) 了解更多详情。
 
 ```java
 private ServiceConnection mConnection = new ServiceConnection() {

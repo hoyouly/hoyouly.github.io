@@ -1,6 +1,6 @@
 ---
 layout: post
-title: View 的绘制 --- 概览
+title: View 的绘制 - 概览
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
@@ -162,11 +162,9 @@ private void performTraversals() {
 后面会详细讲这三大流程。
 perforMeasure() 是经由measureHierarchy() 调用的.这个会在下一篇讲
 
-
-[View 的绘制 --- 概览](http://hoyouly.fun/2018/04/29/view_draw_procress_performTraversals/)   
-[View 的绘制 --- Measure 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_measure/)   
-[View 的绘制 --- Layout 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_layout/)   
-[View 的绘制 --- Draw 流程，invalidate的流程 以及 requestLayout 流程](http://hoyouly.fun/2018/04/29/view_draw_procress_draw/)
-
+[View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
+[View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
+[View 的绘制 - Layout 流程](../../../../2018/06/20/view_draw_procress_layout/)   
+[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
 ---
 搬运地址：   

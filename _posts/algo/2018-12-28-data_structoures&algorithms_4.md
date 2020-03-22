@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 数据结构和算法之美--栈,队列和递归
+title: 数据结构和算法之美 - 栈,队列和递归
 category: 数据结构和算法
 tags: 数据结构 算法
 ---

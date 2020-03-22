@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---面向对象六大原则
+title: 扫盲系列 - 面向对象六大原则
 category: 扫盲系列
 tags: 
 ---

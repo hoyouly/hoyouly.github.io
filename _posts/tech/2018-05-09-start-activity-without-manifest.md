@@ -1,8 +1,8 @@
 ---
 layout: post
-title: 启动一个不在AndroidManifest中注册的Activity
+title: 启动一个不在 AndroidManifest 中注册的 Activity
 category: 技术
-tags: AndroidManifest 
+tags: AndroidManifest
 ---
 * content
 {:toc}

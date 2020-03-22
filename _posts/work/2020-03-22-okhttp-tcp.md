@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 工作填坑 --- OkHttp 支持 TCP 请求
+title: 工作填坑 - OkHttp 支持 TCP 请求
 category: 工作填坑
 tags: Retrofit  
 ---
@@ -8,7 +8,7 @@ tags: Retrofit
 {:toc}
 
 我们都知道，OkHttp 是我们常用的网络请求框架，可是都是用在了HTTP请求上去了，但是我们的项目中既有HTTP，又有TCP请求，我已经使用了Retrofit+OkHttp+Rxjava的架构，难道再写一套网络请求框架吗，能再这上面改造一下，也同时支持TCP请求吗？然后就有了这篇研究。
-在这之前，对OkHttp了解少的，可以先查阅 [OkHttp 源码分析](http://hoyouly.fun/2020/03/16/Okhttp-Source-Code-Analysis/) 对OkHttp 源码有一个基本认识。
+在这之前，对OkHttp了解少的，可以先查阅 [ 源码分析 - OkHttp ](../../../../2020/03/16/Okhttp-Source-Code-Analysis/) 对OkHttp 源码有一个基本认识。
 
 OkHttp 真正请求的地方是 CallServerInterceptor 中的。
 所有的 Interceptor 存放到了一个集合中，一个一个遍历，但是中间都会执行到 Chain.proceed(），这样才能进去到下一个 Interceptor 中，直到 CallServerInterceptor 这个拦截器中，然后请求网络，

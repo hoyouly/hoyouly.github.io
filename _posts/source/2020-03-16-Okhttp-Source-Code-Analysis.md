@@ -1,6 +1,6 @@
 ---
 layout: post
-title: OkHttp 源码分析
+title: 源码分析 - OkHttp 
 category: 源码分析
 tags: Android OkHttp
 ---
@@ -21,7 +21,7 @@ tags: Android OkHttp
 
 so easy
 
-OkHttp 的使用请参考 [扫盲系列之---OkHttp 基本用法](http://hoyouly.fun/2018/03/25/OkHttp/)
+OkHttp 的使用请参考 [扫盲系列 - OkHttp 基本用法](../../../../2018/03/25/OkHttp/)
 
 以下是OKHTTP一个常见异步用法实例
 
@@ -222,7 +222,7 @@ public synchronized ExecutorService executorService() {
 
 AsyncCall  是RealCall的一个内部类，持有RealCall的引用，是对RealCall进行了封装
 
-ExecutorService 是一个核心线程数为0的线程池，其实就是 一个 CachedTheadPool类型的线程池，关于线程池的知识，可以查看  [ Android 线程池 ](http://hoyouly.fun/2018/05/12/Android-ThreadPoolExecutor/)
+ExecutorService 是一个核心线程数为0的线程池，其实就是 一个 CachedTheadPool类型的线程池，关于线程池的知识，可以查看  [ Android 线程池 ](../../../../2018/05/12/Android-ThreadPoolExecutor/)
 
 在Dispatcher 中会根据情况，把Call加入请求队列还是等待队列，在请求队列中，就会在线程池中执行这个请求。
 

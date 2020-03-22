@@ -1,13 +1,13 @@
 ---
 layout: post
-title: Glide4 源码分析 二
+title: 源码分析 - Glide4 之 into()
 category: 源码分析
 tags: glide4
 ---
 * content
 {:toc}
 
-承接上文 [Glide4 源码分析 一 ](http://hoyouly.fun/2019/10/07/glide4-source_analysis/)
+承接上文 [ 源码分析 - Glide4 之 with() 和 load() ](../../../../2019/11/01/glide4-source_analysis/)
 
 ```java
 public ViewTarget<ImageView, TranscodeType> into(@NonNull ImageView view) {

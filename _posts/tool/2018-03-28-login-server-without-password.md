@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 免输密码登录服务器的Shell 脚本
+title: 免输密码登录服务器的 Shell 脚本
 category: 工具
 tags: Shell
 ---

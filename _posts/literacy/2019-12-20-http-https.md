@@ -1,13 +1,13 @@
 ---
 layout: post
-title: 扫盲系列之---Socket,HTTP,HTTPS
+title: 扫盲系列 - Socket,HTTP,HTTPS
 category: 扫盲系列
 tags: Socket HTTP HTTPS
 ---
 * content
 {:toc}
 
-在上一篇文章中[ 扫盲系列之---TCP/IP ](http://hoyouly.fun/2018/04/11/tcp-ip/)，我们知道以下几点
+在上一篇文章中[ 扫盲系列 - TCP/IP ](../../../../2018/04/11/tcp-ip/)，我们知道以下几点
 # HTTP
 超文本传输协议(Hypertext Transfer Protocol)  简称HTTP，这里面已经带有协议二字了，如果再说HTTP协议，那么就是超文本传输协议协议。重复了，
 是一个在计算机世界里面 专门在两点之间传输文字，图片，音频，视频等超文本数据的约定和规范。

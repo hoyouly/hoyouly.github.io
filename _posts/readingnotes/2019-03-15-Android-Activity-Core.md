@@ -2,7 +2,7 @@
 layout: post
 title: Android 四大组件之 Activity
 category: 读书笔记
-tags: Android开发艺术探索 Activity 
+tags: Android开发艺术探索 Activity
 ---
 
 * content
@@ -262,7 +262,7 @@ ActivityRecord(ActivityManagerService _service ...) {
 ### TaskRecord
 Activity栈，内部维护一个`ArrayList<ActivityRecord>`。
 
-App启动一个Activity，会不会新建一个TaskRecord取决于launchMode，launchMode 详情查看 [Activity的生命周期和启动模式](http://hoyouly.fun/2018/03/17/Activity-lifecycle-task)。  默认的standard模式不会创建新的TaskRecord
+App启动一个Activity，会不会新建一个TaskRecord取决于launchMode，launchMode 详情查看 [Activity 的生命周期和启动模式](../../../../2018/03/17/Activity-lifecycle-task)。  默认的standard模式不会创建新的TaskRecord
 ### ActivityStack
 并不是一个Activity栈，真正意义上的Activity栈是TaskRecord。
 

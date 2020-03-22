@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---Java 泛型
+title: 扫盲系列 - Java 泛型
 category: 扫盲系列
 tags: 泛型 Java
 ---

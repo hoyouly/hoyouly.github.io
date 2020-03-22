@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 恍然大悟之--Android Studio中asserts位置
+title: 恍然大悟 - Android Studio 中 asserts 位置
 category: 恍然大悟
 tags: AndroidStudio asserts
 ---

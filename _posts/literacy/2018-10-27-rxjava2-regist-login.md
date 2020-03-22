@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---RxJava2.0 注册登录顺序
+title: 扫盲系列 - RxJava2.0 注册登录顺序
 category: 扫盲系列
 tags: RxJava2.0
 ---

@@ -118,19 +118,19 @@ jekyll build
 
 ```shell
 Deprecation: The 'gems' configuration option has been renamed to 'plugins'. Please update your config file accordingly.
-Dependency Error: Yikes! It looks like you don't have jekyll-sitemap or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file -- jekyll-sitemap' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
+Dependency Error: Yikes! It looks like you don't have jekyll-sitemap or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file - jekyll-sitemap' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
 
 ```
-Deprecation 这个先不管它，可是下面却有一个 error message ，这是为啥呢，继续百度，Google咯，既然`cannot load such file -- jekyll-sitemap` ，那我就install一个这样的文件不就得了，
+Deprecation 这个先不管它，可是下面却有一个 error message ，这是为啥呢，继续百度，Google咯，既然`cannot load such file - jekyll-sitemap` ，那我就install一个这样的文件不就得了，
 ```shell
 gem install  jekyll-sitemap
 ```
 然后继续 jekyll build 的时候，还遇到了相同的错误。只不过缺少的文件名不同，那就照猫画虎咯，继续安装缺少的文件
 ```shell
-Dependency Error: Yikes! It looks like you don't have jekyll-feed or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file -- jekyll-jekyll-seo-tag' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
+Dependency Error: Yikes! It looks like you don't have jekyll-feed or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file - jekyll-jekyll-seo-tag' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
 
 
-Dependency Error: Yikes! It looks like you don't have jekyll-feed or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file -- jekyll-feed' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
+Dependency Error: Yikes! It looks like you don't have jekyll-feed or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file - jekyll-feed' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
 
 ```
 

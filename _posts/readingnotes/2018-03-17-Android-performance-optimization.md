@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Android性能优化
+title: Android 性能优化
 category: 读书笔记
 tags: Android开发艺术探索 性能优化
 description: Android 性能优化
@@ -113,7 +113,7 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 2. 通过分析工具比如MAT来找出潜在的内存泄露继而解决
 
 ### 内存泄露的例子
-参照： [Android 内存泄漏总结](http://hoyouly.fun/2018/03/17/android-memory-leak/)
+参照： [Android 内存泄漏总结](../../../../2018/03/17/android-memory-leak/)
 
 
 ## 响应速度优化和ANR日志分析
@@ -213,11 +213,11 @@ Android每隔16ms发送一个VSYNC信号，触发对UI的渲染，如果每次�
 
 #### 分析 TraceView 日志
 
-* Incl CUP Time -- 某方法占用CPU的时间
-* Excl CUP Time -- 某方法本身（不包括子方法）占用CPU的时间
-* Incl Real Time -- 某方法真正执行的时间
-* Excl Real Time -- 某方法本身（不包括子方法）真正执行时间
-* Calls+RecurCalls --  调用次数+递归回调的次数
+* Incl CUP Time - 某方法占用CPU的时间
+* Excl CUP Time - 某方法本身（不包括子方法）占用CPU的时间
+* Incl Real Time - 某方法真正执行的时间
+* Excl Real Time - 某方法本身（不包括子方法）真正执行时间
+* Calls+RecurCalls -  调用次数+递归回调的次数
 
 每个时间都包含两列，一个是实际的时间，一个是百分比。
 

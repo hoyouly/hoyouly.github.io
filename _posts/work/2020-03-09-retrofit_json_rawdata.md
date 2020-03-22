@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 工作填坑系列--- Retrofit 同时支持对 Json 格式和原始数据
+title: 工作填坑 - Retrofit 同时支持对 Json 格式和原始数据
 category: 工作填坑
 tags: Retrofit  
 ---
@@ -45,7 +45,7 @@ public Builder addConverterFactory(Converter.Factory factory) {
 	OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
 	return serviceMethod.adapt(okHttpCall);
 ```
-  如果没看过，可以参考 [ Retrofit 源码分析 ](http://hoyouly.fun/2018/03/26/Retrofit-Source-Code-Analysis/)
+  如果没看过，可以参考 [ 源码分析 - Retrofit ](../../../../2018/03/26/Retrofit-Source-Code-Analysis/)
 
 这三行代码，我们先看 loadServiceMethod()
 

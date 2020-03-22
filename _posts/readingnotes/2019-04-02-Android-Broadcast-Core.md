@@ -8,7 +8,7 @@ tags: Android开发艺术探索   Broadcast
 {:toc}
 ## 类名解释
 ### AMS
-详情参照 [Android 四大组件之 Activity](http://hoyouly.fun/2019/03/15/Android-Activity-Core/)
+详情参照 [Android 四大组件之 Activity](../../../../2019/03/15/Android-Activity-Core/)
 
 ### ReceiverDispatcher
 广播分发者,同时保留 BroadcastReceiver 和 InnerReceiver.

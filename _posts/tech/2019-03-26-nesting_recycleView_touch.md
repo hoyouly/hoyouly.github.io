@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 水平方向的RecycleView嵌套竖直方向的RecycleView滑动冲突解决办法
+title: 水平方向的 RecycleView 嵌套竖直方向的 RecycleView 滑动冲突解决办法
 category: 技术
 tags: RecycleView
 ---

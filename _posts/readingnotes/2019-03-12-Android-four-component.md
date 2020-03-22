@@ -22,7 +22,7 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
 * 显示Intent 明确指向一个Activity组件
 * 隐式Intent 指向一个或者多个目标Activity组件
 
-一个Activity组件具有特定的启动模式，详情见  [Activity的生命周期和启动模式](http://hoyouly.fun/2018/03/17/Activity-lifecycle-task)
+一个Activity组件具有特定的启动模式，详情见  [Activity 的生命周期和启动模式](../../../../2018/03/17/Activity-lifecycle-task)
 
 通过Activity的finish()方法结束一个Activity组件运行。
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 拜拜了，七牛。GitHub才是图床的王道
+title: 拜拜了，七牛。GitHub 才是图床的王道
 category: 工具
 tags: GitHub  图床
 ---

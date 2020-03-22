@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 街题系列---接口和抽象类的区别
+title: 街题系列 - 接口和抽象类的区别
 category: 街题系列
 tags: abstract  implements
 ---

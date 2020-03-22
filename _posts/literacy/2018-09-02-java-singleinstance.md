@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---Java 单例模式
+title: 扫盲系列 - Java 单例模式
 category: 扫盲系列
 tags:  Java
 ---

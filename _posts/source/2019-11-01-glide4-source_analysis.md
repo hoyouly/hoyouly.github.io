@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Glide4 源码分析 一
+title: 源码分析 - Glide4 之 with() 和 load()
 category: 源码分析
 tags: glide4
 ---
@@ -54,7 +54,7 @@ public static GlideRequests with(@NonNull Activity activity) {
 }
 ```
 
-在 [扫盲系列之---Glide 笔记](http://hoyouly.fun/2019/07/10/glide4/)中我们知道，Glide 加载流程是
+在 [ 源码分析 - Glide4 之 概况 ](../../../../2019/07/10/glide4/)中我们知道，Glide 加载流程是
 
 ```
 model(数据源)-->data(转换数据)-->decode(解码)-->transformed(缩放)-->transcoded(转码)-->encoded(编码保存到本地)
@@ -288,7 +288,7 @@ load()有很多重载方法，但是最后都是执行到了loadGeneric()中
 
 load()返回的是 RequestBuilder 对象，所以第三步 就是查看 RequestBuilder的into()方法
 
-详情查看  承接上文 [Glide4 源码分析 二 ](http://hoyouly.fun/2019/11/01/glide4-source_analysis_2/)
+详情查看  承接上文 [ 源码分析 - Glide4 之 into() ](../../../../2019/11/01/glide4-source_analysis_2/)
 
 
 ---

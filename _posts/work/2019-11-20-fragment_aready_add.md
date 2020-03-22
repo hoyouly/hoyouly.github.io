@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 工作填坑系列---Fragment already added 或许并不是你想的那样
+title: 工作填坑 - Fragment already added 或许并不是你想的那样
 category: 工作填坑
 tags: Fragment ViewPager
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列之---Java 引用类型
+title: 扫盲系列 - Java 引用类型
 category: 扫盲系列
 tags:  Java
 ---

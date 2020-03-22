@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 数据结构和算法之美--前言
+title: 数据结构和算法之美 - 前言
 category: 数据结构和算法
 tags: 数据结构 算法
 ---

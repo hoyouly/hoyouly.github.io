@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 工作填坑系列---Android 高版本中AlarmManager，PendingIntent的坑
+title: 工作填坑 - Android 高版本中 AlarmManager，PendingIntent 的坑
 category: 工作填坑
 tags: AlarmManager PendingIntent
 ---

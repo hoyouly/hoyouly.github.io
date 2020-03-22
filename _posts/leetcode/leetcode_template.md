@@ -1,6 +1,6 @@
 ---
 layout: post
-title: LeetCode刷题--
+title: LeetCode刷题 - 
 category: LeetCode
 tags: 数组 中位数
 ---

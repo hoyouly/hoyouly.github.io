@@ -169,7 +169,7 @@ Parcel 内部包装了可序列化的数据，可以在Binder中自由传输，
 3. 使用Parcelable 将对象序列化到存储设备中或者将对象序列化后通过网络传输，过程复杂，建议在这种情况下使用Serializable
 
 ### Binder
-详情点击  [Android Binder 总结](http://hoyouly.fun/2018/03/17/Android-Binder/)  和   [从一个小例子理解Binder整个流程](http://hoyouly.fun/2019/10/01/Binder-Demo/)
+详情点击  [Android Binder 总结](../../../../2018/03/17/Android-Binder/)  和   [从一个小例子理解 Binder 整个流程](../../../../2019/10/01/Binder-Demo/)
 
 
 ## Android中的IPC方式
@@ -205,7 +205,7 @@ Messenger是以串行方式处理客户端发来的消息，如果大量的消�
 4.  客户端绑定服务端Service。
 5.  建立连接后就可以访问远程服务端的方法了
 
-详情点击  [Android AIDL 总结](http://hoyouly.fun/2019/07/17/Android-AIDL/)
+详情点击  [Android AIDL 总结](../../../../2019/07/17/Android-AIDL/)
 
 ### ContentProvider
 Android中专门用于不同应用程序间进行数据共享的方式，天生适合进程通信，底层实现Binder。

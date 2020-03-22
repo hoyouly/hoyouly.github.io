@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 街题系列之---Java 两个线程交替打印
+title: 街题系列 - Java 两个线程交替打印
 category: 街题系列
 tags: Java Synchronized Thread
 ---
