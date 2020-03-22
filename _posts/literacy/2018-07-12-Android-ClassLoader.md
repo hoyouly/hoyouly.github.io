@@ -205,8 +205,12 @@ public final class DelegateLastClassLoader extends PathClassLoader {
 
 
 - - - -
-搬运地址：   
+搬运地址：    
+
 [Android动态加载之ClassLoader详解](https://www.jianshu.com/p/a620e368389a)   
+
 [Android类加载器ClassLoader](http://gityuan.com/2017/03/19/android-classloader/)    
-[热修复入门：Android 中的 ClassLoader](https://jaeger.itscoder.com/android/2016/08/27/android-classloader.html)   
+
+[热修复入门：Android 中的 ClassLoader](https://jaeger.itscoder.com/android/2016/08/27/android-classloader.html)  
+ 
 [Android热补丁动态修复技术（二）：实战！CLASS_ISPREVERIFIED问题！](https://blog.csdn.net/u010386612/article/details/51077291)

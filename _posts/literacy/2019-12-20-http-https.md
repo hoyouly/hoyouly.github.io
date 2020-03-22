@@ -240,13 +240,22 @@ X.509   公开秘钥证书的标准格式。这个文档将加密秘钥与个人
 
 
 ---
-搬运地址：  
+搬运地址：    
+
 [HTTP和HTTPS协议，看一篇就够了](https://blog.csdn.net/xiaoming100001/article/details/81109617)   
+
 [Android中的TCP/IP协议，Socket，Http协议间的关系](https://blog.csdn.net/u010618194/article/details/62439168)   
+
 [Android客户端面试基础(四)-TCP/IP](https://blog.csdn.net/johnWcheung/article/details/72835044)     
+
 [用信鸽来解释 HTTPS](https://www.oschina.net/translate/https-explained-with-carrier-pigeons)   
+
 [深入浅出HTTPS基本原理](https://blog.csdn.net/kobejayandy/article/details/52433660)   
+
 [(建议收藏)TCP协议灵魂之问，巩固你的网路底层基础](https://juejin.im/post/5e527c58e51d4526c654bf41)     
+
 [HTTP 协议理解及服务端与客户端的设计实现](https://yanzhenjie.blog.csdn.net/article/details/93098495)    
+
 [看完这篇 HTTPS，和面试官扯皮就没问题了](https://mp.weixin.qq.com/s/PW4X6WL0t6YJiuXC-dSdKg)    
+
 [HTTP常见状态码 200 301 302 404 500](https://www.cnblogs.com/starof/p/5035119.html)

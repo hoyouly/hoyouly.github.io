@@ -127,6 +127,7 @@ IntentService和Service都是一个服务，区别在于IntentService使用队�
 
 ---   
 搬运地址：    
+ 
 
 [Android优化】最强ListView优化方案](http://blog.csdn.net/gs12software/article/details/51173392)
 

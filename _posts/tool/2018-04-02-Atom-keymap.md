@@ -30,7 +30,8 @@ tags: Atom  快捷键
 1. 关闭代理
 2. 打开设置 -> Core -> 往下拉， 取消Use Proxy Settings When Calling APM的勾选就可以了
 
-搬运地址：
+搬运地址：    
 
 [Atom快捷键整理](https://www.jianshu.com/p/e33f864981bb)  
+
 [atom在mac上闪退](https://atom-china.org/t/topic/5735)

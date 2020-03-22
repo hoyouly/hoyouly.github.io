@@ -222,8 +222,8 @@ Object.wait(),与Object.notify()必须要在synchronized(obj)一起使用，也�
 但是sleep()和wait()都可以通过Interrupt()方法打断线程的暂停状态，从而使线程立刻抛出InterruptException，
 
 ---
-搬运地址：   
+搬运地址：    
+
 [Java中的多线程你只要看这一篇就够了](https://www.cnblogs.com/wxd0108/p/5479442.html)   
-[Java多线程学习（吐血超详细总结）
-](https://blog.csdn.net/Evankaka/article/details/44153709)    
-[java 中的锁 - 偏向锁、轻量级锁、自旋锁、重量级锁](https://blog.csdn.net/zqz_zqz/article/details/70233767)
+
+[Java多线程学习（吐血超详细总结）](https://blog.csdn.net/Evankaka/article/details/44153709)   

@@ -241,9 +241,15 @@ Android每隔16ms发送一个VSYNC信号，触发对UI的渲染，如果每次�
 
 ---   
 搬运地址：    
+
 Android 开发艺术探索      
+
 Android 群英传     
+
 [Android性能优化系列之Bitmap图片优化](https://blog.csdn.net/u012124438/article/details/66087785)   
+
 [Android中常见的内存泄漏及解决方案](https://blog.csdn.net/u014005316/article/details/63258107)   
+
 [Android 内存泄漏分析心得](https://zhuanlan.zhihu.com/p/25213586)     
+
 [Android 布局优化之include与merge](https://blog.csdn.net/a740169405/article/details/50473909)

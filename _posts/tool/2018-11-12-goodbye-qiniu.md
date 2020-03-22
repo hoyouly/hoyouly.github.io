@@ -32,5 +32,6 @@ tags: GitHub  图床
 GitHub 才是王道，如果连GitHub都不能用了，那还敲个写个啥博客啊，直接回家种地不就行了。
 
 ---
-搬运地址：
+搬运地址：    
+
 [github做Markdown图床](https://www.jianshu.com/p/33eeacac3344)

@@ -41,9 +41,9 @@ public Builder addConverterFactory(Converter.Factory factory) {
 
 看过Retofit代码的人，应该也都知道，执行某个接口的时候，最终会通过动态代理，执行到
 ```java
-	ServiceMethod<Object, Object> serviceMethod =(ServiceMethod<Object, Object>) loadServiceMethod(method);
-	OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
-	return serviceMethod.adapt(okHttpCall);
+  ServiceMethod<Object, Object> serviceMethod =(ServiceMethod<Object, Object>) loadServiceMethod(method);
+  OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
+  return serviceMethod.adapt(okHttpCall);
 ```
   如果没看过，可以参考 [ 源码分析 - Retrofit ](../../../../2018/03/26/Retrofit-Source-Code-Analysis/)
 
@@ -84,12 +84,12 @@ private Converter<ResponseBody, T> createResponseConverter() {
     ...
     return retrofit.responseBodyConverter(responseType, annotations);
     ...
-  }
+}
 
 //Retrofit.java
-	public <T> Converter<ResponseBody, T> responseBodyConverter(Type type, Annotation[]annotations) {
-	 return nextResponseBodyConverter(null, type, annotations);
- }
+public <T> Converter<ResponseBody, T> responseBodyConverter(Type type, Annotation[]annotations) {
+    return nextResponseBodyConverter(null, type, annotations);
+}
 
  public <T> Converter<ResponseBody, T> nextResponseBodyConverter(
       @Nullable Converter.Factory skipPast, Type type, Annotation[] annotations) {
@@ -230,14 +230,14 @@ Observable<String> updatePic(@PartMap Map<String, RequestBody> requestBodyMap, @
 ```java
 
 retrofit = new Retrofit.Builder()
-					 .baseUrl(sBaseUrl)
-					 .addConverterFactory(RawConverterFactory.create(buildGson()))
-					 .addConverterFactory(GsonConverterFactory.create(buildGson()))
-					 //支持RxJava2
-					 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-					 .client(httpClientBuilder.build())
-					 .build();
+		.baseUrl(sBaseUrl)
+		.addConverterFactory(RawConverterFactory.create(buildGson()))
+		.addConverterFactory(GsonConverterFactory.create(buildGson()))
+		//支持RxJava2
+		.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+		.client(httpClientBuilder.build())
+		.build();
 ```
 
 ---
-搬运地址：   
+搬运地址：    

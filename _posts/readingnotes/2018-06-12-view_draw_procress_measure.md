@@ -466,5 +466,6 @@ measure()的流程就说完了，但是如果有这样一个任务，在Activity
 [View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
 
 ---
-搬运地址：   
+搬运地址：    
+
 Android开发艺术探索

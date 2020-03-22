@@ -113,6 +113,7 @@ ActivityManagerNative.getDefault().finishActivityAffinity(mToken)
 ```
 
 - - - -
-搬运地址：   
+搬运地址：    
+
 
  [你真的会写单例模式吗——Java实现](http://www.importnew.com/18872.html)

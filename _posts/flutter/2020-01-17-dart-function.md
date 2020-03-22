@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Flutter 学习 - Dart 中的Function
+title: Flutter 学习 - Dart 中的 Function
 category: Flutter 学习
 tags: Flutter  Dart
 ---
@@ -229,6 +229,9 @@ final String data;
 
 ---
 搬运地址：    
-[Flutter和Dart系列四：Function](https://blog.csdn.net/xlh1191860939/article/details/87895616)      
-[Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)   
+
+[Flutter和Dart系列四：Function](https://blog.csdn.net/xlh1191860939/article/details/87895616)
+
+[Flutter学习日记：Dart语言学习之typedef](https://blog.csdn.net/FreeAndWake/article/details/88979769)
+
 极客时间《Flutter核心技术与实战》

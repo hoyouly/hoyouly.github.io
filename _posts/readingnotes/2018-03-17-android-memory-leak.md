@@ -194,7 +194,7 @@ mSensorManager = (SensorManager) getApplicationContext().getSystemService(Contex
 ## 集合中对象没有清理导致的内存泄漏
 ### 分析
 我们通常把一些对象的引用添加到一个集合上，当我们不需要这些对象的时候，并没有把他们的引用从集合中清理掉，这样集合就会越来越大，如果这个集合是一个static，那么更严重。   
-### 解决 
+### 解决
 在Activity退出之前，clear集合，然后集合设置为null，再退出集合。
 ## WebView造成的泄露
   不使用WebView的时候，应该调用onDestory(),并释放占用内存。
@@ -211,8 +211,13 @@ mSensorManager = (SensorManager) getApplicationContext().getSystemService(Contex
 
 ---   
 搬运地址：    
+
 Android 开发艺术探索        
+
 [Android中常见的内存泄漏及解决方案](https://blog.csdn.net/u014005316/article/details/63258107)   
+
 [Android 内存泄漏分析心得](https://zhuanlan.zhihu.com/p/25213586)  
+
 [内存泄漏分析二-线程](https://blog.csdn.net/wd_cloud/article/details/52848902)   
+
 [static关键字所导致的内存泄漏问题](https://blog.csdn.net/lovejavasman/article/details/52643089)

@@ -191,7 +191,10 @@ Class Test{
 
 
 ---
-搬运地址：  
+搬运地址：    
+
 [请别再拿“String s = new String("xyz");创建了多少个String实例”来面试了吧](http://rednaxelafx.iteye.com/blog/774673)  
+
 [String s=new String("abc")创建了几个对象?](https://www.cnblogs.com/ydpvictor/archive/2012/09/09/2677260.html)  
+
 [java用这样的方式生成字符串：String str = "Hello"，到底有没有在堆中创建对象？ - 胖胖的回答](https://www.zhihu.com/question/29884421/answer/113785601)    

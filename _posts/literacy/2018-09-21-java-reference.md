@@ -67,6 +67,8 @@ table th:nth-of-type(2) {
 
 
 - - - -
-搬运地址：   
+搬运地址：    
+
 [Java中的四种引用类型](https://www.jianshu.com/p/147793693edc)    
+
 [Java内存回收机制--Java引用的种类（强引用、弱引用、软引用、虚引用）](http://blog.csdn.net/daijin888888/article/details/49949283)

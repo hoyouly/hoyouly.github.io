@@ -158,4 +158,6 @@ getWidth()：  得到的是最终宽度。形成与layout()过程中
 [View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
 
 ---
-搬运地址：   
+搬运地址：    
+
+Android开发艺术探索

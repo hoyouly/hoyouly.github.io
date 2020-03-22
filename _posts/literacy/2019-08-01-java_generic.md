@@ -181,6 +181,8 @@ public static <T> T[] creatArr(int size) {
 解释二：因为静态成员变量属于一个类，所有的对象持有一份，如果静态成员变量能够使用参数类型，那么不同的对象造成不同的类型，这样就造成了冲突
 
 ---
-搬运地址：   
+搬运地址：    
+
 [关于java泛型大大小小的那些事](https://juejin.im/post/5ae2d31ef265da0b9a69b0da)   
+
 [浅谈泛型数组](https://www.cnblogs.com/MrJR/p/10463479.html)

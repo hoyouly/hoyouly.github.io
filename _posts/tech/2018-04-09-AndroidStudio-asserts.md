@@ -43,4 +43,5 @@ assets下面为啥必须只能放xml文件呢，不可能啊，肯定是可以�
 卧槽，还能不能行啊，这又是啥啊，百度吧，还真找到了， [Android studio assets error：前言中不允许有内容](https://blog.csdn.net/alice_1_1/article/details/70050794), 原来assets是放在src/main 下面的，不是在res 文件夹下面的，犯了经验主义错误。只需要把assets移动到src/main 下面，所有的问题都解决了，不需要添加所谓的 android.disableResourceValidation=true一样能解决问题。终于可以睡个好觉了。。
 
 ---
-搬运地址：
+搬运地址：    
+

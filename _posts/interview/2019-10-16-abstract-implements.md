@@ -25,5 +25,6 @@ tags: abstract  implements
 * 派生类必须实现未实现的方法
 
 ---
-搬运地址：  
+搬运地址：    
+ 
 [每个程序员都必须搞懂的抽象类和接口的含义以及区别](https://baijiahao.baidu.com/s?id=1622053733155304478&wfr=spider&for=pc)  

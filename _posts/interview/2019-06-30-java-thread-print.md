@@ -243,6 +243,8 @@ public class PrintNumAndChar2 {
 这个和第一种很像，就不过多解释了。这个不需要使用同步代码块，更方便一些。
 
 ---
-搬运地址：   
+搬运地址：    
+
 [一道多线程面试题引起的自我救赎）](https://segmentfault.com/a/1190000006671595)    
+
 [浅谈wait()和notify()](https://www.cnblogs.com/stupid-chan/p/9465625.html)

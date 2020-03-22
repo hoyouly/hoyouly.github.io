@@ -536,6 +536,8 @@ public Handler(Callback callback, boolean async) {
 这个很好理解，如果有两个甚至多个Looper，那么就有多个MessageQueue,那么sendMessage()过来的消息该放到哪个MessageQueue呢？怎么能保证消息的顺序执行呢？所以只能有一个Looper对象，相应的，也就只能执行一次Looper.prepare().
 
 ---
-搬运地址：   
+搬运地址：    
+
 Android 开发艺术探索    
+
 [深入理解MessageQueue](https://www.jianshu.com/p/8c829dc15950)

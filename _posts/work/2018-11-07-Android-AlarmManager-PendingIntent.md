@@ -419,10 +419,11 @@ public void startAlarm(String data) {
 目前为止，坑终于平晚了，主要还是Android 新版本的一些问题，原本熟悉的正常的代码到了新版本，尤其是Android 6.0 以后，就会遇到各种坑。不过总算解决了，唯一美中不足的是，要把Service变成静态内部类，这样他使用的所有外部类的变量都得成静态的，可是我又没办法把Service变成单独的类，如果这样，需要创建的变量会更麻烦，所以只能这样了。
 
 
-
-
 ---
-搬运地址：  
- [No empty constructor when create a service](https://stackoverflow.com/questions/11859403/no-empty-constructor-when-create-a-service)    
+搬运地址：    
+
+ [No empty constructor when create a service](https://stackoverflow.com/questions/11859403/no-empty-constructor-when-create-a-service)   
+
 [关于使用 AlarmManager 的注意事项](https://juejin.im/entry/588628e8128fe10065eb62a9)   
+
 [Android 7.0 pendingIntent bug(AlarmManager通过PendingIntent传递数据（跨进程数据传递](https://blog.csdn.net/m190607070/article/details/78492887)

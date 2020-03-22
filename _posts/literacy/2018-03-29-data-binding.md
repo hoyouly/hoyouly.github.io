@@ -514,11 +514,17 @@ public class TextUtil {
 </layout>
 ```
 ---
-搬运地址：
+搬运地址：    
+
 
 [告别findView和ButterKnife](https://www.jianshu.com/p/499c8e2b80c4)  
+
 [DataBinding实用指南](https://www.jianshu.com/p/015ad08c2c75)  
+
 [ Android基础——框架模式MVVM之DataBinding的实践](https://blog.csdn.net/qq_30379689/article/details/53037430)  
+
 [玩转Android之MVVM开发模式实战，炫酷的DataBinding！](https://blog.csdn.net/u012702547/article/details/52077515)  
+
 [完全掌握Android Data Binding](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0603/2992.html)  
+
 [Android DataBinding：再见Presenter，你好ViewModel！](http://www.jcodecraeer.com/a/anzhuokaifa/androidkaifa/2015/0727/3220.html)

@@ -209,6 +209,7 @@ resolveActivity() 返回最佳匹配的Activity信息
 
 
 ---
-搬运地址：  
+搬运地址：    
+ 
 
 [你必须弄懂的Intent Filter匹配规则](http://blog.csdn.net/mynameishuangshuai/article/details/51673273)

@@ -56,7 +56,8 @@ try {
 
 
 ---
-搬运地址：
+搬运地址：    
 
 [修复一个ViewPager+Fragment报的java.lang.IllegalStateException Fragment already added问题](https://blog.csdn.net/newone_helloworld/article/details/88537285)
+
 [Fragment already added问题解决方法，记录一下](https://www.jianshu.com/p/3c88629070bd)

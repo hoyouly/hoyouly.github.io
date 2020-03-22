@@ -352,7 +352,8 @@ AIDL 通过Stub 来接受并处理数据，Proxy代理类用来发送数据。�
 并且客户端和服务器是相对而言的，服务端不仅可以接收和处理消息，而且可以定时往客户端发送数据，与此同时服务端使用Proxy类跨进程调用，相当于充当了"Client"。
 
 ---
-搬运地址：   
+搬运地址：    
+
 Android 开发艺术探索
 
 [Android 深入浅出AIDL（一）](https://blog.csdn.net/qian520ao/article/details/78072250)  
