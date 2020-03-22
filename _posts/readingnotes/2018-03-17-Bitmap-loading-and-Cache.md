@@ -20,15 +20,15 @@ description: Bitmap 的加载和 Cache 处理
 # Android 中的缓存策略
 一般来说，缓存策略主要包括缓存的添加，获取和删除这三类操作。目前常用的缓存算法就是LRU
 * LRU : 全称Least Recently Used,即最近最少使用，一种非常常用的置换算法，即淘汰最长时间未使用的对象.    
-	他的核心思想是当缓存满时，优先淘汰那些近期最少使用的缓存对象    
+  他的核心思想是当缓存满时，优先淘汰那些近期最少使用的缓存对象    
 
 采用LRU算法缓存有两种，LruCache（实现内存缓存）和DiskLruCache（存储设备缓存）,二者结合，就可以很方便的实现一个完美的ImageLoader
 ## LruCache
 1. android 3.1 提供的缓存类，v4包中也有，兼容之前的版本，使用v4 包
 2. 属于一个泛型类，内部采用LinkedHashMap，以强引用的方式存储外界的缓存对象。
-	* 强引用：直接的对象引用
-	* 软引用：系统内存不足时被gc回收
-	* 弱引用：会随时被gc回收
+  * 强引用：直接的对象引用
+  * 软引用：系统内存不足时被gc回收
+  * 弱引用：会随时被gc回收
 
 3. get(key)获取一个缓存对象
 4. put(key,bitmap) 添加一个缓存对象
@@ -268,7 +268,7 @@ public final V get(K key) {
 开发者根据需求是否重写改方法处理自己的逻辑，可以进行的一些操作包括
 1. 资源的回收
 2. <span style="border-bottom:1px solid red;">实现二级缓存。</span>   
- 	**思路：** 重写entryRemoved()方法，把删除掉的item再次存入另外一个`LinkedHashMap<String, SoftWeakReference<Bitmap>>`中，这个数据当做二级缓存，每次获得图片的时候，先判断LruCache 中是否存在缓存，如果没有的话，判断这个二级缓存中是否有，如果都没有在从SDcard中获取，如果SDCard中也不存在，那么直接从网络中获取，
+   **思路：** 重写entryRemoved()方法，把删除掉的item再次存入另外一个`LinkedHashMap<String, SoftWeakReference<Bitmap>>`中，这个数据当做二级缓存，每次获得图片的时候，先判断LruCache 中是否存在缓存，如果没有的话，判断这个二级缓存中是否有，如果都没有在从SDcard中获取，如果SDCard中也不存在，那么直接从网络中获取，
 
 ```java
 /**

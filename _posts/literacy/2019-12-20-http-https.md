@@ -63,10 +63,10 @@ body 内容是字节流，因此可以写任何内容
 
 <style>
 table th:first-of-type {
-	width: 120px;
+  width: 120px;
 }
 table th:nth-of-type(3) {
-  	width: 180px;
+    width: 180px;
 }
 </style>
 |类型|body 拼接方式(举例) |请求头Content-Type|

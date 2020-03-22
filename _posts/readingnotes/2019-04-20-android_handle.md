@@ -16,29 +16,29 @@ tags: Handler Message Looper ThreadLocal
 
 ```java
 public Handler(Callback callback, boolean async) {
-		//匿名类、内部类或本地类都必须申明为static，否则会警告可能出现内存泄露
-		if (FIND_POTENTIAL_LEAKS) {
-			final Class<? extends Handler> klass = getClass();
-			if ((klass.isAnonymousClass() || klass.isMemberClass() || klass.isLocalClass()) && (klass.getModifiers() & Modifier.STATIC) == 0) {
-				Log.w(TAG, "The following Handler class should be static or leaks might occur: " + klass.getCanonicalName());
-			}
-		}
-		//必须先执行Looper.prepare()，才能获取Looper对象，否则为null.
-		mLooper = Looper.myLooper();//从当前线程的TLS中获取Looper对象
-		if (mLooper == null) {
-			throw new RuntimeException("Can't create handler inside thread that has not called Looper.prepare()");
-		}
-		mQueue = mLooper.mQueue;//消息队列，来自Looper对象
-		mCallback = callback;//回调方法
-		mAsynchronous = async;//设置消息是否为异步处理方式
-	}
+    //匿名类、内部类或本地类都必须申明为static，否则会警告可能出现内存泄露
+    if (FIND_POTENTIAL_LEAKS) {
+      final Class<? extends Handler> klass = getClass();
+      if ((klass.isAnonymousClass() || klass.isMemberClass() || klass.isLocalClass()) && (klass.getModifiers() & Modifier.STATIC) == 0) {
+        Log.w(TAG, "The following Handler class should be static or leaks might occur: " + klass.getCanonicalName());
+      }
+    }
+    //必须先执行Looper.prepare()，才能获取Looper对象，否则为null.
+    mLooper = Looper.myLooper();//从当前线程的TLS中获取Looper对象
+    if (mLooper == null) {
+      throw new RuntimeException("Can't create handler inside thread that has not called Looper.prepare()");
+    }
+    mQueue = mLooper.mQueue;//消息队列，来自Looper对象
+    mCallback = callback;//回调方法
+    mAsynchronous = async;//设置消息是否为异步处理方式
+  }
 
   public Handler(Looper looper, Callback callback, boolean async) {
-		mLooper = looper;
-		mQueue = looper.mQueue;
-		mCallback = callback;
-		mAsynchronous = async;
-	}
+    mLooper = looper;
+    mQueue = looper.mQueue;
+    mCallback = callback;
+    mAsynchronous = async;
+  }
 ```
 在我们创建Handler的时候，会有并且必须一个Looper对象，要么是创建的时候传递过来，要么就是通过Looper.myLooper()获得，这个从Looper对象中取得的MessageQueue，
 一个线程中Looper只有一个，相应的MessageQueue 也只有一个   
@@ -61,31 +61,31 @@ public Handler(Callback callback, boolean async) {
 其实不管是sendMessage()还是post() 都会执行 sendMessageDelayed(),
 ```java
 public final boolean sendMessageDelayed(Message msg, long delayMillis) {
-	if (delayMillis < 0) {
-		delayMillis = 0;
-	}
-	return sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);
+  if (delayMillis < 0) {
+    delayMillis = 0;
+  }
+  return sendMessageAtTime(msg, SystemClock.uptimeMillis() + delayMillis);
 }
 //这里面会接受一个 uptimeMillis，这个如果没设置，会是当前时间 （SystemClock.uptimeMillis()），
 //如果设置延迟时间，则是当前时间+延迟时间（SystemClock.uptimeMillis() + delayMillis）
 //这个时间是很重要，是进入MessageQueue 中队列先后的依据
 public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
-		MessageQueue queue = mQueue;//这个mQueue就是创建Handler的时候从Looper对象中取得的
-		if (queue == null) {
-			RuntimeException e = new RuntimeException(this + " sendMessageAtTime() called with no mQueue");
-			Log.w("Looper", e.getMessage(), e);
-			return false;
-		}
-		return enqueueMessage(queue, msg, uptimeMillis);
-	}
+    MessageQueue queue = mQueue;//这个mQueue就是创建Handler的时候从Looper对象中取得的
+    if (queue == null) {
+      RuntimeException e = new RuntimeException(this + " sendMessageAtTime() called with no mQueue");
+      Log.w("Looper", e.getMessage(), e);
+      return false;
+    }
+    return enqueueMessage(queue, msg, uptimeMillis);
+  }
 
   private boolean enqueueMessage(MessageQueue queue, Message msg, long uptimeMillis) {
-		msg.target = this;
-		if (mAsynchronous) {
-			msg.setAsynchronous(true);
-		}
-		return queue.enqueueMessage(msg, uptimeMillis);
-	}
+    msg.target = this;
+    if (mAsynchronous) {
+      msg.setAsynchronous(true);
+    }
+    return queue.enqueueMessage(msg, uptimeMillis);
+  }
 ```
 由上可知 sendMessageDelayed() -> sendMessageAtTime()-> sendMessageAtTime() -> enqueueMessage()。enqueueMessage()主要做了两件事
 1. 保存当前的handler对象到msg.target中
@@ -97,10 +97,10 @@ public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
 post()的时候，会把Runnable对象转成一个Message，
 ```java
 private static Message getPostMessage(Runnable r) {
-		Message m = Message.obtain();
-		m.callback = r; //这个在后面dispatchMessage()的时候还会用到
-		return m;
-	}
+    Message m = Message.obtain();
+    m.callback = r; //这个在后面dispatchMessage()的时候还会用到
+    return m;
+  }
 ```
 ![添加图片](../../../../images/handler_post.png)
 
@@ -118,68 +118,68 @@ private static Message getPostMessage(Runnable r) {
 代码不算太长，中间都有注释
 ```java
 boolean enqueueMessage(Message msg, long when) {
-		// 每一个普通Message必须有一个target
-		if (msg.target == null) {
-			throw new IllegalArgumentException("Message must have a target.");
-		}
-		if (msg.isInUse()) {
-			throw new IllegalStateException(msg + " This message is already in use.");
-		}
+    // 每一个普通Message必须有一个target
+    if (msg.target == null) {
+      throw new IllegalArgumentException("Message must have a target.");
+    }
+    if (msg.isInUse()) {
+      throw new IllegalStateException(msg + " This message is already in use.");
+    }
 
-		synchronized (this) {
-			if (mQuitting) {//正在退出时
-				IllegalStateException e = new IllegalStateException(msg.target + " sending message to a Handler on a dead thread");
-				Log.w("MessageQueue", e.getMessage(), e);
-				msg.recycle();//回收msg，加入到消息池
-				return false;
-			}
+    synchronized (this) {
+      if (mQuitting) {//正在退出时
+        IllegalStateException e = new IllegalStateException(msg.target + " sending message to a Handler on a dead thread");
+        Log.w("MessageQueue", e.getMessage(), e);
+        msg.recycle();//回收msg，加入到消息池
+        return false;
+      }
 
-			msg.markInUse();
-			msg.when = when;
-			Message p = mMessages;
-			boolean needWake;
-			if (p == null || when == 0 || when < p.when) {
-				//p为null(代表MessageQueue没有消息） 或者msg的触发时间是队列中最早的， 则进入该该分支
-				msg.next = p;
-				mMessages = msg;
-				needWake = mBlocked;//当阻塞时需要唤醒
-			} else {
-				//插入队列中间。 通常，我们不必唤醒事件队列，除非队列头部存在障碍，并且消息是队列中最早的异步消息。
-				needWake = mBlocked && p.target == null && msg.isAsynchronous();
-				Message prev;
-				for (; ; ) {
-					prev = p;
-					p = p.next;
-					if (p == null || when < p.when) {
-						break;
-					}
-					if (needWake && p.isAsynchronous()) {
-						needWake = false;
-					}
-				}
-				msg.next = p; // invariant: p == prev.next
-				prev.next = msg;
-			}
+      msg.markInUse();
+      msg.when = when;
+      Message p = mMessages;
+      boolean needWake;
+      if (p == null || when == 0 || when < p.when) {
+        //p为null(代表MessageQueue没有消息） 或者msg的触发时间是队列中最早的， 则进入该该分支
+        msg.next = p;
+        mMessages = msg;
+        needWake = mBlocked;//当阻塞时需要唤醒
+      } else {
+        //插入队列中间。 通常，我们不必唤醒事件队列，除非队列头部存在障碍，并且消息是队列中最早的异步消息。
+        needWake = mBlocked && p.target == null && msg.isAsynchronous();
+        Message prev;
+        for (; ; ) {
+          prev = p;
+          p = p.next;
+          if (p == null || when < p.when) {
+            break;
+          }
+          if (needWake && p.isAsynchronous()) {
+            needWake = false;
+          }
+        }
+        msg.next = p; // invariant: p == prev.next
+        prev.next = msg;
+      }
 
-			//消息没有退出，我们认为此时mPtr != 0
-			if (needWake) {
-				//用于唤醒功能
-				nativeWake(mPtr);
-			}
-		}
-		return true;
-	}
+      //消息没有退出，我们认为此时mPtr != 0
+      if (needWake) {
+        //用于唤醒功能
+        nativeWake(mPtr);
+      }
+    }
+    return true;
+  }
 ```
 转换成流程图如下
 ![添加图片](../../../../images/enqueuemessage.png)
 主要做了两件事
 1. 插入到消息队列中
 怎么插入队列中的，就是图中红框中的实现。主要包括两种
-	1. 插入到队列头部 依据 p == null || when == 0 || when < p.when
-  	* 如果当前队列为null   这个好理解，队列为空，那么来的第一个肯定是队头
-  	* 该消息的处理时间为0   这个有点迷糊，什么时候 when 为0 呢，handler提供了一个sendMessageAtFrontOfQueue(),看名字也猜出来了，VIP消息，过来直接插入到队头。怎么能保证直接在队头呢，when =0即可，因为当前时间肯定大于0的，如果一个消息when=0,那么肯定排在最前面了
-  	* 该消息的处理时间小于头消息的处理时间 这个也可以理解，虽然when 不为0，但是目前消息队列中第一个消息时间大于当前时间，那么就排在队头了。
-	2. 插入到队列中间/后面
+  1. 插入到队列头部 依据 p == null || when == 0 || when < p.when
+    * 如果当前队列为null   这个好理解，队列为空，那么来的第一个肯定是队头
+    * 该消息的处理时间为0   这个有点迷糊，什么时候 when 为0 呢，handler提供了一个sendMessageAtFrontOfQueue(),看名字也猜出来了，VIP消息，过来直接插入到队头。怎么能保证直接在队头呢，when =0即可，因为当前时间肯定大于0的，如果一个消息when=0,那么肯定排在最前面了
+    * 该消息的处理时间小于头消息的处理时间 这个也可以理解，虽然when 不为0，但是目前消息队列中第一个消息时间大于当前时间，那么就排在队头了。
+  2. 插入到队列中间/后面
   遍历整个队列，然后找到第一个比该消息处理时间大的，然后排在他的前面即可。
 
 2. 如果是即时消息并且线程是阻塞状态，唤醒Looper中等待的线程
@@ -197,11 +197,11 @@ public static void main(String[] args) {
   thread.attach(false);
 
   if (sMainThreadHandler == null) {
-  	//保存进程对应的主线程Handler
-  	sMainThreadHandler = thread.getHandler();
+    //保存进程对应的主线程Handler
+    sMainThreadHandler = thread.getHandler();
   }
   //进入主线程的消息循环
-	Looper.loop();
+  Looper.loop();
 }
 ```
 记得之前一个搞C++的同学问我，Android 程序的最先执行的函数是哪个啊，怎么没找到main()函数啊，之前我一直不知道，现在可以告诉他了，在ActivityThread中。
@@ -209,34 +209,34 @@ public static void main(String[] args) {
 然后我们就看看 Looper.prepareMainLooper()中干了啥吧，其实就是创建了一个Looper对象，
 ```Java
 public static void prepareMainLooper() {
-		//设置不允许退出的Looper
-		prepare(false);
-		synchronized (Looper.class) {
-			//将当前的Looper保存为主Looper，每个线程只允许执行一次。
-			if (sMainLooper != null) {
-				throw new IllegalStateException("The main Looper has already been prepared.");
-			}
-			sMainLooper = myLooper();
-		}
-	}
+    //设置不允许退出的Looper
+    prepare(false);
+    synchronized (Looper.class) {
+      //将当前的Looper保存为主Looper，每个线程只允许执行一次。
+      if (sMainLooper != null) {
+        throw new IllegalStateException("The main Looper has already been prepared.");
+      }
+      sMainLooper = myLooper();
+    }
+  }
 
   private static void prepare(boolean quitAllowed) {
-		//每个线程只允许执行一次该方法，第二次执行时线程的TLS已有数据，则会抛出异常。
-		if (sThreadLocal.get() != null) {
-			throw new RuntimeException("Only one Looper may be created per thread");
-		}
-		//创建Looper对象，并保存到当前线程的TLS区域
-		sThreadLocal.set(new Looper(quitAllowed));
-	}
+    //每个线程只允许执行一次该方法，第二次执行时线程的TLS已有数据，则会抛出异常。
+    if (sThreadLocal.get() != null) {
+      throw new RuntimeException("Only one Looper may be created per thread");
+    }
+    //创建Looper对象，并保存到当前线程的TLS区域
+    sThreadLocal.set(new Looper(quitAllowed));
+  }
 
   private Looper(boolean quitAllowed) {
-  		mQueue = new MessageQueue(quitAllowed);//创建MessageQueue
-  		mThread = Thread.currentThread();
+      mQueue = new MessageQueue(quitAllowed);//创建MessageQueue
+      mThread = Thread.currentThread();
   }
 
   public static Looper myLooper() {
-		return sThreadLocal.get();
-	}
+    return sThreadLocal.get();
+  }
   static final ThreadLocal<Looper> sThreadLocal = new ThreadLocal<Looper>();
 ```
 其实主要的就是prepare()，就是我们经常说的，在子线程中创建Handler之前，必须先Looper.prepare()才行   如下图
@@ -247,30 +247,30 @@ Looper创建成功了，那么就开始干活吧，开启传送带。loop()方�
 删掉了log之后，代码如下，关键地方也做了注释，相信不需要过多解释。
 ```java
 public static void loop() {
-		//获取TLS存储的Looper对象
-		final Looper me = myLooper();
-		if (me == null) {
-			throw new RuntimeException("No Looper; Looper.prepare() wasn't called on this thread.");
-		}
-		//获取Looper对象中的消息队列
-		final MessageQueue queue = me.mQueue;
+    //获取TLS存储的Looper对象
+    final Looper me = myLooper();
+    if (me == null) {
+      throw new RuntimeException("No Looper; Looper.prepare() wasn't called on this thread.");
+    }
+    //获取Looper对象中的消息队列
+    final MessageQueue queue = me.mQueue;
 
-		Binder.clearCallingIdentity();
-		final long ident = Binder.clearCallingIdentity();
+    Binder.clearCallingIdentity();
+    final long ident = Binder.clearCallingIdentity();
 
-		for (; ; ) {//进入loop的主循环方法
-			Message msg = queue.next(); // might block //可能会阻塞
-			if (msg == null) {  //没有消息，则退出循环
-				return;
-			}
-			//用于分发Message
-			msg.target.dispatchMessage(msg);
-			//确保分发过程中identity不会损坏
-			final long newIdent = Binder.clearCallingIdentity();
-			//将Message放入消息池  以便重复利用。
-			msg.recycleUnchecked();
-		}
-	}
+    for (; ; ) {//进入loop的主循环方法
+      Message msg = queue.next(); // might block //可能会阻塞
+      if (msg == null) {  //没有消息，则退出循环
+        return;
+      }
+      //用于分发Message
+      msg.target.dispatchMessage(msg);
+      //确保分发过程中identity不会损坏
+      final long newIdent = Binder.clearCallingIdentity();
+      //将Message放入消息池  以便重复利用。
+      msg.recycleUnchecked();
+    }
+  }
 ```
 再来一份流程图
 ![添加图片](../../../../images/looper_loop.png)
@@ -283,118 +283,118 @@ public static void loop() {
 ## MessageQueue # next()
 ```java
 Message next() {
-		//如果消息循环已经退出并被处理，返回这里。如果应用程序试图在不支持退出后重新启动looper，就会发生这种情况。
-		final long ptr = mPtr;
-		//当消息循环已经退出，则直接返回
-		if (ptr == 0) {
-			return null;
-		}
+    //如果消息循环已经退出并被处理，返回这里。如果应用程序试图在不支持退出后重新启动looper，就会发生这种情况。
+    final long ptr = mPtr;
+    //当消息循环已经退出，则直接返回
+    if (ptr == 0) {
+      return null;
+    }
 
-		int pendingIdleHandlerCount = -1; // -1 only during first iteration  // 循环迭代的首次为-1
-		int nextPollTimeoutMillis = 0;//代表下一个消息到来前，还需要等待的时长；当nextPollTimeoutMillis = -1时，表示消息队列中无消息，会一直等待下去。
-		//无限循环，如果队列中没有消息，那么next()方法就会一直阻塞在这里，当新消息到来的时候，next方法就会返回这条消息并且将其从链表中移除
-		for (; ; ) {
-			if (nextPollTimeoutMillis != 0) {
-				Binder.flushPendingCommands();
-			}
-			//在主线程的MessageQueue没有消息时，便阻塞在loop的queue.next()中的nativePollOnce()方法里
-			//此时主线程会释放CPU资源进入休眠状态，直到下个消息到达或者有事务发生，通过往pipe管道写端写入数据来唤醒主线程工作。
-			//阻塞操作，当等待nextPollTimeoutMillis时长，或者消息队列被唤醒，都会返回
-			nativePollOnce(ptr, nextPollTimeoutMillis);
+    int pendingIdleHandlerCount = -1; // -1 only during first iteration  // 循环迭代的首次为-1
+    int nextPollTimeoutMillis = 0;//代表下一个消息到来前，还需要等待的时长；当nextPollTimeoutMillis = -1时，表示消息队列中无消息，会一直等待下去。
+    //无限循环，如果队列中没有消息，那么next()方法就会一直阻塞在这里，当新消息到来的时候，next方法就会返回这条消息并且将其从链表中移除
+    for (; ; ) {
+      if (nextPollTimeoutMillis != 0) {
+        Binder.flushPendingCommands();
+      }
+      //在主线程的MessageQueue没有消息时，便阻塞在loop的queue.next()中的nativePollOnce()方法里
+      //此时主线程会释放CPU资源进入休眠状态，直到下个消息到达或者有事务发生，通过往pipe管道写端写入数据来唤醒主线程工作。
+      //阻塞操作，当等待nextPollTimeoutMillis时长，或者消息队列被唤醒，都会返回
+      nativePollOnce(ptr, nextPollTimeoutMillis);
 
-			synchronized (this) {
-				// Try to retrieve the next message.  Return if found.
-				final long now = SystemClock.uptimeMillis();
-				Message prevMsg = null;
-				Message msg = mMessages;
-				if (msg != null && msg.target == null) {
-					//msg.target为空是一类特殊消息（栅栏消息），用于阻塞所有同步消息，但是对异步消息没有影响，
+      synchronized (this) {
+        // Try to retrieve the next message.  Return if found.
+        final long now = SystemClock.uptimeMillis();
+        Message prevMsg = null;
+        Message msg = mMessages;
+        if (msg != null && msg.target == null) {
+          //msg.target为空是一类特殊消息（栅栏消息），用于阻塞所有同步消息，但是对异步消息没有影响，
           //在这个前提下，当头部是特殊消息时需要往后找是否有异步消息
-					// Stalled by a barrier.  Find the next asynchronous message in the queue.
-					//当消息Handler为空时，查询MessageQueue中的下一条异步消息msg，则退出循环。
-					do {
-						prevMsg = msg;
-						msg = msg.next;
-					} while (msg != null && !msg.isAsynchronous());
-				}
+          // Stalled by a barrier.  Find the next asynchronous message in the queue.
+          //当消息Handler为空时，查询MessageQueue中的下一条异步消息msg，则退出循环。
+          do {
+            prevMsg = msg;
+            msg = msg.next;
+          } while (msg != null && !msg.isAsynchronous());
+        }
 
-				// 走到这一步, 有两种可能,
-				// 一种是遍历到队尾没有发现异步消息,
-				// 另一种是找到queue中的第一个异步消息
+        // 走到这一步, 有两种可能,
+        // 一种是遍历到队尾没有发现异步消息,
+        // 另一种是找到queue中的第一个异步消息
 
-				if (msg != null) { // 找到queue中的第一个异步消息
-					if (now < msg.when) { // 没有到消息的执行时间
-						//当异步消息触发时间大于当前时间，则设置下一次轮询的超时时长
-						nextPollTimeoutMillis = (int) Math.min(msg.when - now, Integer.MAX_VALUE);
-					} else {// 当前消息到达可以执行的时间, 直接返回这个msg
-						// 获取一条消息，并返回
-						mBlocked = false;
-						if (prevMsg != null) {
-							prevMsg.next = msg.next;
-						} else {
-							//更新队头指针 mMessages
-							mMessages = msg.next;
-						}
-						//移除队头消息并返回
-						msg.next = null;
-						if (false) Log.v("MessageQueue", "Returning message: " + msg);
-						return msg;
-					}
-				} else {
-					//没有消息
-					nextPollTimeoutMillis = -1;
-				}
+        if (msg != null) { // 找到queue中的第一个异步消息
+          if (now < msg.when) { // 没有到消息的执行时间
+            //当异步消息触发时间大于当前时间，则设置下一次轮询的超时时长
+            nextPollTimeoutMillis = (int) Math.min(msg.when - now, Integer.MAX_VALUE);
+          } else {// 当前消息到达可以执行的时间, 直接返回这个msg
+            // 获取一条消息，并返回
+            mBlocked = false;
+            if (prevMsg != null) {
+              prevMsg.next = msg.next;
+            } else {
+              //更新队头指针 mMessages
+              mMessages = msg.next;
+            }
+            //移除队头消息并返回
+            msg.next = null;
+            if (false) Log.v("MessageQueue", "Returning message: " + msg);
+            return msg;
+          }
+        } else {
+          //没有消息
+          nextPollTimeoutMillis = -1;
+        }
 
-				//消息正在退出，返回null
-				if (mQuitting) {
-					dispose();
-					return null;
-				}
+        //消息正在退出，返回null
+        if (mQuitting) {
+          dispose();
+          return null;
+        }
 
-				// 如果queue中没有msg, 或者msg没到可执行的时间,那么现在线程就处于空闲时间了, 可以执行IdleHandler了
-				if (pendingIdleHandlerCount < 0 && (mMessages == null || now < mMessages.when)) {
-					// pendingIdleHandlerCount在进入for循环之前是被初始化为-1的  并且没有更多地消息要进行处理
-					pendingIdleHandlerCount = mIdleHandlers.size();
-				}
-				if (pendingIdleHandlerCount <= 0) {
-					//没有idle handlers 需要运行，则循环并等待。
-					mBlocked = true;
-					continue;
-				}
+        // 如果queue中没有msg, 或者msg没到可执行的时间,那么现在线程就处于空闲时间了, 可以执行IdleHandler了
+        if (pendingIdleHandlerCount < 0 && (mMessages == null || now < mMessages.when)) {
+          // pendingIdleHandlerCount在进入for循环之前是被初始化为-1的  并且没有更多地消息要进行处理
+          pendingIdleHandlerCount = mIdleHandlers.size();
+        }
+        if (pendingIdleHandlerCount <= 0) {
+          //没有idle handlers 需要运行，则循环并等待。
+          mBlocked = true;
+          continue;
+        }
 
-				if (mPendingIdleHandlers == null) {
-					mPendingIdleHandlers = new IdleHandler[Math.max(pendingIdleHandlerCount, 4)];
-				}
-				mPendingIdleHandlers = mIdleHandlers.toArray(mPendingIdleHandlers);
-			}
+        if (mPendingIdleHandlers == null) {
+          mPendingIdleHandlers = new IdleHandler[Math.max(pendingIdleHandlerCount, 4)];
+        }
+        mPendingIdleHandlers = mIdleHandlers.toArray(mPendingIdleHandlers);
+      }
 
-			//只有第一次循环时，会运行idle handlers，执行完成后，重置pendingIdleHandlerCount为0.
-			for (int i = 0; i < pendingIdleHandlerCount; i++) {
-				final IdleHandler idler = mPendingIdleHandlers[i];
-				//只有第一次循环时，会运行idle handlers，执行完成后，重置pendingIdleHandlerCount为0.
-				mPendingIdleHandlers[i] = null; // release the reference to the handler
+      //只有第一次循环时，会运行idle handlers，执行完成后，重置pendingIdleHandlerCount为0.
+      for (int i = 0; i < pendingIdleHandlerCount; i++) {
+        final IdleHandler idler = mPendingIdleHandlers[i];
+        //只有第一次循环时，会运行idle handlers，执行完成后，重置pendingIdleHandlerCount为0.
+        mPendingIdleHandlers[i] = null; // release the reference to the handler
 
-				boolean keep = false;
-				try {
-					keep = idler.queueIdle();//idle时执行的方法
-				} catch (Throwable t) {
-					Log.wtf("MessageQueue", "IdleHandler threw exception", t);
-				}
+        boolean keep = false;
+        try {
+          keep = idler.queueIdle();//idle时执行的方法
+        } catch (Throwable t) {
+          Log.wtf("MessageQueue", "IdleHandler threw exception", t);
+        }
 
-				if (!keep) {
-					synchronized (this) {
-						// 如果之前addIdleHandler中返回为false,
-						// 就在执行完这个IdleHandler的callback之后, 将这个idler移除掉
-						mIdleHandlers.remove(idler);
-					}
-				}
-			}
-			//重置idle handler个数为0，以保证不会再次重复运行
-			pendingIdleHandlerCount = 0;
-			//当调用一个空闲handler时，一个新message能够被分发，因此无需等待可以直接查询pending message.
-			nextPollTimeoutMillis = 0;
-		}
-	}
+        if (!keep) {
+          synchronized (this) {
+            // 如果之前addIdleHandler中返回为false,
+            // 就在执行完这个IdleHandler的callback之后, 将这个idler移除掉
+            mIdleHandlers.remove(idler);
+          }
+        }
+      }
+      //重置idle handler个数为0，以保证不会再次重复运行
+      pendingIdleHandlerCount = 0;
+      //当调用一个空闲handler时，一个新message能够被分发，因此无需等待可以直接查询pending message.
+      nextPollTimeoutMillis = 0;
+    }
+  }
 ```
 
 代码很长，相应的地方也做了注释，但是可能还是看不懂，简单做一下解释。
@@ -418,20 +418,20 @@ Message next() {
 
 ```Java
 public void dispatchMessage(Message msg) {
-		if (msg.callback != null) {//post()的时候执行到这里
-			handleCallback(msg);
-		} else {
-			if (mCallback != null) {//创建Handler的时候传递的callback对象
-				if (mCallback.handleMessage(msg)) {//返回true，就不执行handleMessage()了，
-					return;
-				}
-			}
-			handleMessage(msg);
-		}
-	}
-	private static void handleCallback(Message message) {
-		message.callback.run();
-	}
+    if (msg.callback != null) {//post()的时候执行到这里
+      handleCallback(msg);
+    } else {
+      if (mCallback != null) {//创建Handler的时候传递的callback对象
+        if (mCallback.handleMessage(msg)) {//返回true，就不执行handleMessage()了，
+          return;
+        }
+      }
+      handleMessage(msg);
+    }
+  }
+  private static void handleCallback(Message message) {
+    message.callback.run();
+  }
 ```
 这个代码很短，可以直接看流程图
 ![添加图片](../../../../images/handler_dispatchmessage.png)
@@ -462,13 +462,13 @@ public static void main(String[] args) {
   thread.attach(false);
 
   if (sMainThreadHandler == null) {
-  	//保存进程对应的主线程Handler
-  	sMainThreadHandler = thread.getHandler();
+    //保存进程对应的主线程Handler
+    sMainThreadHandler = thread.getHandler();
   }
   //进入主线程的消息循环
-	Looper.loop();
+  Looper.loop();
 
-	throw new RuntimeException("Main thread loop unexpectedly exited");
+  throw new RuntimeException("Main thread loop unexpectedly exited");
 ```
 会发现一个很奇怪的线程，loop()执行完毕后，直接抛异常了，很诡异啊，但是我们很少能遇到这个异常，这是因为 loop()是一个死循环，永远不会结束，也就执行不到了throw new RuntimeException()中了，程序也就不会崩溃了。可是这和ANR有啥关系呢？
 
@@ -502,17 +502,17 @@ ThreadLocal 是线程内部的数据存储类，通过他可以在指定的线�
 ```java
 static final ThreadLocal<Looper> sThreadLocal = new ThreadLocal<Looper>();
 private static void prepare(boolean quitAllowed) {
-		//每个线程只允许执行一次该方法，第二次执行时线程的TLS已有数据，则会抛出异常。
-		if (sThreadLocal.get() != null) {
-			throw new RuntimeException("Only one Looper may be created per thread");
-		}
-		//创建Looper对象，并保存到当前线程的TLS区域
-		sThreadLocal.set(new Looper(quitAllowed));
-	}
+    //每个线程只允许执行一次该方法，第二次执行时线程的TLS已有数据，则会抛出异常。
+    if (sThreadLocal.get() != null) {
+      throw new RuntimeException("Only one Looper may be created per thread");
+    }
+    //创建Looper对象，并保存到当前线程的TLS区域
+    sThreadLocal.set(new Looper(quitAllowed));
+  }
 
-	public static Looper myLooper() {
-			return sThreadLocal.get();
-	}
+  public static Looper myLooper() {
+      return sThreadLocal.get();
+  }
 ```
 在Looper中创建一个静态的ThreadLocal变量sThreadLocal，在prepare()中创建Looper对象，然后保存到ThreadLocal中。sThreadLocal.set(new Looper(quitAllowed));，同时对外提供得到该Looper的静态方法。当我们在某个线程中想要创建Looper的时候，如果是第一次，需要执行Looper.prepare(),创建一个Looper对象并且保存到ThreadLocal,再次创建的时候，只需要使用Looper.myLooper()得到该Looper对象即可。
 
@@ -520,16 +520,16 @@ private static void prepare(boolean quitAllowed) {
 因为Looper.prepare() 在ActivityThread 的main()中已经执行了。而不需要传递Looper对象，是因为在Handler的构造函数自己通过Looper.myLooper()拿到了。
 ```java
 public Handler(Callback callback, boolean async) {
-	  ...
-		//必须先执行Looper.prepare()，才能获取Looper对象，否则为null.
-		mLooper = Looper.myLooper();//从当前线程的TLS中获取Looper对象
-		if (mLooper == null) {
-			throw new RuntimeException("Can't create handler inside thread that has not called Looper.prepare()");
-		}
-		mQueue = mLooper.mQueue;//消息队列，来自Looper对象å
-		mCallback = callback;//回调方法
-		mAsynchronous = async;//设置消息是否为异步处理方式
-	}
+    ...
+    //必须先执行Looper.prepare()，才能获取Looper对象，否则为null.
+    mLooper = Looper.myLooper();//从当前线程的TLS中获取Looper对象
+    if (mLooper == null) {
+      throw new RuntimeException("Can't create handler inside thread that has not called Looper.prepare()");
+    }
+    mQueue = mLooper.mQueue;//消息队列，来自Looper对象å
+    mCallback = callback;//回调方法
+    mAsynchronous = async;//设置消息是否为异步处理方式
+  }
 ```
 其实不用ThreadLocal 也可以，只需要弄一个全局的HashMap供Handler查找指定线程的Looper对象即可。那样就需要一个类似LooperManager的类进行管理。既然ThreadLocal 有这样的功能，干嘛重复造轮子呢？
 ### 为啥一个线程中只能有一个Looper

@@ -24,9 +24,9 @@ retrofit = new Retrofit.Builder()
 
 ```java
 public Builder addConverterFactory(Converter.Factory factory) {
-			converterFactories.add(checkNotNull(factory, "factory == null"));
-			return this;
-		}
+      converterFactories.add(checkNotNull(factory, "factory == null"));
+      return this;
+    }
 ```
 
 那么就需要研究一下，在什么情况下，使用 GsonConverterFactory 去解析，什么时候，使用另外一种方式解析数据。
@@ -69,13 +69,13 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
 
 ```java
 public ServiceMethod build() {
-	   callAdapter = createCallAdapter();
-	   responseType = callAdapter.responseType();
-	   ...
-	   responseConverter = createResponseConverter();
-	  ...
-	   return new ServiceMethod<>(this);
-	 }
+     callAdapter = createCallAdapter();
+     responseType = callAdapter.responseType();
+     ...
+     responseConverter = createResponseConverter();
+    ...
+     return new ServiceMethod<>(this);
+   }
 ```
 其他的我们不比关心，只看着几行代码
 
@@ -230,13 +230,13 @@ Observable<String> updatePic(@PartMap Map<String, RequestBody> requestBodyMap, @
 ```java
 
 retrofit = new Retrofit.Builder()
-		.baseUrl(sBaseUrl)
-		.addConverterFactory(RawConverterFactory.create(buildGson()))
-		.addConverterFactory(GsonConverterFactory.create(buildGson()))
-		//支持RxJava2
-		.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-		.client(httpClientBuilder.build())
-		.build();
+    .baseUrl(sBaseUrl)
+    .addConverterFactory(RawConverterFactory.create(buildGson()))
+    .addConverterFactory(GsonConverterFactory.create(buildGson()))
+    //支持RxJava2
+    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+    .client(httpClientBuilder.build())
+    .build();
 ```
 
 ---

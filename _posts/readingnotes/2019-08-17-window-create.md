@@ -82,8 +82,8 @@ public Window makeNewWindow(Context context) {
 ```java
 //设置WindowManager
 mWindow.setWindowManager((WindowManager) context.getSystemService(Context.WINDOW_SERVICE),//
-		mToken, mComponent.flattenToString(),//
-		(info.flags & ActivityInfo.FLAG_HARDWARE_ACCELERATED) != 0);
+    mToken, mComponent.flattenToString(),//
+    (info.flags & ActivityInfo.FLAG_HARDWARE_ACCELERATED) != 0);
 ```
 这里说一下mToken 吧
 #### Token
@@ -344,45 +344,45 @@ void showNextToastLocked() {
 ```java
 //Toast. TN
 public void show() {
-	mHandler.post(mShow);
+  mHandler.post(mShow);
 }
 final Runnable mShow = new Runnable() {
-	@Override
-	public void run() {
-		handleShow();
-	}
+  @Override
+  public void run() {
+    handleShow();
+  }
 };
 
 public void handleShow() {
 if (mView != mNextView) {
-	// 移除就的Toast
-	handleHide();
-	mView = mNextView;
-	// 优先取Application的Context，如果用Acivity的Context，容易导致Activity内存泄露有关
-	Context context = mView.getContext().getApplicationContext();
-	String packageName = mView.getContext().getOpPackageName();
-	if (context == null) {
-		context = mView.getContext();
-	}
-	//取WindowManager，这里取的WindowManagerImpl，
-	mWM = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-	final Configuration config = mView.getContext().getResources().getConfiguration();
-	final int gravity = Gravity.getAbsoluteGravity(mGravity, config.getLayoutDirection());
-	mParams.gravity = gravity;
-	if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.FILL_HORIZONTAL) {
-		mParams.horizontalWeight = 1.0f;
-	}
-	if ((gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.FILL_VERTICAL) {
-		mParams.verticalWeight = 1.0f;
-	}
-	mParams.x = mX;
-	mParams.y = mY;
-	mParams.verticalMargin = mVerticalMargin;
-	mParams.horizontalMargin = mHorizontalMargin;
-	mParams.packageName = packageName;
-	// 直接addView了
-	mWM.addView(mView, mParams);
-	trySendAccessibilityEvent();
+  // 移除就的Toast
+  handleHide();
+  mView = mNextView;
+  // 优先取Application的Context，如果用Acivity的Context，容易导致Activity内存泄露有关
+  Context context = mView.getContext().getApplicationContext();
+  String packageName = mView.getContext().getOpPackageName();
+  if (context == null) {
+    context = mView.getContext();
+  }
+  //取WindowManager，这里取的WindowManagerImpl，
+  mWM = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+  final Configuration config = mView.getContext().getResources().getConfiguration();
+  final int gravity = Gravity.getAbsoluteGravity(mGravity, config.getLayoutDirection());
+  mParams.gravity = gravity;
+  if ((gravity & Gravity.HORIZONTAL_GRAVITY_MASK) == Gravity.FILL_HORIZONTAL) {
+    mParams.horizontalWeight = 1.0f;
+  }
+  if ((gravity & Gravity.VERTICAL_GRAVITY_MASK) == Gravity.FILL_VERTICAL) {
+    mParams.verticalWeight = 1.0f;
+  }
+  mParams.x = mX;
+  mParams.y = mY;
+  mParams.verticalMargin = mVerticalMargin;
+  mParams.horizontalMargin = mHorizontalMargin;
+  mParams.packageName = packageName;
+  // 直接addView了
+  mWM.addView(mView, mParams);
+  trySendAccessibilityEvent();
 }}
 ```
 Toast. TN 先切到主线程中，然后执行handleShow()方法

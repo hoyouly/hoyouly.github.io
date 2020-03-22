@@ -24,7 +24,7 @@ root.setView(view, wparams, panelParentView);
 ## ViewRootImpl # setView()
 ```java
 public void setView(View view, WindowManager.LayoutParams attrs, View  panelParentView) {
-		...
+    ...
     // Schedule the first layout -before- adding to the window manager,
     //to make sure we do the relayout before receiving any other events from the system.
     requestLayout();
@@ -36,11 +36,11 @@ public void setView(View view, WindowManager.LayoutParams attrs, View  panelPare
 ## ViewRootImpl # requestLayout()
 ```java
 public void requestLayout() {
-	if (!mHandlingLayoutInLayoutRequest) {
-		checkThread();  // 检查发起布局请求的线程是否为主线程
-		mLayoutRequested = true; //mLayoutRequested 是否measure和layout布局。
-		scheduleTraversals();
-	}
+  if (!mHandlingLayoutInLayoutRequest) {
+    checkThread();  // 检查发起布局请求的线程是否为主线程
+    mLayoutRequested = true; //mLayoutRequested 是否measure和layout布局。
+    scheduleTraversals();
+  }
 }
 ```
 代码很短，也有注释，相信很好理解，只需要记住一点即可：mHandlingLayoutInLayoutRequest默认是false， 但它会在 performLayout() 被修改，
@@ -55,7 +55,7 @@ void scheduleTraversals() {
       mTraversalBarrier = mHandler.getLooper().postSyncBarrier();
       //post一个runnable处理-->mTraversalRunnable
       //ViewRootImpl中W类是Binder的Native端，用来接收WMS处理操作，
-			//因为W类的接收方法是在线程池中的，所以我们可以通过Handler将事件处理切换到主线程中
+      //因为W类的接收方法是在线程池中的，所以我们可以通过Handler将事件处理切换到主线程中
       mChoreographer.postCallback(Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, null);
       if (!mUnbufferedInputDispatch) {
           scheduleConsumeBatchedInput();
@@ -70,30 +70,30 @@ void scheduleTraversals() {
 final TraversalRunnable mTraversalRunnable = new TraversalRunnable();
 
 final class TraversalRunnable implements Runnable {
-		@Override
-		public void run() {
-			//切换到主线程中执行。
-			doTraversal();
-		}
-	}
+    @Override
+    public void run() {
+      //切换到主线程中执行。
+      doTraversal();
+    }
+  }
 ```
 这样就保证 doTraversal()一定在主线程中执行。
 ## ViewRootImpl # doTraversal()
 
 ```java
 void doTraversal() {
-		if (mTraversalScheduled) {
-			mTraversalScheduled = false;
-			mHandler.getLooper().removeSyncBarrier(mTraversalBarrier);
-			Trace.traceBegin(Trace.TRACE_TAG_VIEW, "performTraversals");
-			try {
-			   //View的绘制流程正式开始。
-				performTraversals();
-			} finally {
-				Trace.traceEnd(Trace.TRACE_TAG_VIEW);
-			}
-		}
-	}
+    if (mTraversalScheduled) {
+      mTraversalScheduled = false;
+      mHandler.getLooper().removeSyncBarrier(mTraversalBarrier);
+      Trace.traceBegin(Trace.TRACE_TAG_VIEW, "performTraversals");
+      try {
+         //View的绘制流程正式开始。
+        performTraversals();
+      } finally {
+        Trace.traceEnd(Trace.TRACE_TAG_VIEW);
+      }
+    }
+  }
 ```
 解释一下：
 在scheduleTraversals 方法中，通过mHandle发送一个runnable对象，在run方法中处理绘制流程，这一点和ActivityThread中的H类相似，因为我们知道ViewRootImpl中的W类是Binder的Native端，用来接收WMS处理的操作，W类的方法是发生线程池中的，所以我们需要 <font color="#ff0000">
@@ -120,22 +120,22 @@ performTraversals()首次绘制的大致流程，会依次调用performMeasure()
 下面是源码
 ```java
 private void performTraversals() {
-	...
-	if (layoutRequested) {
-		 ...
-			//创建了DecorView的MeasureSpec，并调用performMeasure
-			 measureHierarchy(host, lp, res,desiredWindowWidth, desiredWindowHeight);
+  ...
+  if (layoutRequested) {
+     ...
+      //创建了DecorView的MeasureSpec，并调用performMeasure
+       measureHierarchy(host, lp, res,desiredWindowWidth, desiredWindowHeight);
     ...
-		final boolean didLayout = layoutRequested && !mStopped;
-		        boolean triggerGlobalLayoutListener = didLayout || mAttachInfo.mRecomputeGlobalAttributes;
-		     if (didLayout) {
-		            //控件树中的控件对于自己的尺寸显然已经了然于胸。而且父控件对于子控件的位置也有了眉目，所以经过测量过程后，布局阶段会把测量结果转化为控件的实际位置与尺寸。
-		            // 控件的实际位置与尺寸由View的mLeft，mTop，mRight，mBottom 等4个成员变量存储的坐标值来表示。
-		            performLayout(lp, desiredWindowWidth, desiredWindowHeight);
-					}
+    final boolean didLayout = layoutRequested && !mStopped;
+            boolean triggerGlobalLayoutListener = didLayout || mAttachInfo.mRecomputeGlobalAttributes;
+         if (didLayout) {
+                //控件树中的控件对于自己的尺寸显然已经了然于胸。而且父控件对于子控件的位置也有了眉目，所以经过测量过程后，布局阶段会把测量结果转化为控件的实际位置与尺寸。
+                // 控件的实际位置与尺寸由View的mLeft，mTop，mRight，mBottom 等4个成员变量存储的坐标值来表示。
+                performLayout(lp, desiredWindowWidth, desiredWindowHeight);
+          }
 
-		...
-		boolean cancelDraw = mAttachInfo.mTreeObserver.dispatchOnPreDraw() || viewVisibility != View.VISIBLE;
+    ...
+    boolean cancelDraw = mAttachInfo.mTreeObserver.dispatchOnPreDraw() || viewVisibility != View.VISIBLE;
         if (!cancelDraw && !newSurface) {
             if (!skipDraw || mReportNextDraw) {
                 if (mPendingTransitions != null && mPendingTransitions.size() > 0) {

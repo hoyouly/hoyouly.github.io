@@ -45,22 +45,22 @@ DexClassLoader和PathClassLoader 都继承BaseDexClassLoader，其中主要逻�
  * @param parent           该加载器的父加载器，
  */
 public BaseDexClassLoader(String dexPath, File optimizedDirectory
-							, String libraryPath, ClassLoadeparent) {
+              , String libraryPath, ClassLoadeparent) {
     super(parent);
     this.pathList = new DexPathList(this, dexPath, libraryPath, optimizedDirectory);
 }
 ```
 四个参数的解释：
 * dexPath    类加载器将从该路径中寻找指定的目标类，
-	* 该类必须是APK或者JAR的全路径如果要包括多个路径，
-	* 路径之间必须使用指定的分隔符，可以使用System.getProperty("path.separtor"),
-	* DexClassLoader 中所谓的支持加载APK，JAR，dex,也可以从SD卡中加载，指的就是这个路径，
-	* 最终是将dexPath路径上的文件ODEX优化到optimizedDirectoyr,然后进行加载
+  * 该类必须是APK或者JAR的全路径如果要包括多个路径，
+  * 路径之间必须使用指定的分隔符，可以使用System.getProperty("path.separtor"),
+  * DexClassLoader 中所谓的支持加载APK，JAR，dex,也可以从SD卡中加载，指的就是这个路径，
+  * 最终是将dexPath路径上的文件ODEX优化到optimizedDirectoyr,然后进行加载
 * optimizedDirectory   
-	* 由于dex文件被包含在APK或者JAR中，因此在装载目标类之前需要从APK或者JAR文件中解压dex文件，该参数就是定制解压出来的dex文件存放的路径的，这也是对apk的dex根据平台进行ODE优化的过程，
-	* 其实APK 是一个压缩包，里面包括dex文件，ODEX文件的优化就是把包里面的执行程序提取出来，就变成ODEX文件，因为你提取出来了，系统第一次启动的时候就不用去解压程序压缩包里面的程序，少了一个解压过程，这样系统启动就加快，
-	* 为什么说是第一次呢？因为DEX版本只会有在第一次会解压执行程序到 /data/dalvik-cache(针对PathClassLoder)或者 optimizedDirectory (针对DexClassLoader)目录，之后也就直接读取dex文件，所以第二次启动就和正常启动差不多了，当然这只是简单理解，实际生成ODEX还有一定的优化作用，
-	* ClassLoader只能加载内部存储路径中的dex文件，所以这个路径必须是内部路径
+  * 由于dex文件被包含在APK或者JAR中，因此在装载目标类之前需要从APK或者JAR文件中解压dex文件，该参数就是定制解压出来的dex文件存放的路径的，这也是对apk的dex根据平台进行ODE优化的过程，
+  * 其实APK 是一个压缩包，里面包括dex文件，ODEX文件的优化就是把包里面的执行程序提取出来，就变成ODEX文件，因为你提取出来了，系统第一次启动的时候就不用去解压程序压缩包里面的程序，少了一个解压过程，这样系统启动就加快，
+  * 为什么说是第一次呢？因为DEX版本只会有在第一次会解压执行程序到 /data/dalvik-cache(针对PathClassLoder)或者 optimizedDirectory (针对DexClassLoader)目录，之后也就直接读取dex文件，所以第二次启动就和正常启动差不多了，当然这只是简单理解，实际生成ODEX还有一定的优化作用，
+  * ClassLoader只能加载内部存储路径中的dex文件，所以这个路径必须是内部路径
 * libraryPath   指的是目标所使用的c/c++库存放的路径
 * parent    一般为当前执行类的加载器，例如Android中以context.getClassLoader()作为父加载器
 
@@ -71,7 +71,7 @@ public class PathClassLoader extends BaseDexClassLoader {
     public PathClassLoader(String dexPath, ClassLoader parent) {
         super(dexPath, null, null, parent);
     }
-	public PathClassLoader(String dexPath, String libraryPath, ClassLoader parent) {
+  public PathClassLoader(String dexPath, String libraryPath, ClassLoader parent) {
         super(dexPath, null, libraryPath, parent);
     }
 }
@@ -86,10 +86,10 @@ public class PathClassLoader extends BaseDexClassLoader {
 继承BaseDexClassLoader,构造函数如下
 ```java
 public class DexClassLoader extends BaseDexClassLoader {
-	public DexClassLoader(String dexPath, String optimizedDirectory,
+  public DexClassLoader(String dexPath, String optimizedDirectory,
                           String libraryPath, ClassLoader parent) {
         super(dexPath, new File(optimizedDirectory), libraryPath, parent);
-	}
+  }
 }
 ```
 1. 支持加载APK，JAR，和DEX，也可以从SD卡上进行加载
@@ -121,28 +121,28 @@ public final class DelegateLastClassLoader extends PathClassLoader {
     public DelegateLastClassLoader(String dexPath, ClassLoader parent) {
         super(dexPath, parent);
     }
-		@Override
-		protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-    	Class<?> cl = findLoadedClass(name);
-    	if (cl != null) {
-        	return cl;
-    	}
-    	try {
-        	return Object.class.getClassLoader().loadClass(name);
-    	} catch (ClassNotFoundException ignored) {
-    	}
-      	ClassNotFoundException fromSuper = null;
-      	try {
-          	return findClass(name);
-      	} catch (ClassNotFoundException ex) {
-          	fromSuper = ex;
-      	}
-      	try {
-          	return getParent().loadClass(name);
-      	} catch (ClassNotFoundException cnfe) {
-          	throw fromSuper;
-      	}
-  	}
+    @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+      Class<?> cl = findLoadedClass(name);
+      if (cl != null) {
+          return cl;
+      }
+      try {
+          return Object.class.getClassLoader().loadClass(name);
+      } catch (ClassNotFoundException ignored) {
+      }
+        ClassNotFoundException fromSuper = null;
+        try {
+            return findClass(name);
+        } catch (ClassNotFoundException ex) {
+            fromSuper = ex;
+        }
+        try {
+            return getParent().loadClass(name);
+        } catch (ClassNotFoundException cnfe) {
+            throw fromSuper;
+        }
+    }
 }
 ```
 实行的是最后查找策略。使用DelegateLastClassLoader来加载每个类或者资源。使用一下查找顺序

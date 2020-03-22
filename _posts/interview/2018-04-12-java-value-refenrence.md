@@ -12,16 +12,16 @@ tags: Java  值传递  引用传递
 
 ```java
 public static void main(String[] args) {
-		String str = new String("abc");
-		char[] c = new char[] { 'a', 'b', 'c' };
-		change(str, c);  
-    	System.out.println("str= "+str);
-    	System.out.println("c= "+String.valueOf(c));
-  }
-  public static void change(String str, char[] c) {
-		str = "123";
-		c[0] = 'd';
-	}
+    String str = new String("abc");
+    char[] c = new char[] { 'a', 'b', 'c' };
+    change(str, c);  
+    System.out.println("str= "+str);
+    System.out.println("c= "+String.valueOf(c));
+}
+public static void change(String str, char[] c) {
+    str = "123";
+    c[0] = 'd';
+}
 ```
 先公布这个结果吧  
 
@@ -94,21 +94,21 @@ num2 = 20
 ## 引用数据类型
 ```java
 public  static class Employee {
-		public int age;
-	}
-	// 创建两个线程，交替打印数字
+    public int age;
+  }
+  // 创建两个线程，交替打印数字
 
-	public static void main(String[] args) {
-		Employee employee = new Employee();
-		employee.age = 10;
-		changeEmployee(employee);
-		System.out.println("age = "+employee.age);
-	}
-	public static void changeEmployee(Employee emp ) {
-		emp = new Employee();
-		emp.age = 50;
-		System.out.println("changeEmployee  age = "+emp.age);
-	}
+  public static void main(String[] args) {
+    Employee employee = new Employee();
+    employee.age = 10;
+    changeEmployee(employee);
+    System.out.println("age = "+employee.age);
+  }
+  public static void changeEmployee(Employee emp ) {
+    emp = new Employee();
+    emp.age = 50;
+    System.out.println("changeEmployee  age = "+emp.age);
+  }
 ```
 运行结果如下：
 
@@ -119,26 +119,26 @@ age = 100
 然后我们再添加一些log,查看运行结果
 ```java
 public  static class Employee {
-		public int age;
-	}
-	// 创建两个线程，交替打印数字
+    public int age;
+  }
+  // 创建两个线程，交替打印数字
 
-	public static void main(String[] args) {
-		Employee employee = new Employee();
-			employee.age = 10;
-			System.out.println("employee : "+employee);
-			changeEmployee(employee);
-			System.out.println("employee: "+employee+"    age = "+employee.age);
-	}
+public static void main(String[] args) {
+    Employee employee = new Employee();
+    employee.age = 10;
+    System.out.println("employee : "+employee);
+    changeEmployee(employee);
+    System.out.println("employee: "+employee+"    age = "+employee.age);
+  }
 public static void changeEmployee(Employee emp) {
-	  System.out.println("changeEmployee before"+emp);
+    System.out.println("changeEmployee before"+emp);
 
-		emp = new Employee();
-		System.out.println("changeEmployee end "+emp);
+    emp = new Employee();
+    System.out.println("changeEmployee end "+emp);
 
-		emp.age = 50;
-		System.out.println("changeEmployee emp = "+emp+"  age: "+emp.age);
-	}
+    emp.age = 50;
+    System.out.println("changeEmployee emp = "+emp+"  age: "+emp.age);
+  }
 
 ```
 运行结果如下：
@@ -162,35 +162,35 @@ employee: top.hoyouly.sina.JavaReferenceTest$Employee@6a998c1    age = 10
 2. 发现我家油烟机很脏   employee.age = 10;   
 3. changeEmployee() 可以理解为清理油烟机(),接受一个家庭地址   
 4. 我把我家地址给你了，执行 changeEmployee(employee);  
-5. 你知道了我家地址，		System.out.println("changeEmployee before"+emp);  
+5. 你知道了我家地址，    System.out.println("changeEmployee before"+emp);  
 6. 可是你竟然私自做主张，更换地址，emp = new Employee();      
 7. 那么就算你把油烟机清理的再干净，emp.age = 50; 那也不是我家的啊，我家的还是脏兮兮的，age = 10   
 
 接下来我们再改变一下代码
 ```java
 public  static class Employee {
-		public int age;
-	}
-	// 创建两个线程，交替打印数字
+    public int age;
+  }
+  // 创建两个线程，交替打印数字
 
-	public static void main(String[] args) {
-		Employee employee = new Employee();
-			employee.age = 10;
-			System.out.println("employee : "+employee);
-			changeEmployee(employee);
-			System.out.println("employee: "+employee+"    age = "+employee.age);
-	}
+  public static void main(String[] args) {
+    Employee employee = new Employee();
+    employee.age = 10;
+    System.out.println("employee : "+employee);
+    changeEmployee(employee);
+    System.out.println("employee: "+employee+"    age = "+employee.age);
+  }
 public static void changeEmployee(Employee emp) {
-	  System.out.println("changeEmployee before"+emp);
+    System.out.println("changeEmployee before"+emp);
 
-		// emp = new Employee();
-		System.out.println("changeEmployee end "+emp);
+    // emp = new Employee();
+    System.out.println("changeEmployee end "+emp);
 
-		emp.age = 50;
-		System.out.println("changeEmployee emp = "+emp+"  age: "+emp.age);
-	}
+    emp.age = 50;
+    System.out.println("changeEmployee emp = "+emp+"  age: "+emp.age);
+  }
 ```
-我只是注释了一行代码，	// emp = new Employee();，其他一样，可是结果却大不相同了，先看这次运行结果
+我只是注释了一行代码，  // emp = new Employee();，其他一样，可是结果却大不相同了，先看这次运行结果
 ```java
 employee : top.hoyouly.sina.JavaReferenceTest$Employee@2f63e9a1
 changeEmployee beforetop.hoyouly.sina.JavaReferenceTest$Employee@2f63e9a1
@@ -205,14 +205,14 @@ employee: top.hoyouly.sina.JavaReferenceTest$Employee@2f63e9a1    age = 50
 ### 数组类型
 ```java
 public static void main(String[] args) {
-		char[] ch = new char[] { 'a', 'b', 'c' };
-		change(ch);
-		System.out.println("ch= "+String.valueOf(ch)+"  ch的地址： "+ch);
-	}
-	public static void change( char[] c) {
-		c[0] = 'd';
-		System.out.println("c[0]: "+c[0]+"  c :"+c);
-	}
+    char[] ch = new char[] { 'a', 'b', 'c' };
+    change(ch);
+    System.out.println("ch= "+String.valueOf(ch)+"  ch的地址： "+ch);
+  }
+  public static void change( char[] c) {
+    c[0] = 'd';
+    System.out.println("c[0]: "+c[0]+"  c :"+c);
+  }
 ```
 运行结果:
 ```java
@@ -227,17 +227,17 @@ ch= dbc  ch的地址： [C@528f2588
 说最简单的吧，String类型，
 ```java
 public static void main(String[] args) {
-		String str = new String("abc");
-		System.out.println("before  str: "+str.hashCode()+"   str: "+str);
-		change(str);
-		System.out.println("end str: "+str.hashCode()+"   str: "+str);
+    String str = new String("abc");
+    System.out.println("before  str: "+str.hashCode()+"   str: "+str);
+    change(str);
+    System.out.println("end str: "+str.hashCode()+"   str: "+str);
 }
 
 public static void change(String s) {
-		System.out.println("before s "+s.hashCode()+"  s: "+s);
-		s = "123";
-		System.out.println("end  s "+s.hashCode()+"  s: "+s);
-	}
+    System.out.println("before s "+s.hashCode()+"  s: "+s);
+    s = "123";
+    System.out.println("end  s "+s.hashCode()+"  s: "+s);
+  }
 ```
 运行结果：
 ```java

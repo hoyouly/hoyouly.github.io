@@ -11,10 +11,10 @@ tags: Android Retrofit
 
 ```java
 Retrofit retrofit=new Retrofit.Builder()//
-		.baseUrl("http://fanyi.youdao.com/")//
-		.addConverterFactory(GsonConverterFactory.create())//
-		.addCallAdapterFactory(RxJavaCallAdapterFactory.create())//
-		.build();
+    .baseUrl("http://fanyi.youdao.com/")//
+    .addConverterFactory(GsonConverterFactory.create())//
+    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())//
+    .build();
 ```
 ## new Retrofit.Builder()
 通过Builder 模式建立Retrofit实例，既然是链式结构，那就一步步往下看吧，先看 `new Retrofit.Builder()`
@@ -159,11 +159,11 @@ public Retrofit build() {
     }
     okhttp3.Call.Factory callFactory = this.callFactory;
     if (callFactory == null) {
-    		callFactory = new OkHttpClient();
+        callFactory = new OkHttpClient();
     }
     Executor callbackExecutor = this.callbackExecutor;
     if (callbackExecutor == null) {
-     		callbackExecutor = platform.defaultCallbackExecutor();
+         callbackExecutor = platform.defaultCallbackExecutor();
     }
       // Make a defensive copy of the adapters and add the default Call adapter.
     List<CallAdapter.Factory> adapterFactories = new ArrayList<>(this.adapterFactories);
@@ -171,13 +171,13 @@ public Retrofit build() {
     // Make a defensive copy of the converters.
     List<Converter.Factory> converterFactories = new ArrayList<>(this.converterFactories);
     return new Retrofit(callFactory, baseUrl, converterFactories, adapterFactories,
- 		callbackExecutor, validateEagerly);
+     callbackExecutor, validateEagerly);
 }
 ```
 我们看到。
 * baseurl 为null的时候，直接抛异常了，这个baseUrl就是我们之前通过baseUrl()方法设置的。
 
-	所以可知：**创建Retrofit的时候，必须执行baseUrl()方法，传递的值必须不能为null，并且需要符合一定的规则。**
+  所以可知：**创建Retrofit的时候，必须执行baseUrl()方法，传递的值必须不能为null，并且需要符合一定的规则。**
 * 创建Retrofit，六个参数的，除了baseUrl必须在Builder中指定，其他都有默认值的，
 
 <font color="#ff000" >总结一句话： 通过建造者模式，创建一个Retrofit对象，baseUrl必须有，其他可以使用默认的。</font>
@@ -311,10 +311,10 @@ public ServiceMethod build() {
       responseType = callAdapter.responseType();
       ...
       responseConverter = createResponseConverter();
-			for (Annotation annotation : methodAnnotations) {
-				//解析所有的注解
-			 parseMethodAnnotation(annotation);
-		 	}
+      for (Annotation annotation : methodAnnotations) {
+        //解析所有的注解
+       parseMethodAnnotation(annotation);
+       }
       ...
       return new ServiceMethod<>(this);
 }
@@ -341,9 +341,9 @@ ServiceMethod(Builder<T> builder) {
 1. callFactory 负责创建HTTP请求，HTTP请求被抽象为了okhttp3.Call 类，它表示一个已经准备好，可以随时执行的HTTP请求
 2. callAdapter 把`retrofit2.Call<T>` 转为T，（注意和okhttp3.Call 区分开，`retrofit2.Call<T>` 表示的是一个Retrofit方法的调用）。
 
-	这个过程会发送一个HTTP请求，拿到服务器返回的数据（okhttp3.Call实现），并把数据转换为声明T类型的对象，通过（`Converter<F,T>`实现）
+  这个过程会发送一个HTTP请求，拿到服务器返回的数据（okhttp3.Call实现），并把数据转换为声明T类型的对象，通过（`Converter<F,T>`实现）
 
-	这个callAdapter 是关键，第三步就靠他执行apdater()返回真正的Call<MovieObject>
+  这个callAdapter 是关键，第三步就靠他执行apdater()返回真正的Call<MovieObject>
 3. responseConvert是Conver<ResponsetBody,T>类型，负责把服务器返回的数据（JSON，XML，二进制或者其他格式，由ResponseBody封装）转换成T类型对象，
 4. parameterHandlers 负责解析API定义事每个方法的参数，并在构造HTTP请求时设置参数
 
@@ -392,13 +392,13 @@ this.parameterHandlers = builder.parameterHandlers;
 该对象将在第三步中起着重要作用。
 ```java
 private CallAdapter<?> createCallAdapter() {
-		//得到method 的返回值
+    //得到method 的返回值
     Type returnType = method.getGenericReturnType();
     ...
-		//得到注解，这个annotations好像没用到，应该是预留的吧
+    //得到注解，这个annotations好像没用到，应该是预留的吧
     Annotation[] annotations = method.getAnnotations();
 
-		return retrofit.callAdapter(returnType, annotations);
+    return retrofit.callAdapter(returnType, annotations);
     ...
 }
 ```
@@ -434,9 +434,9 @@ public CallAdapter<?> nextCallAdapter(CallAdapter.Factory skipPast, Type returnT
 Retrofit(okhttp3.Call.Factory callFactory, HttpUrl baseUrl,
       List<Converter.Factory> converterFactories, List<CallAdapter.Factory> adapterFactories,
       Executor callbackExecutor, boolean validateEagerly) {
-	...
-  	this.adapterFactories = unmodifiableList(adapterFactories); // Defensive copy at call site.
-	...
+  ...
+    this.adapterFactories = unmodifiableList(adapterFactories); // Defensive copy at call site.
+  ...
 }
 ```
 而这个构造函数我们知道，是在Builder.build()中执行的。
@@ -449,7 +449,7 @@ public Retrofit build() {
   }
   List<CallAdapter.Factory> adapterFactories = new ArrayList<>(this.adapterFactories);
   adapterFactories.add(platform.defaultCallAdapterFactory(callbackExecutor));
-	...
+  ...
   return new Retrofit(callFactory, baseUrl, converterFactories, adapterFactories,
           callbackExecutor, validateEagerly);
 }
@@ -476,7 +476,7 @@ callbackExecutor 不为null，所以呢。adapterFactories中至少会add一个C
 
 ```java
 public CallAdapter<?> nextCallAdapter(CallAdapter.Factory skipPast, Type returnType,Annotation[] annotations) {
-	...
+  ...
   int start = adapterFactories.indexOf(skipPast) + 1;
   for (int i = start, count = adapterFactories.size(); i < count; i++) {
     CallAdapter<?> adapter = adapterFactories.get(i).get(returnType, annotations, this);
@@ -484,7 +484,7 @@ public CallAdapter<?> nextCallAdapter(CallAdapter.Factory skipPast, Type returnT
       return adapter;
     }
   }
-	...
+  ...
 }
 ```
 我们知道adapterFactories中至少会add一个CallAdapterFactory ，就是ExecutorCallAdapterFactory，那么我们就看看ExecutorCallAdapterFactory的get()方法是什么吧
@@ -663,10 +663,10 @@ final class ExecutorCallAdapterFactory extends CallAdapter.Factory {
 调用链如下
 ```java
 movieService.getTop250(0,20)->InvocationHandler.invoke()
-		->Retrofit.loadServiceMethod(method)
-				->new ServiceMethod.Builder(this, method).build();
-		->okHttpCall = new OkHttpCall<>(serviceMethod, args)
-		->CallAdapter.adapt(okHttpCall)
+    ->Retrofit.loadServiceMethod(method)
+        ->new ServiceMethod.Builder(this, method).build();
+    ->okHttpCall = new OkHttpCall<>(serviceMethod, args)
+    ->CallAdapter.adapt(okHttpCall)
 ```
 
 
@@ -686,7 +686,7 @@ call.enqueue(new Callback<MovieObject>() {
 
     @Override
     public void onFailure(Call<MovieObject> call, Throwable t) {
-				t.printStackTrace();
+        t.printStackTrace();
         Log.e("hoyouly", "onFailure: "+t.getMessage());
     }
 });
@@ -826,7 +826,7 @@ okhttp3.Call toCall(@Nullable Object... args) throws IOException {
 
     @SuppressWarnings("unchecked") // It is an error to invoke a method with the wrong arg types.
     ParameterHandler<Object>[] handlers = (ParameterHandler<Object>[]) parameterHandlers;
-		...
+    ...
     for (int p = 0; p < argumentCount; p++) {
       handlers[p].apply(requestBuilder, args[p]);
     }
@@ -840,7 +840,7 @@ okhttp3.Call toCall(@Nullable Object... args) throws IOException {
 //OkHttpClient.java
 @Override
 public Call newCall(Request request) {
-	 return RealCall.newRealCall(this, request, false /* for web socket */);
+   return RealCall.newRealCall(this, request, false /* for web socket */);
 }
 
 //RealCall.java

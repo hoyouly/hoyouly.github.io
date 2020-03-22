@@ -24,10 +24,10 @@ tags:
 
 <style>
 table th:first-of-type {
-	width: 80px;
+  width: 80px;
 }
 table th:nth-of-type(2) {
-  	width: 80px;
+    width: 80px;
 }
 </style>
 

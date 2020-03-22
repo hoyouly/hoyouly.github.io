@@ -201,14 +201,14 @@ name属性表示变量的名称，type表示这个变量的类型 其实可以�
 
 ```java
 public class Student {
-	public String name;
-	public String nickName;
-	public List<Courses> courses;
-	public int age;
+  public String name;
+  public String nickName;
+  public List<Courses> courses;
+  public int age;
   public String userface;
 
   @BindingAdapter({"userface"})
-	public static void getInternetImage(ImageView imageView,String userface){
+  public static void getInternetImage(ImageView imageView,String userface){
         Picasso.get().load(userface).into(imageView);
     }
 }
@@ -307,10 +307,10 @@ mBinding.setStudent(student);
 ```java
 public class ImageUtils {
 
-	@BindingAdapter("bind:img")
-	public static void loadInternetImage(ImageView iv, String img) {
-		Picasso.get().load(img).into(iv);
-	}
+  @BindingAdapter("bind:img")
+  public static void loadInternetImage(ImageView iv, String img) {
+    Picasso.get().load(img).into(iv);
+  }
 }
 ```
 照样可以显示图片的。这样的话，我们就可以把所有处理图片的方法归纳到一个类里面了。
@@ -318,52 +318,52 @@ public class ImageUtils {
 接下来看Adapter怎么处理的，这个可NB了，
 ```java
 public class MyBaseAdapter<T> extends BaseAdapter {
-	private Context context;
-	private LayoutInflater inflater;
-	private int layoutId; //layoutId这个表示item布局的资源id
-	private int variableId;//variableId是系统自动生成的，根据我们的实体类，直接从外部传入即可
-	private List<T> list;
+  private Context context;
+  private LayoutInflater inflater;
+  private int layoutId; //layoutId这个表示item布局的资源id
+  private int variableId;//variableId是系统自动生成的，根据我们的实体类，直接从外部传入即可
+  private List<T> list;
 
-	public MyBaseAdapter(Context context, int layoutId, List<T> list, int resId) {
-		this.context = context;
-		this.layoutId = layoutId;
-		this.list = list;
-		this.variableId = resId;
-		inflater = LayoutInflater.from(context);
-	}
+  public MyBaseAdapter(Context context, int layoutId, List<T> list, int resId) {
+    this.context = context;
+    this.layoutId = layoutId;
+    this.list = list;
+    this.variableId = resId;
+    inflater = LayoutInflater.from(context);
+  }
 
-	public void setList(List<T> list) {
-		this.list = list;
-		notifyDataSetChanged();
-	}
+  public void setList(List<T> list) {
+    this.list = list;
+    notifyDataSetChanged();
+  }
 
-	@Override
-	public int getCount() {
-		return list.size();
-	}
+  @Override
+  public int getCount() {
+    return list.size();
+  }
 
-	@Override
-	public Object getItem(int position) {
-		return list.get(position);
-	}
+  @Override
+  public Object getItem(int position) {
+    return list.get(position);
+  }
 
-	@Override
-	public long getItemId(int position) {
-		return position;
-	}
+  @Override
+  public long getItemId(int position) {
+    return position;
+  }
 
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewDataBinding dataBinding;
-		if (convertView == null) {
-			dataBinding = DataBindingUtil.inflate(inflater, layoutId, parent, false);
-		} else {
-			dataBinding = DataBindingUtil.getBinding(convertView);
-		}
-		dataBinding.setVariable(variableId, list.get(position));
+  @Override
+  public View getView(int position, View convertView, ViewGroup parent) {
+    ViewDataBinding dataBinding;
+    if (convertView == null) {
+      dataBinding = DataBindingUtil.inflate(inflater, layoutId, parent, false);
+    } else {
+      dataBinding = DataBindingUtil.getBinding(convertView);
+    }
+    dataBinding.setVariable(variableId, list.get(position));
 
-		return dataBinding.getRoot();
-	}
+    return dataBinding.getRoot();
+  }
 }
 
 ```
@@ -413,18 +413,18 @@ public class GankActivity extends BaseBindingActivity<ActivityGankBinding> {
 
 //BaseBindingActivity.java
 public abstract class BaseBindingActivity<VB extends ViewDataBinding> extends Activity {
-	protected  VB mBinding;
+  protected  VB mBinding;
 
-	@Override
-	protected void onCreate(@Nullable Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+  @Override
+  protected void onCreate(@Nullable Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
     mBinding=DataBindingUtil.setContentView(this,getLayouId());
-		initView();
-	}
+    initView();
+  }
 
-	protected abstract void initView();
+  protected abstract void initView();
 
-	protected abstract int getLayouId();
+  protected abstract int getLayouId();
 
 }
 

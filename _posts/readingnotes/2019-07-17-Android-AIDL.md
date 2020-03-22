@@ -39,9 +39,9 @@ Java层的Binder类，代表的其实就是Binder本地对象。BinderProxy类�
 * 自定义的Parcelable对象和AIDL对象必须要显示的import进来，不管是否和当前的AIDL文件位于同一个包内，
 * 如果用到Parcelable对象，那么必须新建一个和它同名的AIDL文件，并且在其中生命为Parcelable类型，
 * 除了基本数据类型，其他的类型参数必须标上方向：in,out或者inout
-	* in  输入型参数，客户端数据流入服务端，并且服务端对该数据的修改不会影响客户端
-	* out 输出型参数，数据对象有服务端流向客户端，（客户端传递的数据对象时服务端收到的对象内容为空，服务端可以对该数据对象修改，并传给客户端）
-	* inout 输入输出型参数，即两种数据流向的结合体。但是不建议使用，因为会增加开销
+  * in  输入型参数，客户端数据流入服务端，并且服务端对该数据的修改不会影响客户端
+  * out 输出型参数，数据对象有服务端流向客户端，（客户端传递的数据对象时服务端收到的对象内容为空，服务端可以对该数据对象修改，并传给客户端）
+  * inout 输入输出型参数，即两种数据流向的结合体。但是不建议使用，因为会增加开销
 * AIDL接口中只支持方法，不支持声明静态常量。
 * 建议把所有和AIDL相关的类和文件全部都放入同一个包中，好处就是当客户端是另外一个应用时，可以直接把整个包复制到客户端工程中。
 * AIDL文件中不能存在同方法名不同参数的方法
@@ -118,17 +118,17 @@ public static com.hoyouly.android_art.IBookManager asInterface(android.os.IBinde
 
 ```java
 private ServiceConnection mConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    @Override
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
       //iBinder 是在ActivityThread中创建的.  因为Binder实现了IBinder，所以这个iBinder就是实际上的Binder对象
-			mService = IBookManager.Stub.asInterface(iBinder);
-		}
+      mService = IBookManager.Stub.asInterface(iBinder);
+    }
 
-		@Override
-		public void onServiceDisconnected(ComponentName componentName) {
-			mService = null;
-		}
-	};
+    @Override
+    public void onServiceDisconnected(ComponentName componentName) {
+      mService = null;
+    }
+  };
 
 getContext().bindService(commonIntent, mConnection, Context.BIND_AUTO_CREATE);
 ```
@@ -170,31 +170,31 @@ public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel re
 ```java
 @Override
 public boolean onTransact(int code, android.os.Parcel data, android.os.Parcel reply
-									, int flags) throws android.os.RemoteException {
+                  , int flags) throws android.os.RemoteException {
    switch (code) {
-		 ...
-		 case TRANSACTION_getBookList: {
-			 	data.enforceInterface(DESCRIPTOR);
-			 	//执行目标方法 getBookList(),得到返回结果
-			 	java.util.List<com.hoyouly.android_art.Book> _result = this.getBookList();
-			 	reply.writeNoException();
-			 	reply.writeTypedList(_result);//把结果写入reply中。
-			 	return true;
-	 	}
-	 	case TRANSACTION_addBook: {
-		    	data.enforceInterface(DESCRIPTOR);
-		    	com.hoyouly.android_art.Book _arg0;
-		    	if ((0 != data.readInt())) {//读取所需要的参数
-		        	_arg0 = com.hoyouly.android_art.Book.CREATOR.createFromParcel(data);
-		    	} else {
-		        	_arg0 = null;
-		    	}
-		    	this.addBook(_arg0);
-		    	reply.writeNoException();
-		    	return true;
-				}
-				...			 
-  	}
+     ...
+     case TRANSACTION_getBookList: {
+         data.enforceInterface(DESCRIPTOR);
+         //执行目标方法 getBookList(),得到返回结果
+         java.util.List<com.hoyouly.android_art.Book> _result = this.getBookList();
+         reply.writeNoException();
+         reply.writeTypedList(_result);//把结果写入reply中。
+         return true;
+     }
+     case TRANSACTION_addBook: {
+          data.enforceInterface(DESCRIPTOR);
+          com.hoyouly.android_art.Book _arg0;
+          if ((0 != data.readInt())) {//读取所需要的参数
+              _arg0 = com.hoyouly.android_art.Book.CREATOR.createFromParcel(data);
+          } else {
+              _arg0 = null;
+          }
+          this.addBook(_arg0);
+          reply.writeNoException();
+          return true;
+        }
+        ...       
+    }
   return super.onTransact(code, data, reply, flags);
 }
 ```
@@ -258,8 +258,8 @@ public class RecognitionRemoteService extends Service {
   }
 
   public IBinder onBind(Intent intent) {
-		return mBinder;
-	}
+    return mBinder;
+  }
 }
 ```
 
@@ -269,10 +269,10 @@ public class RecognitionRemoteService extends Service {
 ```java
 public interface IBookManager extends android.os.IInterface {
 public static abstract class Stub extends android.os.Binder implements com.hoyouly.android_art.IBookManager {
-		private static final java.lang.String DESCRIPTOR = "com.hoyouly.android_art.IBookManager";
-		public Stub() {
-			this.attachInterface(this, DESCRIPTOR);
-		}
+    private static final java.lang.String DESCRIPTOR = "com.hoyouly.android_art.IBookManager";
+    public Stub() {
+      this.attachInterface(this, DESCRIPTOR);
+    }
     ...
 }
 ```
@@ -297,15 +297,15 @@ public void attachInterface(IInterface owner, String descriptor) {
 
 ```java
 private ServiceConnection mConnection = new ServiceConnection() {
-	@Override
-	public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-		mService = IBookManager.Stub.asInterface(iBinder);
-	}
+  @Override
+  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    mService = IBookManager.Stub.asInterface(iBinder);
+  }
 
-	@Override
-	public void onServiceDisconnected(ComponentName componentName) {
-		mService = null;
-	}
+  @Override
+  public void onServiceDisconnected(ComponentName componentName) {
+    mService = null;
+  }
 }
 ```
 

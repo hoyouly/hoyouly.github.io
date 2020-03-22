@@ -23,7 +23,7 @@ public interface IActivityManager extends IInterface {...}
 ```java
 // AMN
 static public IActivityManager getDefault() {
-	return gDefault.get();
+  return gDefault.get();
 }
 
 private static final Singleton<IActivityManager> gDefault = new Singleton<IActivityManager>() {
@@ -35,30 +35,30 @@ private static final Singleton<IActivityManager> gDefault = new Singleton<IActiv
 };
 
 static public IActivityManager asInterface(IBinder obj) {
-		if (obj == null) {
-			return null;
-		}
-		IActivityManager in = (IActivityManager) obj.queryLocalInterface(descriptor);
-		if (in != null) {
-			return in;//同一进程，返回Stub本地对象。
-		}
-		//从ServiceManager中获取AMS中Binder的引用对象，
+    if (obj == null) {
+      return null;
+    }
+    IActivityManager in = (IActivityManager) obj.queryLocalInterface(descriptor);
+    if (in != null) {
+      return in;//同一进程，返回Stub本地对象。
+    }
+    //从ServiceManager中获取AMS中Binder的引用对象，
     //然后将它转换成ActivityManagerProxy对象（简称AMP），AMP就是AMS的代理对象。
-		return new ActivityManagerProxy(obj);//跨进程，返回代理对象。
-	}
+    return new ActivityManagerProxy(obj);//跨进程，返回代理对象。
+  }
 
 //Singleton
 public abstract class Singleton<T> {
-	private T mInstance;
-	protected abstract T create();
-	public final T get() {
-		synchronized (this) {
-			if (mInstance == null) {
-				mInstance = create();
-			}
-			return mInstance;
-		}
-	}
+  private T mInstance;
+  protected abstract T create();
+  public final T get() {
+    synchronized (this) {
+      if (mInstance == null) {
+        mInstance = create();
+      }
+      return mInstance;
+    }
+  }
 }
 ```
 #### AMS的启动过程
@@ -66,60 +66,60 @@ public abstract class Singleton<T> {
 ```java
 // SystemServer
 public static void main(String[] args) {
-	new SystemServer().run();
+  new SystemServer().run();
 }
 ```
 在run（）方法中会执行startBootstrapServices()方法，启动引导服务
 在引导服务中，会创建AMS对象并且启动
 ```java
 private void startBootstrapServices() {
-	Installer installer = mSystemServiceManager.startService(Installer.class);
+  Installer installer = mSystemServiceManager.startService(Installer.class);
 
-	// Activity manager runs the show.
-	mActivityManagerService = mSystemServiceManager.startService(
+  // Activity manager runs the show.
+  mActivityManagerService = mSystemServiceManager.startService(
                         ActivityManagerService.Lifecycle.class).getService();
-	mActivityManagerService.setSystemServiceManager(mSystemServiceManager);
-	mActivityManagerService.setInstaller(installer);
-	```
+  mActivityManagerService.setSystemServiceManager(mSystemServiceManager);
+  mActivityManagerService.setInstaller(installer);
+  ```
 }
 ```
 SystemServiceManager的startService()方法中会通过类加载器的方式，创建一个SystemService,并且调用开启该服务
 ```java
 public SystemService startService(String className) {
-	final Class<SystemService> serviceClass;
-	try {
-		serviceClass = (Class<SystemService>) Class.forName(className);
-	} catch (ClassNotFoundException ex) {
-		...
-	}
-	return startService(serviceClass);
+  final Class<SystemService> serviceClass;
+  try {
+    serviceClass = (Class<SystemService>) Class.forName(className);
+  } catch (ClassNotFoundException ex) {
+    ...
+  }
+  return startService(serviceClass);
 }
 
 public <T extends SystemService> T startService(Class<T> serviceClass) {
-	final String name = serviceClass.getName();
+  final String name = serviceClass.getName();
 
-	// Create the service.
-	if (!SystemService.class.isAssignableFrom(serviceClass)) {
-		throw new RuntimeException("Failed to create " + name + ": service must extend " + SystemService.class.getName());
-	}
-	final T service;
-	try {
-		Constructor<T> constructor = serviceClass.getConstructor(Context.class);
-		service = constructor.newInstance(mContext);
-	} catch (InstantiationException ex) {
-		。。。
-	}
+  // Create the service.
+  if (!SystemService.class.isAssignableFrom(serviceClass)) {
+    throw new RuntimeException("Failed to create " + name + ": service must extend " + SystemService.class.getName());
+  }
+  final T service;
+  try {
+    Constructor<T> constructor = serviceClass.getConstructor(Context.class);
+    service = constructor.newInstance(mContext);
+  } catch (InstantiationException ex) {
+    。。。
+  }
 
-	// Register it.
-	mServices.add(service);
+  // Register it.
+  mServices.add(service);
 
-	// Start it.
-	try {
-		service.onStart();
-	} catch (RuntimeException ex) {
-		throw new RuntimeException("Failed to start service " + name + ": onStart threw an exception", ex);
-	}
-	return service;
+  // Start it.
+  try {
+    service.onStart();
+  } catch (RuntimeException ex) {
+    throw new RuntimeException("Failed to start service " + name + ": onStart threw an exception", ex);
+  }
+  return service;
 }
 ```
 1. 根据类加载器创建SystemService子类对象
@@ -131,27 +131,27 @@ public <T extends SystemService> T startService(Class<T> serviceClass) {
 然后我们再查看ActivityManagerService.Lifecycle 是个啥玩意
 ```java
 public static final class Lifecycle extends SystemService {
-		private final ActivityManagerService mService;
-		public Lifecycle(Context context) {
-			super(context);
-			mService = new ActivityManagerService(context);
-		}
-		@Override
-		public void onStart() {
-			mService.start();
-		}
-		public ActivityManagerService getService() {
-			return mService;
-		}
-	}
+    private final ActivityManagerService mService;
+    public Lifecycle(Context context) {
+      super(context);
+      mService = new ActivityManagerService(context);
+    }
+    @Override
+    public void onStart() {
+      mService.start();
+    }
+    public ActivityManagerService getService() {
+      return mService;
+    }
+  }
 ```
 这个类很简单
 1. 在构造函数中创建了一个AMS对象，所以上面在通过类加载器创建ActivityManagerService.Lifecycle对象的时候，AMS对象也就相应的创建了，在AMS中会创建ActivityStackSupervisor对象
 ```java
  public ActivityManagerService(Context systemContext) {
-		。。。
-		mStackSupervisor = new ActivityStackSupervisor(this);
-		。。。
+    。。。
+    mStackSupervisor = new ActivityStackSupervisor(this);
+    。。。
  }
 ```
 因为个系统只启动一个AMS，那么也就只会创建一个ActivityStackSupervisor对象
@@ -249,8 +249,8 @@ final ArrayMap<IBinder, ActivityClientRecord> mActivities = new ArrayMap<IBinder
 ```java
 //ActivityRecord
 ActivityRecord(ActivityManagerService _service ...) {
-		service = _service;
-		appToken = new Token(this);
+    service = _service;
+    appToken = new Token(this);
     ...
 }
 ```

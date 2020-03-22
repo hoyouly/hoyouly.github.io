@@ -19,14 +19,14 @@ Java 语言中，equals()方法是交给开发者自己去复写的，让开发�
 ```java
 
     String s3=new String("abc");
-		String s4=new String("abc");
+    String s4=new String("abc");
     System.out.println("s3==s4 : "+(s3==s4));
     System.out.println("s3.equals(s4) : "+s3.equals(s4));
 
 
-		String s5="abc";
-		String s6="abc";
-		System.out.println("s5==s6 : "+(s5==s6));//ture
+    String s5="abc";
+    String s6="abc";
+    System.out.println("s5==s6 : "+(s5==s6));//ture
     System.out.println("s5.equals(s6) : "+s5.equals(s6));
 
 ```
@@ -41,5 +41,5 @@ s5.equals(s6) : true
 
 ---
 搬运地址：    
- 
+
 [如何“记住” equals 和 == 的区别？](https://www.zhihu.com/question/26872848)

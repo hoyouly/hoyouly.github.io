@@ -68,15 +68,15 @@ getContext().bindService(commonIntent, mConnection, Context.BIND_AUTO_CREATE);
 
 ```Java
 private ServiceConnection mConnection = new ServiceConnection() {
-	@Override
-	public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-		mService = IBookManager.Stub.asInterface(iBinder);
-	}
+  @Override
+  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    mService = IBookManager.Stub.asInterface(iBinder);
+  }
 
-	@Override
-	public void onServiceDisconnected(ComponentName componentName) {
-		mService = null;
-	}
+  @Override
+  public void onServiceDisconnected(ComponentName componentName) {
+    mService = null;
+  }
 };
 ```
 我们只看电话接通的情况。

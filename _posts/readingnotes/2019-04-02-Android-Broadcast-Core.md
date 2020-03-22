@@ -41,7 +41,7 @@ final ArrayList<BroadcastRecord> mOrderedBroadcasts = new ArrayList<BroadcastRec
 public ActivityManagerService(Context systemContext) {
     ...
     mFgBroadcastQueue = new BroadcastQueue(this, mHandler, "foreground", BROADCAST_FG_TIMEOUT, false);
-	mBgBroadcastQueue = new BroadcastQueue(this, mHandler, "background", BROADCAST_BG_TIMEOUT, true);
+  mBgBroadcastQueue = new BroadcastQueue(this, mHandler, "background", BROADCAST_BG_TIMEOUT, true);
     ...
 }
 ```
@@ -332,15 +332,15 @@ private static void performReceiveLocked(ProcessRecord app, IIntentReceiver rece
 ```java
 //LoadedApk.ReceiverDispatcher.java
 public void performReceive(Intent intent, int resultCode, String data, Bundle extras, boolean ordered, boolean sticky, int sendingUser) {
-	// 创建一个Args对象，并通过mActivityThread方法执行，
-	//mActivityThread 是一个Handler对象，Args实现了Runnale接口，最终执行的是run()方法
-	Args args = new Args(intent, resultCode, data, extras, ordered, sticky, sendingUser);
-	if (!mActivityThread.post(args)) {
-		if (mRegistered && ordered) {
-			IActivityManager mgr = ActivityManagerNative.getDefault();
-			args.sendFinished(mgr);
-		}
-	}
+  // 创建一个Args对象，并通过mActivityThread方法执行，
+  //mActivityThread 是一个Handler对象，Args实现了Runnale接口，最终执行的是run()方法
+  Args args = new Args(intent, resultCode, data, extras, ordered, sticky, sendingUser);
+  if (!mActivityThread.post(args)) {
+    if (mRegistered && ordered) {
+      IActivityManager mgr = ActivityManagerNative.getDefault();
+      args.sendFinished(mgr);
+    }
+  }
 }
 
 final class Args extends BroadcastReceiver.PendingResult implements Runnable {

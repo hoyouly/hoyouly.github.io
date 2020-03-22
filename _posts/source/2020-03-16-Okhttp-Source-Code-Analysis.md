@@ -30,13 +30,13 @@ OkHttpClient okHttpClient = new OkHttpClient();//创建OkHttpClient对象
 Request request = new Request.Builder()//
     .url("http://www.baidu.com")//请求接口，如果需要传递参数，拼接到后面
     .build();//创建Request对象
-		//发送Request请求
+    //发送Request请求
 okHttpClient.newCall(request).enqueue(new Callback() {
 
     @Override
     public void onFailure(Call call, IOException e) {
     }
-		//接收返回的Response 数据
+    //接收返回的Response 数据
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         if (response.isSuccessful()) {//请求成功
@@ -70,31 +70,31 @@ public OkHttpClient() {
 }
 
 public Builder() {
-	 dispatcher = new Dispatcher();//分发器
-	 protocols = DEFAULT_PROTOCOLS;//协议
-	 connectionSpecs = DEFAULT_CONNECTION_SPECS;//传输层版本和连接协议
-	 eventListenerFactory = EventListener.factory(EventListener.NONE);
-	 proxySelector = ProxySelector.getDefault();//代理选择
-	 if (proxySelector == null) {
-		 proxySelector = new NullProxySelector();
-	 }
-	 cookieJar = CookieJar.NO_COOKIES;//cookie
-	 socketFactory = SocketFactory.getDefault();//socket 工厂
-	 hostnameVerifier = OkHostnameVerifier.INSTANCE;//  主机名字确认
-	 certificatePinner = CertificatePinner.DEFAULT;//  证书链
-	 proxyAuthenticator = Authenticator.NONE;//代理身份验证
-	 authenticator = Authenticator.NONE;// 本地身份验证
-	 connectionPool = new ConnectionPool(); //连接池,复用连接
-	 dns = Dns.SYSTEM;//域名
-	 followSslRedirects = true;//安全套接层重定向
-	 followRedirects = true; //本地重定向
-	 retryOnConnectionFailure = true;//重试连接失败
-	 callTimeout = 0;
-	 connectTimeout = 10_000;//连接超时
-	 readTimeout = 10_000;//read 超时
-	 writeTimeout = 10_000;//write 超时
-	 pingInterval = 0;
-	}
+   dispatcher = new Dispatcher();//分发器
+   protocols = DEFAULT_PROTOCOLS;//协议
+   connectionSpecs = DEFAULT_CONNECTION_SPECS;//传输层版本和连接协议
+   eventListenerFactory = EventListener.factory(EventListener.NONE);
+   proxySelector = ProxySelector.getDefault();//代理选择
+   if (proxySelector == null) {
+     proxySelector = new NullProxySelector();
+   }
+   cookieJar = CookieJar.NO_COOKIES;//cookie
+   socketFactory = SocketFactory.getDefault();//socket 工厂
+   hostnameVerifier = OkHostnameVerifier.INSTANCE;//  主机名字确认
+   certificatePinner = CertificatePinner.DEFAULT;//  证书链
+   proxyAuthenticator = Authenticator.NONE;//代理身份验证
+   authenticator = Authenticator.NONE;// 本地身份验证
+   connectionPool = new ConnectionPool(); //连接池,复用连接
+   dns = Dns.SYSTEM;//域名
+   followSslRedirects = true;//安全套接层重定向
+   followRedirects = true; //本地重定向
+   retryOnConnectionFailure = true;//重试连接失败
+   callTimeout = 0;
+   connectTimeout = 10_000;//连接超时
+   readTimeout = 10_000;//read 超时
+   writeTimeout = 10_000;//write 超时
+   pingInterval = 0;
+  }
 ```
 这些都是默认的，几乎都和OkHttp有关。可以通过build模式进行修改。如下就是对OkHttp的一些修改接口
 
@@ -115,15 +115,15 @@ OkHttpClient 创建完成。接下来就是创建Request 对象
 ```java
 //OkHttpClient.java
 @Override public Call newCall(Request request) {
-	 return RealCall.newRealCall(this, request, false /* for web socket */);
+   return RealCall.newRealCall(this, request, false /* for web socket */);
  }
 
 //RealCall.java
  static RealCall newRealCall(OkHttpClient client, Request originalRequest, boolean forWebSocket) {
-	 // Safely publish the Call instance to the EventListener.
-	 RealCall call = new RealCall(client, originalRequest, forWebSocket);
-	 call.eventListener = client.eventListenerFactory().create(call);
-	 return call;
+   // Safely publish the Call instance to the EventListener.
+   RealCall call = new RealCall(client, originalRequest, forWebSocket);
+   call.eventListener = client.eventListenerFactory().create(call);
+   return call;
  }
 
 ```
@@ -147,13 +147,13 @@ public interface Call extends Cloneable {
 
 ```java
 @Override public void enqueue(Callback responseCallback) {
-	synchronized (this) {
-		if (executed) throw new IllegalStateException("Already Executed");
-		executed = true;
-	}
-	captureCallStackTrace();
-	eventListener.callStart(this);
-	client.dispatcher().enqueue(new AsyncCall(responseCallback));
+  synchronized (this) {
+    if (executed) throw new IllegalStateException("Already Executed");
+    executed = true;
+  }
+  captureCallStackTrace();
+  eventListener.callStart(this);
+  client.dispatcher().enqueue(new AsyncCall(responseCallback));
 }
 ```
 
@@ -253,13 +253,13 @@ void executeOn(ExecutorService executorService) {
 ```java
 //，NamedRunnable.java
 @Override public final void run() {
-	String oldName = Thread.currentThread().getName();
-	Thread.currentThread().setName(name);
-	try {
-		execute();
-	} finally {
-		Thread.currentThread().setName(oldName);
-	}
+  String oldName = Thread.currentThread().getName();
+  Thread.currentThread().setName(name);
+  try {
+    execute();
+  } finally {
+    Thread.currentThread().setName(oldName);
+  }
 }
 ```
 
@@ -301,31 +301,31 @@ void executeOn(ExecutorService executorService) {
 
 ```java
 Response getResponseWithInterceptorChain() throws IOException {
-	// Build a full stack of interceptors.
-	List<Interceptor> interceptors = new ArrayList<>();
-	//添加开发者应用层自定义的Interceptor
-	interceptors.addAll(client.interceptors());
-	//这个Interceptor是处理请求失败的重试，重定向
-	interceptors.add(retryAndFollowUpInterceptor);
-	//这个Interceptor工作是添加一些请求的头部或其他信息
-	//并对返回的Response做一些友好的处理（有一些信息你可能并不需要）
-	interceptors.add(new BridgeInterceptor(client.cookieJar()));
-	//这个Interceptor的职责是判断缓存是否存在，读取缓存，更新缓存等等
-	interceptors.add(new CacheInterceptor(client.internalCache()));
-	//这个Interceptor的职责是建立客户端和服务器的连接
-	interceptors.add(new ConnectInterceptor(client));
-	if (!forWebSocket) {
-		//添加开发者自定义的网络层拦截器
-		interceptors.addAll(client.networkInterceptors());
-	}
-	//这个Interceptor的职责是向服务器发送数据，并且接收服务器返回的Response
-	interceptors.add(new CallServerInterceptor(forWebSocket));
-	//一个包裹这request的chain
-	Interceptor.Chain chain = new RealInterceptorChain(interceptors, null, null, null, 0,
-			originalRequest, this, eventListener, client.connectTimeoutMillis(),
-			client.readTimeoutMillis(), client.writeTimeoutMillis());
-	//把chain传递到第一个Interceptor手中
-	return chain.proceed(originalRequest);
+  // Build a full stack of interceptors.
+  List<Interceptor> interceptors = new ArrayList<>();
+  //添加开发者应用层自定义的Interceptor
+  interceptors.addAll(client.interceptors());
+  //这个Interceptor是处理请求失败的重试，重定向
+  interceptors.add(retryAndFollowUpInterceptor);
+  //这个Interceptor工作是添加一些请求的头部或其他信息
+  //并对返回的Response做一些友好的处理（有一些信息你可能并不需要）
+  interceptors.add(new BridgeInterceptor(client.cookieJar()));
+  //这个Interceptor的职责是判断缓存是否存在，读取缓存，更新缓存等等
+  interceptors.add(new CacheInterceptor(client.internalCache()));
+  //这个Interceptor的职责是建立客户端和服务器的连接
+  interceptors.add(new ConnectInterceptor(client));
+  if (!forWebSocket) {
+    //添加开发者自定义的网络层拦截器
+    interceptors.addAll(client.networkInterceptors());
+  }
+  //这个Interceptor的职责是向服务器发送数据，并且接收服务器返回的Response
+  interceptors.add(new CallServerInterceptor(forWebSocket));
+  //一个包裹这request的chain
+  Interceptor.Chain chain = new RealInterceptorChain(interceptors, null, null, null, 0,
+      originalRequest, this, eventListener, client.connectTimeoutMillis(),
+      client.readTimeoutMillis(), client.writeTimeoutMillis());
+  //把chain传递到第一个Interceptor手中
+  return chain.proceed(originalRequest);
 }
 ```
 1. Interceptor 的执行是有顺序的。也就意味这当我们自定义Interceptor是需要注意添加顺序
@@ -339,47 +339,47 @@ Response getResponseWithInterceptorChain() throws IOException {
 @Override public Response proceed(Request request) throws IOException {
     return proceed(request, streamAllocation, httpCodec, connection);
   }
-	//这个方法用来获取list中下一个Interceptor，并调用它的intercept（）方法
+  //这个方法用来获取list中下一个Interceptor，并调用它的intercept（）方法
 
 public Response proceed(Request request, StreamAllocation streamAllocation, HttpCodec httpCodec,
-	    RealConnection connection) throws IOException {
-	  if (index >= interceptors.size()) throw new AssertionError();
+      RealConnection connection) throws IOException {
+    if (index >= interceptors.size()) throw new AssertionError();
 
-	  calls++;
+    calls++;
 
-		//如果我们已经有一个stream。确定即将到来的request会使用它
-	  if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
-	    throw new IllegalStateException("network interceptor " + interceptors.get(index - 1) + " must retain the same host and port");
-	  }
+    //如果我们已经有一个stream。确定即将到来的request会使用它
+    if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
+      throw new IllegalStateException("network interceptor " + interceptors.get(index - 1) + " must retain the same host and port");
+    }
 
-	//如果我们已经有一个stream， 确定chain.proceed()唯一的call
-	  if (this.httpCodec != null && calls > 1) {
-	    throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)+ " must call proceed() exactly once");
-	  }
+  //如果我们已经有一个stream， 确定chain.proceed()唯一的call
+    if (this.httpCodec != null && calls > 1) {
+      throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)+ " must call proceed() exactly once");
+    }
 
-	  // Call the next interceptor in the chain.取出来下一个拦截器，然后执行 intercept()
-	  RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation, httpCodec,
-	      connection, index + 1, request, call, eventListener, connectTimeout, readTimeout, writeTimeout);
-	//从list中获取到第一个Interceptor
-	  Interceptor interceptor = interceptors.get(index);
-	  Response response = interceptor.intercept(next);
+    // Call the next interceptor in the chain.取出来下一个拦截器，然后执行 intercept()
+    RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation, httpCodec,
+        connection, index + 1, request, call, eventListener, connectTimeout, readTimeout, writeTimeout);
+  //从list中获取到第一个Interceptor
+    Interceptor interceptor = interceptors.get(index);
+    Response response = interceptor.intercept(next);
 
-	  // Confirm that the next interceptor made its required call to chain.proceed().
-	  if (httpCodec != null && index + 1 < interceptors.size() && next.calls != 1) {
-	    throw new IllegalStateException("network interceptor " + interceptor + " must call proceed() exactly once");
-	  }
+    // Confirm that the next interceptor made its required call to chain.proceed().
+    if (httpCodec != null && index + 1 < interceptors.size() && next.calls != 1) {
+      throw new IllegalStateException("network interceptor " + interceptor + " must call proceed() exactly once");
+    }
 
-	  // Confirm that the intercepted response isn't null.
-	  if (response == null) {
-	    throw new NullPointerException("interceptor " + interceptor + " returned null");
-	  }
+    // Confirm that the intercepted response isn't null.
+    if (response == null) {
+      throw new NullPointerException("interceptor " + interceptor + " returned null");
+    }
 
-	  if (response.body() == null) {
-	    throw new IllegalStateException( "interceptor " + interceptor + " returned a response with no body");
-	  }
+    if (response.body() == null) {
+      throw new IllegalStateException( "interceptor " + interceptor + " returned a response with no body");
+    }
 
-	  return response;
-	}
+    return response;
+  }
 ```
 
 这个有点像是递归调用。
@@ -388,8 +388,8 @@ public Response proceed(Request request, StreamAllocation streamAllocation, Http
 ```java
 // 实例化下一个拦截器对应的RealIterceptorChain对象， index刚开始是0，这里加一，下次取的时候就是下一个 interceptors
 RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation, httpCodec,
-		connection, index + 1, request, call, eventListener, connectTimeout, readTimeout,
-		writeTimeout);
+    connection, index + 1, request, call, eventListener, connectTimeout, readTimeout,
+    writeTimeout);
 //得到当前的拦截器：
 Interceptor interceptor = interceptors.get(index);
 //调用当前拦截器的intercept()方法，并将下一个拦截器的RealIterceptorChain对象传递下去
@@ -449,7 +449,7 @@ addNetworkInterceptor()  添加网络拦截器
       if (priorResponse != null) {
         response = response.newBuilder().priorResponse(priorResponse.newBuilder().body(null).build()).build();
       }
-			...
+      ...
       priorResponse = response;
     }
   }
@@ -464,7 +464,7 @@ addNetworkInterceptor()  添加网络拦截器
 @Override public Response intercept(Chain chain) throws IOException {
     Request userRequest = chain.request();
     Request.Builder requestBuilder = userRequest.newBuilder();
-		//检查request。将用户的request转换为发送到server的请求
+    //检查request。将用户的request转换为发送到server的请求
     RequestBody body = userRequest.body();
     ...
     Response networkResponse = chain.proceed(requestBuilder.build());
@@ -614,97 +614,97 @@ addNetworkInterceptor()  添加网络拦截器
 发送和接收数据
 ```java
 @Override public Response intercept(Chain chain) throws IOException {
-	RealInterceptorChain realChain = (RealInterceptorChain) chain;
-	HttpCodec httpCodec = realChain.httpStream();
-	StreamAllocation streamAllocation = realChain.streamAllocation();
-	RealConnection connection = (RealConnection) realChain.connection();
-	Request request = realChain.request();
+  RealInterceptorChain realChain = (RealInterceptorChain) chain;
+  HttpCodec httpCodec = realChain.httpStream();
+  StreamAllocation streamAllocation = realChain.streamAllocation();
+  RealConnection connection = (RealConnection) realChain.connection();
+  Request request = realChain.request();
 
-	long sentRequestMillis = System.currentTimeMillis();
+  long sentRequestMillis = System.currentTimeMillis();
 
-	realChain.eventListener().requestHeadersStart(realChain.call());
-	httpCodec.writeRequestHeaders(request);
-	realChain.eventListener().requestHeadersEnd(realChain.call(), request);
+  realChain.eventListener().requestHeadersStart(realChain.call());
+  httpCodec.writeRequestHeaders(request);
+  realChain.eventListener().requestHeadersEnd(realChain.call(), request);
 
-	Response.Builder responseBuilder = null;
-	if (HttpMethod.permitsRequestBody(request.method()) && request.body() != null) {
-		if ("100-continue".equalsIgnoreCase(request.header("Expect"))) {
-			httpCodec.flushRequest();
-			realChain.eventListener().responseHeadersStart(realChain.call());
-			responseBuilder = httpCodec.readResponseHeaders(true);
-		}
+  Response.Builder responseBuilder = null;
+  if (HttpMethod.permitsRequestBody(request.method()) && request.body() != null) {
+    if ("100-continue".equalsIgnoreCase(request.header("Expect"))) {
+      httpCodec.flushRequest();
+      realChain.eventListener().responseHeadersStart(realChain.call());
+      responseBuilder = httpCodec.readResponseHeaders(true);
+    }
 
-		if (responseBuilder == null) {
-			// Write the request body if the "Expect: 100-continue" expectation was met.
-			realChain.eventListener().requestBodyStart(realChain.call());
-			long contentLength = request.body().contentLength();
-			CountingSink requestBodyOut =
-					new CountingSink(httpCodec.createRequestBody(request, contentLength));
-			BufferedSink bufferedRequestBody = Okio.buffer(requestBodyOut);
+    if (responseBuilder == null) {
+      // Write the request body if the "Expect: 100-continue" expectation was met.
+      realChain.eventListener().requestBodyStart(realChain.call());
+      long contentLength = request.body().contentLength();
+      CountingSink requestBodyOut =
+          new CountingSink(httpCodec.createRequestBody(request, contentLength));
+      BufferedSink bufferedRequestBody = Okio.buffer(requestBodyOut);
 
-			request.body().writeTo(bufferedRequestBody);
-			bufferedRequestBody.close();
-			realChain.eventListener()
-					.requestBodyEnd(realChain.call(), requestBodyOut.successfulCount);
-		} else if (!connection.isMultiplexed()) {
-			streamAllocation.noNewStreams();
-		}
-	}
+      request.body().writeTo(bufferedRequestBody);
+      bufferedRequestBody.close();
+      realChain.eventListener()
+          .requestBodyEnd(realChain.call(), requestBodyOut.successfulCount);
+    } else if (!connection.isMultiplexed()) {
+      streamAllocation.noNewStreams();
+    }
+  }
 
-	httpCodec.finishRequest();
+  httpCodec.finishRequest();
 
-	if (responseBuilder == null) {
-		realChain.eventListener().responseHeadersStart(realChain.call());
-		responseBuilder = httpCodec.readResponseHeaders(false);
-	}
+  if (responseBuilder == null) {
+    realChain.eventListener().responseHeadersStart(realChain.call());
+    responseBuilder = httpCodec.readResponseHeaders(false);
+  }
 
-	Response response = responseBuilder
-			.request(request)
-			.handshake(streamAllocation.connection().handshake())
-			.sentRequestAtMillis(sentRequestMillis)
-			.receivedResponseAtMillis(System.currentTimeMillis())
-			.build();
+  Response response = responseBuilder
+      .request(request)
+      .handshake(streamAllocation.connection().handshake())
+      .sentRequestAtMillis(sentRequestMillis)
+      .receivedResponseAtMillis(System.currentTimeMillis())
+      .build();
 
-	int code = response.code();
-	if (code == 100) {
-		// server sent a 100-continue even though we did not request one.
-		// try again to read the actual response
-		responseBuilder = httpCodec.readResponseHeaders(false);
+  int code = response.code();
+  if (code == 100) {
+    // server sent a 100-continue even though we did not request one.
+    // try again to read the actual response
+    responseBuilder = httpCodec.readResponseHeaders(false);
 
-		response = responseBuilder
-						.request(request)
-						.handshake(streamAllocation.connection().handshake())
-						.sentRequestAtMillis(sentRequestMillis)
-						.receivedResponseAtMillis(System.currentTimeMillis())
-						.build();
+    response = responseBuilder
+            .request(request)
+            .handshake(streamAllocation.connection().handshake())
+            .sentRequestAtMillis(sentRequestMillis)
+            .receivedResponseAtMillis(System.currentTimeMillis())
+            .build();
 
-		code = response.code();
-	}
+    code = response.code();
+  }
 
-	realChain.eventListener().responseHeadersEnd(realChain.call(), response);
+  realChain.eventListener().responseHeadersEnd(realChain.call(), response);
 
-	if (forWebSocket && code == 101) {
-		// Connection is upgrading, but we need to ensure interceptors see a non-null response body.
-		response = response.newBuilder()
-				.body(Util.EMPTY_RESPONSE)
-				.build();
-	} else {
-		response = response.newBuilder()
-				.body(httpCodec.openResponseBody(response))
-				.build();
-	}
+  if (forWebSocket && code == 101) {
+    // Connection is upgrading, but we need to ensure interceptors see a non-null response body.
+    response = response.newBuilder()
+        .body(Util.EMPTY_RESPONSE)
+        .build();
+  } else {
+    response = response.newBuilder()
+        .body(httpCodec.openResponseBody(response))
+        .build();
+  }
 
-	if ("close".equalsIgnoreCase(response.request().header("Connection"))
-			|| "close".equalsIgnoreCase(response.header("Connection"))) {
-		streamAllocation.noNewStreams();
-	}
+  if ("close".equalsIgnoreCase(response.request().header("Connection"))
+      || "close".equalsIgnoreCase(response.header("Connection"))) {
+    streamAllocation.noNewStreams();
+  }
 
-	if ((code == 204 || code == 205) && response.body().contentLength() > 0) {
-		throw new ProtocolException(
-				"HTTP " + code + " had non-zero Content-Length: " + response.body().contentLength());
-	}
+  if ((code == 204 || code == 205) && response.body().contentLength() > 0) {
+    throw new ProtocolException(
+        "HTTP " + code + " had non-zero Content-Length: " + response.body().contentLength());
+  }
 
-	return response;
+  return response;
 }
 
 ```

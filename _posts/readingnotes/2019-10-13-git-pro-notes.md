@@ -10,7 +10,7 @@ tags: Git
 ## 远程仓库
 git remote -v  显示对应的克隆地址，如果有多个远程仓库，将会全部列出来
 
-git remote add pb 	 添加一个远程仓库 ,pb 是远程仓库的地址，例如 git@github.com:hoyouly/LearnGit.git
+git remote add pb    添加一个远程仓库 ,pb 是远程仓库的地址，例如 git@github.com:hoyouly/LearnGit.git
 
 git remote show 查看某个远程仓库的详细信息
 

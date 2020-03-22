@@ -20,9 +20,9 @@ tags: Atom  快捷键
 |增加新光标|cmd-click|Ctrl-click |
 |相应括号之间，html tag之间等跳转|ctrl-m|Ctrl-m |
 |Markdown预览|ctrl-shift-M|Ctrl-shift-m |
-|	查找文件|cmd-t 或 cmd-p|Ctrl-t 或 Ctrl-p |
-|	显示或隐藏目录树|cmd-\|Ctrl-\ |
-|	打开目录|cmd-shift-o|Ctrl-shift-o |
+|  查找文件|cmd-t 或 cmd-p|Ctrl-t 或 Ctrl-p |
+|  显示或隐藏目录树|cmd-\|Ctrl-\ |
+|  打开目录|cmd-shift-o|Ctrl-shift-o |
 
 ## Atom在mac上崩溃
 产生原因：在mac上使用shadowsocks的PAC模式就会使atom闪退，全局模式就不会闪退

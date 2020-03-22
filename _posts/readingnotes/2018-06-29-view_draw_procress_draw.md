@@ -310,18 +310,18 @@ private void performTraversals() {
 ```java
 private void draw(boolean fullRedrawNeeded) {
 ...
-	final Rect dirty = mDirty;
-		if (mSurfaceHolder != null) {
+  final Rect dirty = mDirty;
+    if (mSurfaceHolder != null) {
       //清除mDirty区域
-			dirty.setEmpty();
-			if (animating) {
-				if (mScroller != null) {
-					mScroller.abortAnimation();
-				}
-				disposeResizeBuffer();
-			}
-			return;
-		}
+      dirty.setEmpty();
+      if (animating) {
+        if (mScroller != null) {
+          mScroller.abortAnimation();
+        }
+        disposeResizeBuffer();
+      }
+      return;
+    }
 ...
 }
 ```

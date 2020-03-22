@@ -31,22 +31,22 @@ onStop()执行的时机
 * **SingleTop  栈顶复用模式**，如果该Activity在栈顶，则再次启动的该Activity的时候，不创建，onCreate()和onStart()也不会执行，但是onNewIntent()方法会执行，通过此方法我们可以获得当前请求的信息。如果不在栈顶但是存在这个栈里面，那么就仍然创建新的实例，
 ![添加图片](../../../../images/singleTop.png)
 
-	<span style="border-bottom:1px solid red;">适合接受通知启动的内容显示界面。   
-	例如：当收到多条新闻推送的通知，用于展示新闻的Activity界面，可以设置SingleTop模式，根据传递过来的信息显示不同的新闻信息，不会启动多个Activity。</span>
+  <span style="border-bottom:1px solid red;">适合接受通知启动的内容显示界面。   
+  例如：当收到多条新闻推送的通知，用于展示新闻的Activity界面，可以设置SingleTop模式，根据传递过来的信息显示不同的新闻信息，不会启动多个Activity。</span>
 
 * **SingleTask  栈内复用模式**  一种单实例模式，只要该Activity存在一个栈中，那么多次启动该Activity都不会重新创建该实例，也不会执行onCreat() 和onStart()方法，但是执行onNewIntent()，如果Activity A 是singleTask
 ```java
 if(A 所在的栈不存在){
-	创建A所需的任务栈 taskA
+  创建A所需的任务栈 taskA
 }
 if(taskA 中不存在A的实例){
-	创建A的实例，执行onCreat(),onStart(),onResume()
-	放到任务栈 taskA 中
+  创建A的实例，执行onCreat(),onStart(),onResume()
+  放到任务栈 taskA 中
 }else{
-	if(A 不在栈顶){
-		清空A 之上的所有Activity 实例
-	}
-	执行 onNewIntent(),
+  if(A 不在栈顶){
+    清空A 之上的所有Activity 实例
+  }
+  执行 onNewIntent(),
 }
 ```
 到这里说明存在包含A实例的任务栈  
@@ -57,13 +57,13 @@ if(taskA 中不存在A的实例){
 2. 如果D所需要的任务栈是S1,由于S1已经存在，那么就直接创建D的实例并将其压入到S1中
 3. 如果D所需要的任务栈是S1，并且S1内是ADBC，那么此时D不会创建，而是把BC移除栈，因为singleTask具有clearTop 的效果，最终S1的情况是AD 这两个   
 
-		<span style="border-bottom:1px solid red;">适合做程序的主入口。   
-		例如浏览器主页面，不管多少应用启动浏览器，主界面只启动一次，其余情况都会执行onNewIntent(),并且会清空主界面信息。</span>
+    <span style="border-bottom:1px solid red;">适合做程序的主入口。   
+    例如浏览器主页面，不管多少应用启动浏览器，主界面只启动一次，其余情况都会执行onNewIntent(),并且会清空主界面信息。</span>
 
 * **SingleInstance  单实例模式**，是一种加强的singleTask模式，除了具有singleTask的模式的所有特性，还有一点就是此模式的Activity只能单独位于一个任务栈中。由于独自一个栈，就没有clearTop 一说了，
 ![添加图片](../../../../images/singleinstance.png)
 
-	<span style="border-bottom:1px solid red;">例如闹铃响铃界面，在你正在聊微信的时候，突然响铃，弹出一个对话框形式的Activity（名为AlarmAlertActivity），这个Activity就是以SingleInstance 模式加载出来的，当你按下返回键之后，返回的是微信界面，因为栈内只有这一个Activity，按下返回键，栈就为空了。如果设置SingleTask，那么按下返回键就应该是闹铃设置页面。</span>
+  <span style="border-bottom:1px solid red;">例如闹铃响铃界面，在你正在聊微信的时候，突然响铃，弹出一个对话框形式的Activity（名为AlarmAlertActivity），这个Activity就是以SingleInstance 模式加载出来的，当你按下返回键之后，返回的是微信界面，因为栈内只有这一个Activity，按下返回键，栈就为空了。如果设置SingleTask，那么按下返回键就应该是闹铃设置页面。</span>
 
 
 ### TaskAffinity 任务相关性
@@ -129,15 +129,15 @@ singleTask启动模式默认就有次标记的效果
 1. 区别一：
 android.intent.action.MAIN决定一个应用程序最先启动那个组件
 android.intent.category.LAUNCHER决定应用程序是否显示在程序列表里(说白了就是是否在桌面上显示一个图标)
-	* 第一种情况：有MAIN,无LAUNCHER，程序列表中无图标
+  * 第一种情况：有MAIN,无LAUNCHER，程序列表中无图标
 原因：android.intent.category.LAUNCHER决定应用程序是否显示在程序列表里
-	* 第二种情况：无MAIN,有LAUNCHER，程序列表中无图标
+  * 第二种情况：无MAIN,有LAUNCHER，程序列表中无图标
 原因：android.intent.action.MAIN决定应用程序最先启动的Activity，如果没有MAIN，则不知启动哪个Activity，故也不会有图标出现
 
-	所以这两个属性一般成对出现。
+  所以这两个属性一般成对出现。
 
-	<span style="border-bottom:1px solid red;"> 如果一个应用中有两个组件intent-filter都添加了android.intent.action.MAIN和
-	android.intent.category.LAUNCHER这两个属性， 则这个应用将会显示两个图标， 写在前面的组件先运行。</span>
+  <span style="border-bottom:1px solid red;"> 如果一个应用中有两个组件intent-filter都添加了android.intent.action.MAIN和
+  android.intent.category.LAUNCHER这两个属性， 则这个应用将会显示两个图标， 写在前面的组件先运行。</span>
 2. 区别二：
 android.intent.category.LAUNCHER：决定应用程序是否显示在程序列表里，就是android开机后的主程序列表。
 android.intent.category.HOME：按住“HOME”键，该程序显示在HOME列表里。
@@ -152,13 +152,13 @@ data由两部分组成，
 URI的结构  
 ![Alt text](../../../../images/activity_uri)  
 
-	* scheme: URI的模式，比如http，file,content等，如果URI没有指定scheme，那么整个URI的其他参数无效，这也就意味着URI无效
-	* host: URI的主机名，比如www.baidu.com，如果host未指定，那么整个URI的其他参数无效，这也就意味着URI无效
-	* port: URI中的端口号，比如 80 ，仅当指定了Scheme和host参数的时候，port参数才有意义
-	* path/pathPattern/pathPreFix:  这三个表示路径信息：
-		1. path表示完整路径信息，
-		2. pathPattern也表示完整路径信息，但是里面可以包含通配符`*`，由于正则表达式的规范，想要表示真实的`*`，要转义写成`\\*`，`\` 写成`\\\\`
-		3. pathPrefix  表示路径的前缀信息
+  * scheme: URI的模式，比如http，file,content等，如果URI没有指定scheme，那么整个URI的其他参数无效，这也就意味着URI无效
+  * host: URI的主机名，比如www.baidu.com，如果host未指定，那么整个URI的其他参数无效，这也就意味着URI无效
+  * port: URI中的端口号，比如 80 ，仅当指定了Scheme和host参数的时候，port参数才有意义
+  * path/pathPattern/pathPreFix:  这三个表示路径信息：
+    1. path表示完整路径信息，
+    2. pathPattern也表示完整路径信息，但是里面可以包含通配符`*`，由于正则表达式的规范，想要表示真实的`*`，要转义写成`\\*`，`\` 写成`\\\\`
+    3. pathPrefix  表示路径的前缀信息
 
 匹配规则:**Intent中必须含有data数据，并且data数据能够完全匹配过滤规则中的某一个data,这里的完全匹配是指过滤规则中出现的data部分也出现在Intent中的data中**
 1. 规则一   

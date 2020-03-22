@@ -132,10 +132,10 @@ serialVersionUID 是用来辅助序列化和反序列化过程的，原则上序
 3. 默认的序列化过程是可以改变的，只需要重写系统默认的序列化和反序列化方法就可以了
 ```java
 private void writeObject(ObjectOutputStream out)throws IOException{
-	//write this to out
+  //write this to out
 }
 private void readObject(ObjectInputStream in)throws IOException,ClassNotFoundException{
-	//populate the fields of this from the data in 'in'
+  //populate the fields of this from the data in 'in'
 }
 ```
 
@@ -188,12 +188,12 @@ Parcel 内部包装了可序列化的数据，可以在Binder中自由传输，
 信使。通过它可以在不同进程中传递Message对象，在Message中存放我们需要传递的数据，这样就可以轻松实现进程传递过程。轻量级的IPC方案，底层实现是AIDL，由于它一次处理一个请求，不需要考虑线程同步问题。
 实现步骤：
 1. 服务端进程
-	1. 在服务端创建Service来处理客户端的连接请求，
-	2. 创建Handler并通过它来创建一个Messager对象，
-	3. 在onBind中返回这个Messager底层的Binder即可
+  1. 在服务端创建Service来处理客户端的连接请求，
+  2. 创建Handler并通过它来创建一个Messager对象，
+  3. 在onBind中返回这个Messager底层的Binder即可
  2. 客户端进程
-	 1. 绑定服务端service，绑定成功后用服务端的IBinder对象创建一个Messager
-	 2. 通过这个Messager就可以向服务端发送消息。消息类型为Message对象
+   1. 绑定服务端service，绑定成功后用服务端的IBinder对象创建一个Messager
+   2. 通过这个Messager就可以向服务端发送消息。消息类型为Message对象
 
 在Messenger中进行数据传递必须将数据放入到Message中，而Messenger和Message都实现了Parcelable接口，因此可以跨进程传输，
 Messenger是以串行方式处理客户端发来的消息，如果大量的消息同事发送到服务器，服务器任然只能一个个处理，这样就不适合大量并发请求。主要作用是为了传递消息，不能夸进程调用服务端的方法，

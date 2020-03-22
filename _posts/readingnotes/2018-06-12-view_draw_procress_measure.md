@@ -27,7 +27,7 @@ tags: View  Android开发艺术探索
 MeasureSpce 不是唯一由LayoutParams决定的，LayoutParams 需要和父容器一起才能决定View的MeasureSpce,从而进一步决定View的宽高。对应顶级View(DecorView)和普通的View，MeasureSpce的转换略有不同，
 * DecorView：  其MeasureSpce由窗口的尺寸和自身的LayoutParams共同决定
 * 普通View：   其MeasureSpce由父容器的MeasureSpce和自身的LayoutParams共同决定。概况起来就是：   
-	<font color="ff000">
+  <font color="ff000">
 子View的MeasureSpec = LayoutParams + margin + padding + 父容器的MeasureSpec</font>
 
 ### DecorView 的 MeasureSpce 创建工程
@@ -45,19 +45,19 @@ performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
 
 ```java
 private static int getRootMeasureSpec(int windowSize, int rootDimension) {
-	int measureSpec;
-	switch (rootDimension) {
-		case ViewGroup.LayoutParams.MATCH_PARENT:
-			measureSpec = MeasureSpec.makeMeasureSpec(windowSize, MeasureSpec.EXACTLY);
-			break;
-		case ViewGroup.LayoutParams.WRAP_CONTENT:
-			measureSpec = MeasureSpec.makeMeasureSpec(windowSize, MeasureSpec.AT_MOST);
-			break;
-		default:
-			measureSpec = MeasureSpec.makeMeasureSpec(rootDimension, MeasureSpec.EXACTLY);
-			break;
-	}
-	return measureSpec;
+  int measureSpec;
+  switch (rootDimension) {
+    case ViewGroup.LayoutParams.MATCH_PARENT:
+      measureSpec = MeasureSpec.makeMeasureSpec(windowSize, MeasureSpec.EXACTLY);
+      break;
+    case ViewGroup.LayoutParams.WRAP_CONTENT:
+      measureSpec = MeasureSpec.makeMeasureSpec(windowSize, MeasureSpec.AT_MOST);
+      break;
+    default:
+      measureSpec = MeasureSpec.makeMeasureSpec(rootDimension, MeasureSpec.EXACTLY);
+      break;
+  }
+  return measureSpec;
 }
 ```
 通过上述代码，DecorView的MeasureSpec的产生过程就很明确了，具体来说就是遵守如下规则。根据layouParams的宽高的参数来划分，
@@ -134,49 +134,49 @@ public static int getChildMeasureSpec(int spec, int padding, int childDimension)
 
 ```java
 private boolean measureHierarchy(final View host, final WindowManager.LayoutParams lp, final Resources res,
-														final int desiredWindowWidth, final int desiredWindowHeight) {
-		int childWidthMeasureSpec;
-		int childHeightMeasureSpec;
-		boolean windowSizeMayChange = false;
-		boolean goodMeasure = false;
-		if (lp.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
-			//在大屏幕上，我们不希望允许对话框拉伸以填充整个屏幕宽度以显示一行文本。 首先尝试以较小的尺寸进行布局，看看是否适合。
-			final DisplayMetrics packageMetrics = res.getDisplayMetrics();
-			res.getValue(com.android.internal.R.dimen.config_prefDialogWidth, mTmpValue, true);
-			int baseSize = 0;
-			if (mTmpValue.type == TypedValue.TYPE_DIMENSION) {
-				baseSize = (int) mTmpValue.getDimension(packageMetrics);
-			}
-			if (baseSize != 0 && desiredWindowWidth > baseSize) {
-				childWidthMeasureSpec = getRootMeasureSpec(baseSize, lp.width);
-				childHeightMeasureSpec = getRootMeasureSpec(desiredWindowHeight, lp.height);
-				performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
-				if ((host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0) {
-					goodMeasure = true;
-				} else {
-					// Didn't fit in that size... try expanding a bit.
-					baseSize = (baseSize + desiredWindowWidth) / 2;
-					childWidthMeasureSpec = getRootMeasureSpec(baseSize, lp.width);
-					performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
-					if ((host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0) {
-						goodMeasure = true;
-					}
-				}
-			}
-		}
-		//goodMeasure 这个变量为true的时候，`(host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0` 而刚开始的时候，
-		//也就是计算DecorView的时候，是不等于0的，所以第一次执行 measureHierarchy方法的时候，goodMeasure为false，也就是执行到了下面的if语句
-		if (!goodMeasure) {//DecorView,宽度基本都为match_parent
-			//创建measureSpec
-			childWidthMeasureSpec = getRootMeasureSpec(desiredWindowWidth, lp.width);
-			childHeightMeasureSpec = getRootMeasureSpec(desiredWindowHeight, lp.height);
-			performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
-			if (mWidth != host.getMeasuredWidth() || mHeight != host.getMeasuredHeight()) {
-				windowSizeMayChange = true;
-			}
-		}
-		return windowSizeMayChange;
-	}
+                            final int desiredWindowWidth, final int desiredWindowHeight) {
+    int childWidthMeasureSpec;
+    int childHeightMeasureSpec;
+    boolean windowSizeMayChange = false;
+    boolean goodMeasure = false;
+    if (lp.width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+      //在大屏幕上，我们不希望允许对话框拉伸以填充整个屏幕宽度以显示一行文本。 首先尝试以较小的尺寸进行布局，看看是否适合。
+      final DisplayMetrics packageMetrics = res.getDisplayMetrics();
+      res.getValue(com.android.internal.R.dimen.config_prefDialogWidth, mTmpValue, true);
+      int baseSize = 0;
+      if (mTmpValue.type == TypedValue.TYPE_DIMENSION) {
+        baseSize = (int) mTmpValue.getDimension(packageMetrics);
+      }
+      if (baseSize != 0 && desiredWindowWidth > baseSize) {
+        childWidthMeasureSpec = getRootMeasureSpec(baseSize, lp.width);
+        childHeightMeasureSpec = getRootMeasureSpec(desiredWindowHeight, lp.height);
+        performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
+        if ((host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0) {
+          goodMeasure = true;
+        } else {
+          // Didn't fit in that size... try expanding a bit.
+          baseSize = (baseSize + desiredWindowWidth) / 2;
+          childWidthMeasureSpec = getRootMeasureSpec(baseSize, lp.width);
+          performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
+          if ((host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0) {
+            goodMeasure = true;
+          }
+        }
+      }
+    }
+    //goodMeasure 这个变量为true的时候，`(host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0` 而刚开始的时候，
+    //也就是计算DecorView的时候，是不等于0的，所以第一次执行 measureHierarchy方法的时候，goodMeasure为false，也就是执行到了下面的if语句
+    if (!goodMeasure) {//DecorView,宽度基本都为match_parent
+      //创建measureSpec
+      childWidthMeasureSpec = getRootMeasureSpec(desiredWindowWidth, lp.width);
+      childHeightMeasureSpec = getRootMeasureSpec(desiredWindowHeight, lp.height);
+      performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
+      if (mWidth != host.getMeasuredWidth() || mHeight != host.getMeasuredHeight()) {
+        windowSizeMayChange = true;
+      }
+    }
+    return windowSizeMayChange;
+  }
 ```
 **MeasureHierarchy()有自己的测量方法，会先以较小的尺寸进行布局。让窗口更加优雅（主要是针对wrap_content的Dialog），所以设置了wrap_content的Dialog，有可能执行多次测量**
 通过getRootMeasureSpec()计算出来MeasureSpce之后，就执行performMeasure()方法，
@@ -185,7 +185,7 @@ private boolean measureHierarchy(final View host, final WindowManager.LayoutPara
 
 ```java
 private void performMeasure(int childWidthMeasureSpec, int childHeightMeasureSpec) {
-	mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+  mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 }
 ```
 该方法很简单，就是直接调用mView.measure()方法，而这个mView就是执行setView方法中，传递过来的View。
@@ -202,29 +202,29 @@ measure过程分为两种：
 
 ```java
 public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
-	。。。
-	final boolean forceLayout = (mPrivateFlags & PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;
-	final boolean isExactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
-									&& MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
-									&& MeasureSpec.getMode(mOldWidthMeasureSpec) == MeasureSpec.EXACTLY
-									&& MeasureSpec.getMode(mOldHeightMeasureSpec) == MeasureSpec.EXACTLY;
-	final boolean matchingSize = isExactly && getMeasuredWidth() == MeasureSpec.getSize(widthMeasureSpec)
-										   && getMeasuredHeight() == MeasureSpec.getSize(heightMeasureSpec);
-		//仅当给与的MeasureSpec发生变化时，或要求强制重新布局时，才会进行测量。
-	if (forceLayout|| !matchingSize && (widthMeasureSpec !=mOldWidthMeasureSpec
-										|| heightMeasureSpec != mOldHeightMeasureSpec)) {
-		。。。
-		if (cacheIndex < 0 || sIgnoreMeasureCache) {
-			long logTime = System.currentTimeMillis();
-			onMeasure(widthMeasureSpec, heightMeasureSpec);
-			long nowTime = System.currentTimeMillis();
-			mPrivateFlags3 &= ~PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
-		} else {
-			long value = mMeasureCache.valueAt(cacheIndex);
-			setMeasuredDimensionRaw((int) (value >> 32), (int) value);
-			mPrivateFlags3 |= PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
-		}
-		。。。
+  。。。
+  final boolean forceLayout = (mPrivateFlags & PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;
+  final boolean isExactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
+                  && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
+                  && MeasureSpec.getMode(mOldWidthMeasureSpec) == MeasureSpec.EXACTLY
+                  && MeasureSpec.getMode(mOldHeightMeasureSpec) == MeasureSpec.EXACTLY;
+  final boolean matchingSize = isExactly && getMeasuredWidth() == MeasureSpec.getSize(widthMeasureSpec)
+                       && getMeasuredHeight() == MeasureSpec.getSize(heightMeasureSpec);
+    //仅当给与的MeasureSpec发生变化时，或要求强制重新布局时，才会进行测量。
+  if (forceLayout|| !matchingSize && (widthMeasureSpec !=mOldWidthMeasureSpec
+                    || heightMeasureSpec != mOldHeightMeasureSpec)) {
+    。。。
+    if (cacheIndex < 0 || sIgnoreMeasureCache) {
+      long logTime = System.currentTimeMillis();
+      onMeasure(widthMeasureSpec, heightMeasureSpec);
+      long nowTime = System.currentTimeMillis();
+      mPrivateFlags3 &= ~PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
+    } else {
+      long value = mMeasureCache.valueAt(cacheIndex);
+      setMeasuredDimensionRaw((int) (value >> 32), (int) value);
+      mPrivateFlags3 |= PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
+    }
+    。。。
 }
 ```
 由代码可知：  
@@ -237,9 +237,9 @@ public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
 
 ```java
 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-	setMeasuredDimension(
-			getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
-			getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
+  setMeasuredDimension(
+      getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+      getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
 }
 ```
 代码很简单，通过setMeasureDimension()设置View的宽和高，那么我们就首先看看宽和高是怎么得到的，这就需要查看getDefaultSize()方法了
@@ -247,19 +247,19 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 ### View # getDefaultSize()
 ```java
 public static int getDefaultSize(int size, int measureSpec) {
-	int result = size;
-	int specMode = MeasureSpec.getMode(measureSpec);
-	int specSize = MeasureSpec.getSize(measureSpec);
-	switch (specMode) {
-		case MeasureSpec.UNSPECIFIED:
-			result = size;
-			break;
-		case MeasureSpec.AT_MOST:
-		case MeasureSpec.EXACTLY:
-			result = specSize;
-			break;
-	}
-	return result;
+  int result = size;
+  int specMode = MeasureSpec.getMode(measureSpec);
+  int specSize = MeasureSpec.getSize(measureSpec);
+  switch (specMode) {
+    case MeasureSpec.UNSPECIFIED:
+      result = size;
+      break;
+    case MeasureSpec.AT_MOST:
+    case MeasureSpec.EXACTLY:
+      result = specSize;
+      break;
+  }
+  return result;
 }
 ```
 从getDefaultSize()方法的实现来看，分两种情况：
@@ -271,9 +271,9 @@ public static int getDefaultSize(int size, int measureSpec) {
 ### View # getSuggestedMinimumWidth()
 ```java
 protected int getSuggestedMinimumWidth() {
-	//如果没有设置背景那么View宽度就是mMinWidth，
-	//mBackground.getMinimumWidth() 得到的就是Drawble的原始宽度
-	return (mBackground == null) ? mMinWidth : max(mMinWidth,mBackground.getMinimumWidth());
+  //如果没有设置背景那么View宽度就是mMinWidth，
+  //mBackground.getMinimumWidth() 得到的就是Drawble的原始宽度
+  return (mBackground == null) ? mMinWidth : max(mMinWidth,mBackground.getMinimumWidth());
 }
 ```
 getSuggestedMinimumWidth()的逻辑就是： 如果没有设置背景，那么View的宽度就是mMinWidth,而mMinWidth 对应的就是Android：minWidth,如果不指定这个属性，默认为0;如果设置了背景，那么得到的就是mMindth和背景宽度的最大哪一个。
@@ -283,14 +283,14 @@ getSuggestedMinimumWidth()的逻辑就是： 如果没有设置背景，那么Vi
 ### ViewGroup # measureChildren()
 ```java
 protected void measureChildren(int widthMeasureSpec, int heightMeasureSpec) {
-	final int size = mChildrenCount;
-	final View[] children = mChildren;
-	for (int i = 0; i < size; ++i) {
-		 final View child = children[i];
-		 if ((child.mViewFlags & VISIBILITY_MASK) != GONE) {
-				 measureChild(child, widthMeasureSpec, heightMeasureSpec);
-		 }
-	}
+  final int size = mChildrenCount;
+  final View[] children = mChildren;
+  for (int i = 0; i < size; ++i) {
+     final View child = children[i];
+     if ((child.mViewFlags & VISIBILITY_MASK) != GONE) {
+         measureChild(child, widthMeasureSpec, heightMeasureSpec);
+     }
+  }
 }
 ```
 从代码上看，ViewGroup在measure时,会对每一个子View进行measure,也就是执行measureChild()，这个方法也很好理解的。就是measure 子View呗。
@@ -298,13 +298,13 @@ protected void measureChildren(int widthMeasureSpec, int heightMeasureSpec) {
 ### ViewGroup # measureChild()
 ```java
 protected void measureChild(View child, int parentWidthMeasureSpec, int parentHeightMeasureSpec) {
-	//取出来子元素的LayoutParams
-	final LayoutParams lp = child.getLayoutParams();
-	// 通过getChildMeasureSpec（）得到创建子元素的MeasureSpec
-	final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, mPaddingLeft + mPaddingRight, lp.width);
-	final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec, mPaddingTop + mPaddingBottom, lp.height);
-	//将MeasureSpec传递到子view中的measure（）进行测量
-	child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+  //取出来子元素的LayoutParams
+  final LayoutParams lp = child.getLayoutParams();
+  // 通过getChildMeasureSpec（）得到创建子元素的MeasureSpec
+  final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, mPaddingLeft + mPaddingRight, lp.width);
+  final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec, mPaddingTop + mPaddingBottom, lp.height);
+  //将MeasureSpec传递到子view中的measure（）进行测量
+  child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 }
 ```
 代码里面都带有注释，很好理解，就不多说了，getChildMeasureSpec()方法参照上面的表格就可以了  ，然后就到了child.measure()，如果这个child 是一个ViewGroup，继续上的，如果是一个View，就执行View的 measure流程。这个上面已经讲过了。
@@ -315,11 +315,11 @@ protected void measureChild(View child, int parentWidthMeasureSpec, int parentHe
 ```java
 @Override
 protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-	if (mOrientation == VERTICAL) {
-		measureVertical(widthMeasureSpec, heightMeasureSpec);
-	} else {
-		measureHorizontal(widthMeasureSpec, heightMeasureSpec);
-	}
+  if (mOrientation == VERTICAL) {
+    measureVertical(widthMeasureSpec, heightMeasureSpec);
+  } else {
+    measureHorizontal(widthMeasureSpec, heightMeasureSpec);
+  }
 }
 ```
 代码很简单，根据不同的方向，选择不同的measure流程。比如选择竖直方向的LinearLayout的测量过程。即 measureVertical()，源码比较长，分看来看。
@@ -328,27 +328,27 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 ```java
 // See how tall everyone is. Also remember max width.
 for (int i = 0; i < count; ++i) {
-	final View child = getVirtualChildAt(i);
-		...
-		//遍历每个子元素，并对每个子元素执行measureChildBeforeLayout()，这个方法内部调用measure()
-		measureChildBeforeLayout(child, i, widthMeasureSpec, 0, heightMeasureSpec, totalWeight == 0 ? mTotalLength : 0);
+  final View child = getVirtualChildAt(i);
+    ...
+    //遍历每个子元素，并对每个子元素执行measureChildBeforeLayout()，这个方法内部调用measure()
+    measureChildBeforeLayout(child, i, widthMeasureSpec, 0, heightMeasureSpec, totalWeight == 0 ? mTotalLength : 0);
 
-		if (oldHeight != Integer.MIN_VALUE) {
-			lp.height = oldHeight;
-		}
+    if (oldHeight != Integer.MIN_VALUE) {
+      lp.height = oldHeight;
+    }
 
-		final int childHeight = child.getMeasuredHeight();
-		final int totalLength = mTotalLength;
-		// 存储LinearLayout竖直方向的高度
-		mTotalLength = Math.max(totalLength, totalLength + childHeight + lp.topMargin + lp.bottomMargin + getNextLocationOffset(child));
+    final int childHeight = child.getMeasuredHeight();
+    final int totalLength = mTotalLength;
+    // 存储LinearLayout竖直方向的高度
+    mTotalLength = Math.max(totalLength, totalLength + childHeight + lp.topMargin + lp.bottomMargin + getNextLocationOffset(child));
 
-		if (useLargestChild) {
-			largestChildHeight = Math.max(childHeight, largestChildHeight);
-		}
+    if (useLargestChild) {
+      largestChildHeight = Math.max(childHeight, largestChildHeight);
+    }
 }
 
 void measureChildBeforeLayout(View child, int childIndex, int widthMeasureSpec, int totalWidth, int heightMeasureSpec, int totalHeight) {
-		measureChildWithMargins(child, widthMeasureSpec, totalWidth, heightMeasureSpec, totalHeight);
+    measureChildWithMargins(child, widthMeasureSpec, totalWidth, heightMeasureSpec, totalHeight);
 }
 ```
 从代码看，
@@ -379,35 +379,35 @@ heightSize = heightSizeAndState & MEASURED_SIZE_MASK;
 ...
 setMeasuredDimension(resolveSizeAndState(maxWidthwidthMeasureSpec, childState), heightSizeAndState);
 if (matchWidth) {
-	forceUniformWidth(count, heightMeasureSpec);
+  forceUniformWidth(count, heightMeasureSpec);
 }
 ```
 LinearLayout 会根据子元素的情况，来测量自己的大小。针对竖直方向而言，他的水平方向遵循View的测量过程。但是竖直方向则和View不同，具体来说
-	1. 如果布局中高度采用的match_parent或者具体的值，那么它的测量过程和View 的一致
-	2. 如果布局高度采用wrap_content,他的高度就是所有子元素高度的总和，但是不能超过它父容器的剩余空间。当然还要考虑他的竖直方向的padding，可以参考resolveSizeAndState(),这是View的方法，LinearLayout 和ViewGroup 都没有重新该方法
+  1. 如果布局中高度采用的match_parent或者具体的值，那么它的测量过程和View 的一致
+  2. 如果布局高度采用wrap_content,他的高度就是所有子元素高度的总和，但是不能超过它父容器的剩余空间。当然还要考虑他的竖直方向的padding，可以参考resolveSizeAndState(),这是View的方法，LinearLayout 和ViewGroup 都没有重新该方法
 ```java
 public static int resolveSizeAndState(int size, int measureSpec, int childMeasuredState) {
-	int result = size;
-	int specMode = MeasureSpec.getMode(measureSpec);
-	int specSize = MeasureSpec.getSize(measureSpec);
-	switch (specMode) {
-		case MeasureSpec.UNSPECIFIED:
-			result = size;
-			break;
-		case MeasureSpec.AT_MOST:
-		//采用wrap_content,他的高度就是所有子元素高度的总和，但是不能超过它父容器的剩余空间。
-			if (specSize < size) {
-				result = specSize | MEASURED_STATE_TOO_SMALL;
-			} else {
-				result = size;
-			}
-			break;
-		case MeasureSpec.EXACTLY:
-		//采用的match_parent或者具体的值,那么返回specSize
-			result = specSize;
-			break;
-	}
-	return result | (childMeasuredState & MEASURED_STATE_MASK);
+  int result = size;
+  int specMode = MeasureSpec.getMode(measureSpec);
+  int specSize = MeasureSpec.getSize(measureSpec);
+  switch (specMode) {
+    case MeasureSpec.UNSPECIFIED:
+      result = size;
+      break;
+    case MeasureSpec.AT_MOST:
+    //采用wrap_content,他的高度就是所有子元素高度的总和，但是不能超过它父容器的剩余空间。
+      if (specSize < size) {
+        result = specSize | MEASURED_STATE_TOO_SMALL;
+      } else {
+        result = size;
+      }
+      break;
+    case MeasureSpec.EXACTLY:
+    //采用的match_parent或者具体的值,那么返回specSize
+      result = specSize;
+      break;
+  }
+  return result | (childMeasuredState & MEASURED_STATE_MASK);
 }
 ```
 
@@ -417,30 +417,30 @@ public static int resolveSizeAndState(int size, int measureSpec, int childMeasur
 因为DecorView是一个Framelayout，所以我们从FrameLayout 开始我们的分析
 
 ```java
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-		int count = getChildCount();
-		final boolean measureMatchParentChildren = MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
-					|| MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
-		mMatchParentChildren.clear();
-		。。。
-		//遍历子View，只要View不是GONE，便处理
-		for (int i = 0; i < count; i++) {
-			final View child = getChildAt(i);
-			if (mMeasureAllChildren || child.getVisibility() != GONE) {
-			//子View结合父View的MeasureSpec和自己的LayoutParams算出子View自己的MeasureSpec
-			measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-			final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-			maxWidth = Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-			maxHeight = Math.max(maxHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-			childState = combineMeasuredStates(childState, child.getMeasuredState());
-			if (measureMatchParentChildren) {
-				if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT) {
-					mMatchParentChildren.add(child);
-				}
-			}
-		}
-	}
-	.....
+  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    int count = getChildCount();
+    final boolean measureMatchParentChildren = MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
+          || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
+    mMatchParentChildren.clear();
+    。。。
+    //遍历子View，只要View不是GONE，便处理
+    for (int i = 0; i < count; i++) {
+      final View child = getChildAt(i);
+      if (mMeasureAllChildren || child.getVisibility() != GONE) {
+      //子View结合父View的MeasureSpec和自己的LayoutParams算出子View自己的MeasureSpec
+      measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+      final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+      maxWidth = Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+      maxHeight = Math.max(maxHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+      childState = combineMeasuredStates(childState, child.getMeasuredState());
+      if (measureMatchParentChildren) {
+        if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT) {
+          mMatchParentChildren.add(child);
+        }
+      }
+    }
+  }
+  .....
 }
 ```
 

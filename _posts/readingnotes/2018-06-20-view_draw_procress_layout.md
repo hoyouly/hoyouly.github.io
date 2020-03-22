@@ -21,7 +21,7 @@ private void performLayout(WindowManager.LayoutParams lp, int desiredWindowWidth
   ...
   final View host = mView;
   host.layout(0, 0, host.getMeasuredWidth(), host.getMeasuredHeight());
-	...
+  ...
 }
 ```
 host 可以是一个View，也可以是一个ViewGroup，尽管ViewGroup也重写了layout方法，但是本质上还是通过super.layout(),调用View的layout方法
@@ -81,11 +81,11 @@ protected abstract void onLayout(boolean changed,int l, int t, int r, int b);
 ```java
 @Override
 protected void onLayout(boolean changed, int l, int t, int r, int b) {
-	if (mOrientation == VERTICAL) {
-		layoutVertical(l, t, r, b);
-	} else {
-		layoutHorizontal(l, t, r, b);
-	}
+  if (mOrientation == VERTICAL) {
+    layoutVertical(l, t, r, b);
+  } else {
+    layoutHorizontal(l, t, r, b);
+  }
 }
 ```
 这里面和measure()类似，这里选择layoutVertical()讲解
@@ -93,39 +93,39 @@ protected void onLayout(boolean changed, int l, int t, int r, int b) {
 
 ```java
 void layoutVertical(int left, int top, int right, int bottom) {
-		...
-		final int count = getVirtualChildCount();
+    ...
+    final int count = getVirtualChildCount();
 
-		for (int i = 0; i < count; i++) {
-			final View child = getVirtualChildAt(i);
-			if (child == null) {
-				childTop += measureNullChild(i);
-			} else if (child.getVisibility() != GONE) {
-				final int childWidth = child.getMeasuredWidth();
-				final int childHeight = child.getMeasuredHeight();
+    for (int i = 0; i < count; i++) {
+      final View child = getVirtualChildAt(i);
+      if (child == null) {
+        childTop += measureNullChild(i);
+      } else if (child.getVisibility() != GONE) {
+        final int childWidth = child.getMeasuredWidth();
+        final int childHeight = child.getMeasuredHeight();
 
-				final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
 
-				int gravity = lp.gravity;
-				if (gravity < 0) {
-					gravity = minorGravity;
-				}
-				final int layoutDirection = getLayoutDirection();
-				final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
-				...
+        int gravity = lp.gravity;
+        if (gravity < 0) {
+          gravity = minorGravity;
+        }
+        final int layoutDirection = getLayoutDirection();
+        final int absoluteGravity = Gravity.getAbsoluteGravity(gravity, layoutDirection);
+        ...
 
-				childTop += lp.topMargin;
-				//遍历所有子元素并执行setChildFrame（）来确定子元素的指定位置
-				setChildFrame(child, childLeft, childTop + getLocationOffset(child), childWidth, childHeight);
-				childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
+        childTop += lp.topMargin;
+        //遍历所有子元素并执行setChildFrame（）来确定子元素的指定位置
+        setChildFrame(child, childLeft, childTop + getLocationOffset(child), childWidth, childHeight);
+        childTop += childHeight + lp.bottomMargin + getNextLocationOffset(child);
 
-				i += getChildrenSkipCount(child, i);
-			}
-		}
-	}
+        i += getChildrenSkipCount(child, i);
+      }
+    }
+  }
 
 private void setChildFrame(View child, int left, int top, int width, int height) {
-	child.layout(left, top, left + width, top + height);
+  child.layout(left, top, left + width, top + height);
 }
 ```
 * 遍历所有子元素并调用setChildFrame()来为子元素指定位置，setChildFrame()内部调用子元素的layout()方法，

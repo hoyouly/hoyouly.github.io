@@ -196,10 +196,10 @@ if (child == null) {
 如果 dispatchTransformedTouchEvent()返回true,那么mFirstTouchTarget就会被赋值，同时跳出循环，break,这个 mFirstTouchTarget到底是啥东西，再一次遇到了，
 ```java
 if (dispatchTransformedTouchEvent(ev, false, child, idBitsToAssign)) {
-	...
+  ...
   newTouchTarget = addTouchTarget(child, idBitsToAssign);
-	alreadyDispatchedToNewTouchTarget = true;
-	break;
+  alreadyDispatchedToNewTouchTarget = true;
+  break;
 }
 ```
 ### mFirstTouchTarget
@@ -207,7 +207,7 @@ mFirstTouchTarget 其实是一个单链表结构，
 mFirstTouchTarget 的赋值过程是在addTouchTarget()中完成的，
 ### View # addTouchTarge()
 
-addTouchTarge()方法又是什么呢？	它会根据传递过来的子View和pointerIdBits 创建一个target ,然后把这个target赋值给mFirstTouchTarget
+addTouchTarge()方法又是什么呢？  它会根据传递过来的子View和pointerIdBits 创建一个target ,然后把这个target赋值给mFirstTouchTarget
 ```java
 private TouchTarget addTouchTarget(View child, int pointerIdBits) {
     TouchTarget target = TouchTarget.obtain(child, pointerIdBits);
@@ -264,7 +264,7 @@ if ((viewFlags & ENABLED_MASK) == DISABLED) {//不可用，
             || (viewFlags & LONG_CLICKABLE) == LONG_CLICKABLE)
             || (viewFlags & CONTEXT_CLICKABLE) == CONTEXT_CLICKABLE);
 }
-```        		
+```            
 2. 如果设置了代理，执行TouchDelegate的onTouchEvent 方法，这个和onToucheListener 类似
 ```java
 if (mTouchDelegate != null) {
@@ -289,7 +289,7 @@ if (((viewFlags & CLICKABLE) == CLICKABLE ||
       return true;
 }
 ```
-4. 如果能进入判断内，说明肯定会消耗这个事件，但是在事件ACTION_UP上，会触发performClick()，		
+4. 如果能进入判断内，说明肯定会消耗这个事件，但是在事件ACTION_UP上，会触发performClick()，    
 ```java
 case MotionEvent.ACTION_UP:
     boolean prepressed = (mPrivateFlags & PFLAG_PREPRESSED) != 0;

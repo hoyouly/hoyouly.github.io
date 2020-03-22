@@ -79,32 +79,32 @@ tags: Java 多线程
 Thread 的一个方法。等待该线程停止，也就是说该线程没停止之前，调用该线程的线程，一般是主线程只能等待。如果在main线程中创建了线程A，并且执行线程A 的start()和join()，那么主线程只等得到线程A执行完后才能停止。
 ```java
 public static void main(String[] args) {
-		System.out.println("main 线程开始");
-		ThreadA threadA=new ThreadA("A");
-		threadA.start();
-		System.out.println("main 线程结束");
-	}
+    System.out.println("main 线程开始");
+    ThreadA threadA=new ThreadA("A");
+    threadA.start();
+    System.out.println("main 线程结束");
+  }
 
-	public static class ThreadA extends Thread {
-		private String name;
-		public ThreadA(String num){
-			this.name=num;
-		}
+  public static class ThreadA extends Thread {
+    private String name;
+    public ThreadA(String num){
+      this.name=num;
+    }
 
-		@Override
-		public void run(){
-		System.out.println("线程 "+ name+" 开始执行");
-			for(int i=0;i<5;i++){
-				System.out.println(name+" 运行： "+i);
-			}
-			try{
-				sleep((int)Math.random()*10);
-			}catch(Exception e){
+    @Override
+    public void run(){
+    System.out.println("线程 "+ name+" 开始执行");
+      for(int i=0;i<5;i++){
+        System.out.println(name+" 运行： "+i);
+      }
+      try{
+        sleep((int)Math.random()*10);
+      }catch(Exception e){
 
-			}
-			System.out.println("线程 "+ name+" 结束");
-		}
-	}
+      }
+      System.out.println("线程 "+ name+" 结束");
+    }
+  }
 ```
 运行结果如下：
 ```java
@@ -122,37 +122,37 @@ A 运行： 4
 如果线程A没有执行join方法，那么主线程是比线程A先执行完毕的，可是加上了join()方法后，结果就不同了
 ```java
 public static void main(String[] args) {
-		System.out.println("main 线程开始");
-		ThreadA threadA=new ThreadA("A");
-		threadA.start();
-		try {
-			threadA.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println("main 线程结束");
-	}
+    System.out.println("main 线程开始");
+    ThreadA threadA=new ThreadA("A");
+    threadA.start();
+    try {
+      threadA.join();
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println("main 线程结束");
+  }
 
-	public static class ThreadA extends Thread {
-		private String name;
-		public ThreadA(String num){
-			this.name=num;
-		}
+  public static class ThreadA extends Thread {
+    private String name;
+    public ThreadA(String num){
+      this.name=num;
+    }
 
-		@Override
-		public void run(){
-		System.out.println("线程 "+ name+" 开始执行");
-			for(int i=0;i<5;i++){
-				System.out.println(name+" 运行： "+i);
-			}
-			try{
-				sleep((int)Math.random()*10);
-			}catch(Exception e){
+    @Override
+    public void run(){
+    System.out.println("线程 "+ name+" 开始执行");
+      for(int i=0;i<5;i++){
+        System.out.println(name+" 运行： "+i);
+      }
+      try{
+        sleep((int)Math.random()*10);
+      }catch(Exception e){
 
-			}
-			System.out.println("线程 "+ name+" 结束");
-		}
-	}
+      }
+      System.out.println("线程 "+ name+" 结束");
+    }
+  }
 ```
 运行结果：
 ```java

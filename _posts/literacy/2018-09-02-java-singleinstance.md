@@ -11,28 +11,28 @@ tags:  Java
 ##  恶汉式
 ```java
 public class Singleton {
-	private  static Singleton singleton=new Singleton();
-	private Singleton(){}
-	public static Singleton newInstance(){
-		return singleton;
-	}
+  private  static Singleton singleton=new Singleton();
+  private Singleton(){}
+  public static Singleton newInstance(){
+    return singleton;
+  }
 }
 ```
 ## 双重校验锁 DCL
 ```java
 public class Singleton {
-	private  static volatile Singleton singleton;
-	private Singleton(){}
-	public static Singleton newInstance(){
-		if(singleton==null){
-			synchronized (Singleton.class){
-				if(singleton==null){
-					singleton=new Singleton();
-				}
-			}
-		}
-		return singleton;
-	}
+  private  static volatile Singleton singleton;
+  private Singleton(){}
+  public static Singleton newInstance(){
+    if(singleton==null){
+      synchronized (Singleton.class){
+        if(singleton==null){
+          singleton=new Singleton();
+        }
+      }
+    }
+    return singleton;
+  }
 }
 ```
 volatile的两层含义:
@@ -42,14 +42,14 @@ volatile的两层含义:
 ##  静态内部类
 ```java
 public class Singleton {
-	private static class SingletonHolder {
-		private static final Singleton INSTANCE = new Singleton();
-	}
-	private Singleton() {
-	}
-	public static final Singleton getInstance() {
-		return SingletonHolder.INSTANCE;
-	}
+  private static class SingletonHolder {
+    private static final Singleton INSTANCE = new Singleton();
+  }
+  private Singleton() {
+  }
+  public static final Singleton getInstance() {
+    return SingletonHolder.INSTANCE;
+  }
 }
 ```
 以上所有实现方式都有两个共同缺点：
@@ -81,32 +81,32 @@ public enum Singleton {
 ```java
 //android.util.Singleton.java
 public abstract class Singleton<T> {
-	private T mInstance;
-	protected abstract T create();
-	public final T get() {
-		synchronized (this) {
-			if (mInstance == null) {
-				mInstance = create();
-			}
-			return mInstance;
-		}
-	}
+  private T mInstance;
+  protected abstract T create();
+  public final T get() {
+    synchronized (this) {
+      if (mInstance == null) {
+        mInstance = create();
+      }
+      return mInstance;
+    }
+  }
 }
 
 //使用方法如下
 public abstract class ActivityManagerNative extends Binder implements IActivityManager {
-	private static final Singleton<IActivityManager> gDefault = new Singleton<IActivityManager>() {
-		protected IActivityManager create() {
+  private static final Singleton<IActivityManager> gDefault = new Singleton<IActivityManager>() {
+    protected IActivityManager create() {
       //通过应用程序中的0号引用，可以向SMgr获取服务端（Server）的Binder引用。
-			IBinder b = ServiceManager.getService("activity");
-			IActivityManager am = asInterface(b);
-			return am;
-		}
-	};
+      IBinder b = ServiceManager.getService("activity");
+      IActivityManager am = asInterface(b);
+      return am;
+    }
+  };
 
 static public IActivityManager getDefault() {
-		return gDefault.get();
-	}
+    return gDefault.get();
+  }
 }
 
 ActivityManagerNative.getDefault().finishActivityAffinity(mToken)

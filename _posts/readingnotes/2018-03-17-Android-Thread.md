@@ -219,7 +219,7 @@ public class HandlerThread extends Thread {
 ```java
 public abstract class IntentService extends Service {
 
-	private final class ServiceHandler extends Handler {
+  private final class ServiceHandler extends Handler {
          public ServiceHandler(Looper looper) {
              super(looper);
          }
@@ -230,7 +230,7 @@ public abstract class IntentService extends Service {
              stopSelf(msg.arg1);
          }
      }
-	@Override
+  @Override
   public void onCreate() {
      super.onCreate();
      HandlerThread thread = new HandlerThread("IntentService[" + mName + "]");
@@ -239,20 +239,20 @@ public abstract class IntentService extends Service {
      mServiceHandler = new ServiceHandler(mServiceLooper);
   }
 
-	@Override
-	public void onStart(Intent intent, int startId) {
-		 Message msg = mServiceHandler.obtainMessage();
-		 msg.arg1 = startId;
-		 msg.obj = intent;
-		 mServiceHandler.sendMessage(msg);
-	}
+  @Override
+  public void onStart(Intent intent, int startId) {
+     Message msg = mServiceHandler.obtainMessage();
+     msg.arg1 = startId;
+     msg.obj = intent;
+     mServiceHandler.sendMessage(msg);
+  }
 
-	 @Override
-	 public int onStartCommand(Intent intent, int flags, int startId) {
-			 onStart(intent, startId);
-			 return mRedelivery ? START_REDELIVER_INTENT : START_NOT_STICKY;
-	 }
-	 protected abstract void onHandleIntent(Intent intent);
+   @Override
+   public int onStartCommand(Intent intent, int flags, int startId) {
+       onStart(intent, startId);
+       return mRedelivery ? START_REDELIVER_INTENT : START_NOT_STICKY;
+   }
+   protected abstract void onHandleIntent(Intent intent);
 
    @Nullable
    public IBinder onBind(Intent intent) {

@@ -46,7 +46,7 @@ sudo gem install jekyll
 然后又报错了，错误信息如下。真是一步一个坑啊。
 ```shell
 ERROR:  Error installing jekyll:
-	public_suffix requires Ruby version >= 2.1.
+  public_suffix requires Ruby version >= 2.1.
 ```
 于是我查看了一下自己的Ruby 版本，ruby -v
 结果发现还真是低啊，才1.9.3 那就想办法升级Ruby 的版本吧，然后就找到了下面的命令

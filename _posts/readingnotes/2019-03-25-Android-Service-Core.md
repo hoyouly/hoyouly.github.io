@@ -77,14 +77,14 @@ connected()才会post 一个Runnable对象，切换到主线程中。然后再�
 
 ```java
 private final void realStartServiceLocked(ServiceRecord r, ProcessRecord app, boolean execInFg) throws RemoteException {
-	 //创建Service对象，并且调用onCreat()
+   //创建Service对象，并且调用onCreat()
    app.thread.scheduleCreateService(r, r.serviceInfo, mAm.compatibilityInfoForPackageLocked(r.serviceInfo.applicationInfo), app.repProcState);
-	 ...
-	 requestServiceBindingsLocked(r, execInFg);
-	 ...
+   ...
+   requestServiceBindingsLocked(r, execInFg);
+   ...
    //通过sendServiceArgsLocked（）调用Service的其他方法，比如onStatCommand()
    sendServiceArgsLocked(r, execInFg, true);
-	 ...
+   ...
 }
 ```
 
@@ -109,7 +109,7 @@ private final void sendServiceArgsLocked(ServiceRecord r, boolean execInFg, bool
     if (N == 0) {
       return;
     }
-		//会执行到onStartCommond()方法
+    //会执行到onStartCommond()方法
 }
 ```
 bindService()没执行 startServiceLocked(),所以pendingStarts 集合是空的，那么就直接return了。
@@ -120,30 +120,30 @@ bindService()没执行 startServiceLocked(),所以pendingStarts 集合是空的�
 final ArrayMap<Intent.FilterComparison, IntentBindRecord> bindings = new ArrayMap<Intent.FilterComparison, IntentBindRecord>();
 
 public AppBindRecord retrieveAppBindingLocked(Intent intent, ProcessRecord app) {
-			 Intent.FilterComparison filter = new Intent.FilterComparison(intent);
-			 IntentBindRecord i = bindings.get(filter);
-			 if (i == null) {
-					 i = new IntentBindRecord(this, filter);
-					 bindings.put(filter, i);
-			 }
-			 AppBindRecord a = i.apps.get(app);
-			 if (a != null) {
-					 return a;
-			 }
-			 a = new AppBindRecord(this, i, app);
-			 i.apps.put(app, a);
-			 return a;
-	 }
+       Intent.FilterComparison filter = new Intent.FilterComparison(intent);
+       IntentBindRecord i = bindings.get(filter);
+       if (i == null) {
+           i = new IntentBindRecord(this, filter);
+           bindings.put(filter, i);
+       }
+       AppBindRecord a = i.apps.get(app);
+       if (a != null) {
+           return a;
+       }
+       a = new AppBindRecord(this, i, app);
+       i.apps.put(app, a);
+       return a;
+   }
 ```
 而在 requestServiceBindingsLocked()中，也有对bindings的操作。
 ```java
 private final void requestServiceBindingsLocked(ServiceRecord r, boolean execInFg) {
-		for (int i = r.bindings.size() - 1; i >= 0; i--) {
-			 IntentBindRecord ibr = r.bindings.valueAt(i);
-			 if (!requestServiceBindingLocked(r, ibr, execInFg, false)) {
-					 break;
-			 }
-		}
+    for (int i = r.bindings.size() - 1; i >= 0; i--) {
+       IntentBindRecord ibr = r.bindings.valueAt(i);
+       if (!requestServiceBindingLocked(r, ibr, execInFg, false)) {
+           break;
+       }
+    }
 }
 ```
 因为startService() 不会执行到bindServiceLocked()中，所以 bindings这个集合就是空的，那么for循环就不会执行，也就执行不到requestServiceBindingLocked(),从而不会调用onBind()方法。

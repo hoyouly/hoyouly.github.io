@@ -39,13 +39,13 @@ evaluate(new File(
 然后同步，结果报错了  
 ```java
 Caused by: java.io.FileNotFoundException: /Users/hoyouly/llll/my_flutter/.android/include_flutter.groovy (/Users/hoyouly/llll/my_flutter/.android/include_flutter.groovy)
-	at groovy.lang.GroovyCodeSource.<init>(GroovyCodeSource.java:112)
-	at groovy.lang.GroovyShell.evaluate(GroovyShell.java:487)
-	at groovy.lang.Script.evaluate(Script.java:221)
-	at groovy.lang.Script$evaluate$0.callCurrent(Unknown Source)
-	at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:156)
-	at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:168)
+  at groovy.lang.GroovyCodeSource.<init>(GroovyCodeSource.java:112)
+  at groovy.lang.GroovyShell.evaluate(GroovyShell.java:487)
+  at groovy.lang.Script.evaluate(Script.java:221)
+  at groovy.lang.Script$evaluate$0.callCurrent(Unknown Source)
+  at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallCurrent(CallSiteArray.java:51)
+  at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:156)
+  at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callCurrent(AbstractCallSite.java:168)
 ```
 
 文件没找到，不可能啊，但是确实报错了，最后查到得知，是路径写的有问题，改成 <font color="#ff000" >  rootProject.name + '/my_flutter/.android/include_flutter.groovy' </font> 就可以了，完整的 文件如下
