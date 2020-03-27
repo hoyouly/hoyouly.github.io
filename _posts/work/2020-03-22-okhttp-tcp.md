@@ -2,7 +2,7 @@
 layout: post
 title: 工作填坑 - OkHttp 支持 TCP 请求
 category: 工作填坑
-tags: Retrofit  
+tags: OkHttp   TCP
 ---
 * content
 {:toc}
