@@ -7,9 +7,9 @@ tags: Retrofit
 * content
 {:toc}
 
-最近在封装HTTP请求的时候，发现了一个挺悲催的事情，服务端返回的数据，有时候是json 格式，有时候又不是json格式，身为乙方的我，又没办法要求甲方去修改成统一的json格式，可是如果统一返回原始数据，又感觉要做太多的无用代码，毕竟使用的是retrofit + rxjava+ OKhttp ,得充分发挥他们三个的作用才行。
+最近在封装 HTTP 请求的时候，发现了一个挺悲催的事情，服务端返回的数据，有时候是 json 格式，有时候又不是 json 格式，身为乙方的我，又没办法要求甲方去修改成统一的 json 格式，可是如果统一返回原始数据，又感觉要做太多的无用代码，毕竟使用的是 retrofit + rxjava+ OKhttp ,得充分发挥他们三个的作用才行。
 
-然后就想着自己封装的框架能不能同时兼容Json格式和非Json格式呢？
+然后就想着自己封装的框架能不能同时兼容 Json 格式和非 Json 格式呢？
 
 感觉应该是可以的，因为我们通常使用Retrofit 解析json格式是按照下面的方式，
 ```java
@@ -64,7 +64,7 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
     return result;
   }
 ```
-因为首次调用该接口的时候，serviceMethodCache 没有该方法，所以会执行到build()方法,创建一个，然后添加到serviceMethodCache里面。
+因为首次调用该接口的时候，serviceMethodCache 没有该方法，所以会执行到build()方法,创建一个，然后添加到serviceMethodCache里面。[ Retrofit 中对 addCallAdapterFactory() 的理解 ](../../../../2020/03/10/retrofit_addCall/)
 我们继续查看 build()方法
 
 ```java
@@ -77,7 +77,7 @@ public ServiceMethod build() {
      return new ServiceMethod<>(this);
    }
 ```
-其他的我们不比关心，只看着几行代码
+其他的我们不比关心，只看着几行代码。  callAdapter = createCallAdapter() 涉及到 addCallAdapterFactory() ，会在另外一篇文章中分析
 
 ```java
 private Converter<ResponseBody, T> createResponseConverter() {
@@ -91,35 +91,37 @@ public <T> Converter<ResponseBody, T> responseBodyConverter(Type type, Annotatio
     return nextResponseBodyConverter(null, type, annotations);
 }
 
- public <T> Converter<ResponseBody, T> nextResponseBodyConverter(
+public <T> Converter<ResponseBody, T> nextResponseBodyConverter(
       @Nullable Converter.Factory skipPast, Type type, Annotation[] annotations) {
-  ...
-    int start = converterFactories.indexOf(skipPast) + 1;
-    for (int i = start, count = converterFactories.size(); i < count; i++) {
-      Converter<ResponseBody, ?> converter =
-          converterFactories.get(i).responseBodyConverter(type, annotations, this);
-      if (converter != null) {
-        //noinspection unchecked
-        return (Converter<ResponseBody, T>) converter;
-      }
+...
+  int start = converterFactories.indexOf(skipPast) + 1;
+  for (int i = start, count = converterFactories.size(); i < count; i++) {
+    //这行代码是关键
+    Converter<ResponseBody, ?> converter =
+        converterFactories.get(i).responseBodyConverter(type, annotations, this);
+    if (converter != null) {
+      return (Converter<ResponseBody, T>) converter;
     }
-  ...
-    throw new IllegalArgumentException(builder.toString());
   }
+...
+  throw new IllegalArgumentException(builder.toString());
+}
 
 ```
 流程就是
 1. 先通过 addConverterFactory()往 converterFactories 中添加Factory
-2. 在调用该接口的时候，第一次缓存中没有，通过ServiceMethod build()方法创建一个，在创建的过程中
-3. 需要设置要通过 createResponseConverter()创建一个 Converter
-4. createCallAdapter()其实就是遍历 callAdapterFactories 这个集合，找到第一个匹配的就直接返回，不再遍历，然后返回。就是改接口要执行的 数据转换的类。遍历结束没找到合适的，就直接跑出异常了。
+2. 在调用该接口的时候，第一次缓存中没有，通过ServiceMethod build()方法创建一个
+3. 在创建的过程中，通过 createResponseConverter()创建一个 Converter
+4. createResponseConverter() 其实就是遍历 converterFactories 这个集合，找到第一个匹配 Converter 直接返回，不再遍历。匹配的依据就是根据 Converter.Factory中的 responseBodyConverter() 这个方法
+5. 遍历结束没找到合适的，就直接抛出异常。
 
-所以，如果我们想要定义某个接口执行其他的数据转换，那么就要通过responseBodyConverter(),返回一个Converter即可，并且是第一个.
+所以，<font color="#ff000" >如果我们想要定义一种新的数据转换的类，分两步。</font>
+1. 继承  Converter.Factory 这个抽象类，然后实现 responseBodyConverter(), 返回一个 Converter
+2. 把这个类添加到 converterFactories 这个集合的首位。
 
-可以先add我们定义的返回原始数据的 Factory，即 RawConverterFactory , 然后在add Json格式的Factory.即 GsonConverterFactory
-
+## 自定义数据转换类
+主要包括三个，RawConverterFactory 和 RawResponseBodyConverter 以及 RawRequestBodyConverter
 ### RawConverterFactory
-
 ```java
 public final class RawConverterFactory extends Converter.Factory {
     public static RawConverterFactory create() {
@@ -159,11 +161,11 @@ public final class RawConverterFactory extends Converter.Factory {
 }
 
 ```
-如果返回的类型是Strig,则认为是需要原始数据，则直接返回一个 RawResponseBodyConverter ，这个RawResponseBodyConverter 是实现Converter的，在convert()中直接返回原始数据。
+* responseBodyConverter() 中进行判断，如果 responseTyp 的类型是Strig,则认为是需要原始数据，则直接返回一个 RawResponseBodyConverter ，
+* 因为请求数据格式是json样式，所以 requestBodyConverter() 实现的和 GsonRequestBodyConverter 类似，如果请求格式改了，例如 xml的话，可以在这里进行处理
 
 ### RawResponseBodyConverter
-
-requestBodyConverter()的转换，还和Json一样，请求数据格式是json样式，如果要是其他样式，可以在这里进行处理
+这个 RawResponseBodyConverter 是 Converter 的实现类，在 convert() 中直接返回原始数据。
 
 ```java
 
@@ -177,16 +179,14 @@ final class RawResponseBodyConverter<T> implements Converter<ResponseBody, T> {
     }
 }
 ```
-因为 RawConverterFactory是首先add的，并且返回的参数是String类型，所以就使用 RawConverterFactory 来进行数据的处理
+因为 RawConverterFactory 是首先add的，并且返回的参数是String类型，所以就使用 RawConverterFactory 来进行数据的处理
 
 ### RawRequestBodyConverter
-
-因为数据请求最终是通过json 串的形式，所以需要把实体类转换成json 串，
-原本可以 使用GsonRequestBodyConverter来处理的，可是谁知道
+这里没有直接使用 GsonRequestBodyConverter 而是重新定义了一个 RawRequestBodyConverter，是因为 GsonRequestBodyConverter 不是public。
 ```java
-final class GsonRequestBodyConverter<T> implements Converter<T, RequestBody> {
+final class GsonRequestBodyConverter<T> implements Converter<T, RequestBody> {}
 ```
-这个类不是public的，所以没办法直接用，只好重新copy 一份。叫 RawRequestBodyConverter。
+不能直接使用。只好重新copy 一份。
 ```java
 final class RawRequestBodyConverter<T> implements Converter<T, RequestBody> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
@@ -212,21 +212,22 @@ final class RawRequestBodyConverter<T> implements Converter<T, RequestBody> {
 }
 
 ```
-这样，当我们定义返回类型是String的时候，就返回的是原始数据，如果是一个其他实体类的话，返回的就是该对象。
+## 使用
+当我们定义返回类型是 String 的时候，就返回的是原始数据，如果是一个其他实体类的话，返回的就是该对象。
 
 ```java
+// 得到 Json 格式数据，最终通过 GsonConverterFactory 来处理
 @Headers("Content-type:application/json")
 @POST("/sinoapi/updatepwd")
 Observable<ModifyPwdResult> updatepwd(@Body ReqModifyPwd ben);  
 
 
+//得到原始数据，最终通过 RawConverterFactory 来处理
 @Multipart
 @POST("/sinoapi/uploadimg")
 Observable<String> updatePic(@PartMap Map<String, RequestBody> requestBodyMap, @Part MultipartBody.Part imgs);
-
 ```
-这样就齐活了，记得先添加 RawConverterFactory这个Factory，再添加GsonConverterFactory 才行。
-
+添加 RawConverterFactory 这个Factory，再添加  。
 ```java
 
 retrofit = new Retrofit.Builder()
@@ -238,6 +239,8 @@ retrofit = new Retrofit.Builder()
     .client(httpClientBuilder.build())
     .build();
 ```
+
+齐活。。。
 
 ---
 搬运地址：    
