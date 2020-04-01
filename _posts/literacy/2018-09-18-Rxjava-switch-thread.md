@@ -173,10 +173,37 @@ hoyouly : subscribe currentThread: main   value:map_map_1
 
 所以可以得出结论<font color="#ff000" > subscribeOn 在 observeOn 之后，不起任何作用。</font>
 
-subscribeOn 是 干不过observeOn了。     
-那 observeOn 自己和自己较劲？如果执行两个 observeOn()的话，那个会有效果呢？
+subscribeOn 是 干不过 observeOn 了。    
 
 ## 试验六
+很多情况下，subscribeOn 之后紧挨着 observeOn，才能做到线程完美切换，可是如果在这两个中间有一个操作符，是按照上游，还是按照下游呢
+
+```java
+Observable
+    .create((ObservableOnSubscribe<Integer>) e -> {
+        Log.d(TAG, "create  currentThread: " + Thread.currentThread().getName());
+        e.onNext(1);
+    })
+    //上游发送事件在IO线程中
+    .subscribeOn(Schedulers.io())
+    .map(integer -> {
+        Log.d("hoyouly", "map :  currentThread " + Thread.currentThread().getName() + "   value:" + integer);
+        return "map_"+integer;
+    })
+    //下游接受事件在主线程中
+    .observeOn(AndroidSchedulers.mainThread())
+    .subscribe(integer -> Log.d(TAG, "subscribe currentThread: " + Thread.currentThread().getName() + "   value:" + integer));
+
+//结果如下
+hoyouly : create  currentThread: RxCachedThreadScheduler-1
+hoyouly : map :  currentThread RxCachedThreadScheduler-1   value:1
+hoyouly : subscribe currentThread: main   value:map_1
+```
+map竟然和create  在同一个线程中执行，看来 observeOn 很高冷啊，没到我的范围内，我就不管。
+
+那 observeOn 自己和自己较劲？如果执行两个 observeOn()的话，那个会有效果呢？
+
+## 试验七
 ```java
 Observable
     .create((ObservableOnSubscribe<Integer>) e -> {
@@ -197,7 +224,7 @@ subscribe 竟然在 RxNewThreadScheduler 线程中，难道 observeOn() 有后�
 还是因为连续执行的缘故啊，继续来下一个试验。
 
 那如果不是连续执行呢，中间有其他操作符，会是怎么一个情形呢？
-## 试验七
+## 试验八
 
 ```java
 Observable
