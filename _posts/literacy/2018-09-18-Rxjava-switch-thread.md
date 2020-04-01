@@ -1,8 +1,8 @@
 ---
 layout: post
-title: 扫盲系列 - 关于 subscribeOn() 和 observeOn() 的几个试验
+title: 扫盲系列 - RxJava 2.0 -- subscribeOn 和 observeOn
 category: 扫盲系列
-tags:  RxJava2.0
+tags:  RxJava 2.0
 ---
 * content
 {:toc}
@@ -269,4 +269,4 @@ map 是在 main 线程中执行的，而subscribe 是在 RxNewThreadScheduler-2 
 
 [RxJava 2.x 使用详解系列](https://maxwell-nc.github.io/)
 
-[给初学者的RxJava2.0教程系列](https://www.jianshu.com/u/c50b715ccaeb)
+[给初学者的RxJava 2.0教程系列](https://www.jianshu.com/u/c50b715ccaeb)
