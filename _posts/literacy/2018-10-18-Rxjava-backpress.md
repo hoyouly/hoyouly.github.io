@@ -2,7 +2,7 @@
 layout: post
 title: 扫盲系列 - RxJava 2.0 -- 背压
 category: 扫盲系列
-tags:  RxJava 2.0
+tags:  RxJava
 ---
 * content
 {:toc}
