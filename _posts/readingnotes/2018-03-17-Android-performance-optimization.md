@@ -41,40 +41,41 @@ description: Android 性能优化
 布局优化的方法
 1. 删除布局中无用的空间和层级
 2. 删除控件中无用的属性
-2. 选择使用性能高较低的ViewGroup，如果LinearLayout和RelativeLayout都可以使用，那么就采用LinearLayout，因为RelativeLayout的功能比较复杂，他的布局过程需要花费更多的CPU时间，但是如果通过一个LinearLayout不能实现，需要嵌套方式完成，建议使用RelativeLayout，因为ViewGroup的嵌套相当于增加了布局的层级，
-3. 采用 include 标签 ，merge 标签和ViewStub 标签,
-   include 主要用于布局的重用，merge一般和include配合使用，可以降低布局层级，ViewStub提供按需加载的功能，
-4. 尽可能少用wrap_content,因为wrap_content 会增加布局measure 时计算的成本，在已知宽高固定的情况下，不适用wrap_content
+2. 选择使用性能高较低的 ViewGroup，如果 LinearLayout 和 RelativeLayout 都可以使用，那么就采用 LinearLayout，因为 RelativeLayout 的功能比较复杂，他的布局过程需要花费更多的 CPU 时间，但是如果通过一个 LinearLayout 不能实现，需要嵌套方式完成，建议使用 RelativeLayout，因为 ViewGroup 的嵌套相当于增加了布局的层级，不过现在都建议使用 ConstraintLayout来替换 RelativeLayout。
+3. 采用 include 标签 ，merge 标签和 ViewStub 标签,
+   include 主要用于布局的重用，merge 一般和 include 配合使用，可以降低布局层级，ViewStub 提供按需加载的功能，
+4. 尽可能少用 wrap_content,因为 wrap_content 会增加布局 measure 时计算的成本，在已知宽高固定的情况下，不适用 wrap_content
 
 
 ### include 标签
 可以将一个指定的布局文件加载到当前布局文件中，
-* 只支持 android：layout_开头的属性，比如android:layout_width， android:layout_height，但是android:background 这样的属性就不支持，android:id是个特例
-* 如果指定了android：layout_开头的属性，那么android:layout_width， android:layout_height 这两个属性必须存在
+* 只支持 android:layout_开头的属性，比如android:layout_width， android:layout_height，但是android:background 这样的属性就不支持，android:id是个特例
+* 如果指定了android:layout_开头的属性，那么android:layout_width， android:layout_height 这两个属性必须存在
 
-### merge标签
-一般和include标签一起使用，如果当前布局是一个竖直方向的LinearLayout，这个时候如果包含的布局文件也是采用竖直方向的LinearLayout，那么显然被包含的布局文件中的LinearLayout是多余的，通过merge标签就可以去掉多有的，
+### merge 标签
+一般和 include 标签一起使用，如果当前布局是一个竖直方向的 LinearLayout，这个时候如果包含的布局文件也是采用竖直方向的 LinearLayout，那么显然被包含的布局文件中的 LinearLayout 是多余的，通过 merge 标签就可以去掉多有的，
 * 必须放在视图的根节点上
-* 不是一个ViewGroup，也不是一个View，相当于声明了一些视图，等待被添加
-* 因为merge标签并不是一个View，所以<span style="border-bottom:1px solid red;"> 通过LayoutInflate.inflate方法渲染的时候， 第二个参数必须指定一个父容器，且第三个参数必须为true，也就是必须为merge下的视图指定一个父亲节点。</span>
-* 因为merge不是View，所以对merge标签设置的所有属性都是无效的
+* 不是一个 ViewGroup，也不是一个 View，相当于声明了一些视图，等待被添加
+* 因为 merge 标签并不是一个View，所以<span style="border-bottom:1px solid red;"> 通过LayoutInflate.inflate方法渲染的时候， 第二个参数必须指定一个父容器，且第三个参数必须为true，也就是必须为merge下的视图指定一个父亲节点。</span>
+* 因为 merge 不是View，所以对merge 标签设置的所有属性都是无效的
 
 #### merge 和 include 的总结
-1. 使用include 标签可以增加布局的复用性，提高效率
-2. 使用merge标签可以减少视图树的节点个数，加快视图的绘制，提高UI的性能
+1. 使用 include 标签可以增加布局的复用性，提高效率
+2. 使用 merge 标签可以减少视图树的节点个数，加快视图的绘制，提高UI的性能
 
 ### ViewStub
-* 继承View，是一个非常轻量级并且宽高都是0，因此本身不参与任何布局和绘制过程
+* 继承 View，是一个非常轻量级并且宽高都是0，因此本身不参与任何布局和绘制过程
 * 存在的意义就是按需加载所需要的布局文件。
 * 在实际开发过程中，很多布局文件在正常情况下是不会显示的，这个时候就没有必要再整个界面初始化的时候加载进来
-* 通过ViewStub就可以做到在使用的时候进行加载，提高程序的初始化的性能
+* 通过 ViewStub 就可以做到在使用的时候进行加载，提高程序的初始化的性能
+
 
 ![Alt text](../../../../images/1465729201927.png)
 
 stub_import 是ViewStub的id，panel_import 是layout_network_error这个布局的根元素的id，如何进行按需加载ViewStub的布局呢，可以有两种方式
 ``` java
 ((ViewStub)findViewById(R.id.stub_import)).setVisibility(View.VISIBLE);
-===
+//或者
 View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 ```
 1. 区别就是inflate()返回的是一个引用布局，从而可以通过findViewById()方法找到对应的控件
@@ -101,7 +102,7 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 ### 名词解释
 * 寄存器： 速度最快的存储场所。因为寄存器处于CPU内部，在程序中无法控制。
 * 栈（Stack）:存放基本类型的数据和对象引用。但对象本身不存放在栈中，而是堆中
-* 堆（Heap）: 存放由new 创建的对象和数组。在堆中分配的内存，由Java虚拟机的GC来管理
+* 堆（Heap）: 存放由 new 创建的对象和数组。在堆中分配的内存，由Java虚拟机的GC来管理
 * 静态存储区域（Static Field）: 在固定的位置存放应用程序运行试一直存在的数据，Java在内存中专门划分了一个静态存储区域来管理一些特殊的数据变量，如静态的数据变量
 * 常量池（Constant Pool）: JVM必须为每一个被装载的类型维护一个常量池。常量池就是该类型所有用到的常量的有序集合，包括直接常量（基本类型，String）和对其他类型，字段和方法的符号引用。
 
@@ -135,7 +136,7 @@ BroadcastRecevier ：10秒
 ### 基础知识
 一张图片Bitmap所占用的内存=图片的长度*图片宽度*一个像素点占用的字节数
 而Bitmap.Config正是单位像素占用的字节数的重要依据
-* ALPHA_8  表示8个alpha位图，即A=8;一个像素点占用一个字节，他没有颜色，只有透明度
+* ALPHA_8  表示8个alpha位图，即A=8，一个像素点占用一个字节，他没有颜色，只有透明度
 * ARGB_4444 表示16位的ARGB位图，即A=4,R=4，G=4,B=4，一个像素点占用4+4+4+4=16个位，即2字节
 * ARGB_8888  表示32位的ARGB位图，即A=8,R=8，G=8,B=，一个像素点占用8+8+8+8=32个位，即4字节
 * RGB_565  表示16位的ARGB位图，即R=5，G=6,B=4，一个像素点占用5+6+4=16个位，即2字节
