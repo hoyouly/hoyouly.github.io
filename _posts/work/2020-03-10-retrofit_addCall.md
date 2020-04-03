@@ -38,7 +38,7 @@ call.execute();
   OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
   return serviceMethod.adapt(okHttpCall);
 ```
-如果没看过，可以参考 [ 源码分析 - Retrofit ](../../../../2018/03/26/Retrofit-Source-Code-Analysis/)
+如果没看过，可以参考 [ 源码分析 - Retrofit ](../../../../../article-detail/2018/03/26/Retrofit-Source-Code-Analysis/)
 
 我们就来看看 serviceMethod.adapt(okHttpCall) 这行代码的奥秘
 
@@ -49,7 +49,7 @@ T adapt(Call<R> call) {
 }
 ```
 这个 callAdapter  是什么时候赋值的吗？ 是在 ServiceMethod.build() 中，有 callAdapter = createCallAdapter() 就是 callAdapter
-详情 可以看 [ 工作填坑 - Retrofit 同时支持对 Json 格式和原始数据 ](../../../../2020/03/09/retrofit_json_rawdata/) 这篇文章
+详情 可以看 [ 工作填坑 - Retrofit 同时支持对 Json 格式和原始数据 ](../../../../../article-detail/2020/03/09/retrofit_json_rawdata/) 这篇文章
 
 接着看  createCallAdapter()
 

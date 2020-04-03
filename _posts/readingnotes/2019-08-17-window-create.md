@@ -92,7 +92,7 @@ mWindow.setWindowManager((WindowManager) context.getSystemService(Context.WINDOW
 3. 应用窗口 : token表示的是activity的mToken(ActivityRecord)
 4. 子窗口 : token表示的是父窗口的W对象，也就是mWindow(IWindow)
 
-![添加图片](../../../../images/attach.png)
+![添加图片](../../../../../article-detail/images/attach.png)
 到这里Window已经创建完成,在Activity启动的时候，通过attach()方法，使用PolicyManager.makeNewWindow(this) 创建一个PhoneWindow。
 #### Activity 显示到Window
 Window创建成功，Activity怎么显示到Window上呢?那就要说到我们经常用到的setContentView()了，
@@ -190,7 +190,7 @@ if (cb != null && !isDestroyed()) {
 ```
 
 来份流程图吧。
-![添加图片](../../../../images/setcontentview.png)
+![添加图片](../../../../../article-detail/images/setcontentview.png)
 
 虽然现在DecorView已经创建并且初始化，Activity的布局文件也添加到DecorView的mContentParent中，但这个时候DecorView还没有被WindowManager正式添加到Window中，而<span style="border-bottom:1px solid red;">真正完成DecorView添加和显示的是在ActivityThread的handleResumeActivity()方法中。
 handleResumeActivity()会先执行Activity的onResume()，然后执行Activity的makeVisible()方法，正是在makeVisible()方法中，DecorView才会被添加到WindowManager中。</span>

@@ -91,7 +91,7 @@ java中的泛型只存在编译时期，运行时，java虚拟机并不知道泛
 * List 和`List<Objec>`中可以添加任何类型的对象，因为所有的类型都是Object的子类，但是List<?> 不可以，虽然他可以指向任何类型的对象，但是不能确定到底是哪种类型，所以不能往里面添加任何对象，但是可以往从里面取对象，取出来的对象都是Object类型
 * 编译器不会对List 进行检查，但是会对List<?> 和`List<Objec>`进行类型检查
 看下图，就能清楚看到   
-![](../../../../images/list_object_comparae.png)
+![](../../../../../article-detail/images/list_object_comparae.png)
 
 
 ### ？和T 的区别

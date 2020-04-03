@@ -7,7 +7,7 @@ tags: ValueAnimator
 * content
 {:toc}
 
-上篇介绍了 [ View动画 ](../../../../2019/07/25/view-animation/)，这篇就主要说 属性动画
+上篇介绍了 [ View动画 ](../../../../../article-detail/2019/07/25/view-animation/)，这篇就主要说 属性动画
 
 ## 属性动画
 
@@ -66,7 +66,7 @@ private void animator(View view) {
 
 属性动画的XML定义在res/animator/下面   
 
-![](../../../../images/set_animator_xml.png)
+![](../../../../../article-detail/images/set_animator_xml.png)
 
 * together 动画集合一起播放，是android:ording 的默认值
 * sequentially  按照前后顺序播放

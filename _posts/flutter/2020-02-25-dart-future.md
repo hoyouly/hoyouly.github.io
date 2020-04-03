@@ -19,7 +19,7 @@ Dart 是单线程的。
 * Event Queue  事件队列，
 * Microtask Queue 微任务队列 ，优先级很高，短时间就完成的异步任务。由scheduleMicroTask 建立，
 
-![](../../../../images/event_loop.png)
+![](../../../../../article-detail/images/event_loop.png)
 
 循环的过程：每一次事件循环，会先去微任务队列中查询，如果队列不为null，则执行微任务队列中的事件，直到为null，才会执行事件队列里面的任务。  
 

@@ -45,7 +45,7 @@ public Builder addConverterFactory(Converter.Factory factory) {
   OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
   return serviceMethod.adapt(okHttpCall);
 ```
-  如果没看过，可以参考 [ 源码分析 - Retrofit ](../../../../2018/03/26/Retrofit-Source-Code-Analysis/)
+  如果没看过，可以参考 [ 源码分析 - Retrofit ](../../../../../article-detail/2018/03/26/Retrofit-Source-Code-Analysis/)
 
 这三行代码，我们先看 loadServiceMethod()
 
@@ -64,7 +64,7 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
     return result;
   }
 ```
-因为首次调用该接口的时候，serviceMethodCache 没有该方法，所以会执行到build()方法,创建一个，然后添加到serviceMethodCache里面。[ Retrofit 中对 addCallAdapterFactory() 的理解 ](../../../../2020/03/10/retrofit_addCall/)
+因为首次调用该接口的时候，serviceMethodCache 没有该方法，所以会执行到build()方法,创建一个，然后添加到serviceMethodCache里面。[ Retrofit 中对 addCallAdapterFactory() 的理解 ](../../../../../article-detail/2020/03/10/retrofit_addCall/)
 我们继续查看 build()方法
 
 ```java

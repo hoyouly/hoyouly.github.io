@@ -10,10 +10,10 @@ tags:  Android ClassLoader
 
 
 ## java 中的classloader
-![Alt text](../../../../images/java_classloader.png)
+![Alt text](../../../../../article-detail/images/java_classloader.png)
 
 类加载流程
-![Alt text](../../../../images/class_Loader_loding.png)
+![Alt text](../../../../../article-detail/images/class_Loader_loding.png)
 
 ## Android 中的classloader
 
@@ -30,7 +30,7 @@ tags:  Android ClassLoader
 这些最终都继承自 java.lang.ClasssLoader
 
 关系图如下：
-![Android 平台的ClassLoader](../../../../images/android_classloader.png)
+![Android 平台的ClassLoader](../../../../../article-detail/images/android_classloader.png)
 
 app 中至少需要 BootClassLoader 和 PathClassLoader 才能运行
 
@@ -211,7 +211,7 @@ protected Class<?> loadClass(String className, boolean resolve) throws ClassNotF
 ```
 流程图如下：
 
-![Alt text](../../../../images/loadclass.png)
+![Alt text](../../../../../article-detail/images/loadclass.png)
 
 如图，当前 classloader 是否加载过当前类，如果加载过，就直接返回，如果没有加载过，则看父类有没有加载过，如果加载过，则直接返回，如果都没加载过，则子classloader调用 findClass()真正加载类
 

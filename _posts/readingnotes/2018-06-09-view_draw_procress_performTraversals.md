@@ -101,12 +101,12 @@ void doTraversal() {
 ### 总结  
 **ViewRootImpl在其创建过程中，通过requestLayout向主线程发送了一条触发遍历操作的消息，遍历操作是perforTraversals()方法，这是一个包罗万象的方法，ViewRootImpl中接收到的各种变化，如来自WMS的窗口属性变化，来自控件树的尺寸变化以及重绘都引发performTraversals()的调用，并在其中处理完成，View类及其子类中的onMeasure()、onLayout()、onDraw()等回调也都是在performTraversals()的执行过程中直接或间接的引发。也正是如此，一次次的performTraversals()调用驱动着控件树有条不紊的工作，一旦此方法无法正常执行，整个控件树都将处于僵死状态。<span style="border-bottom:1px solid red;">因此 performTraversals() 函数可以说是ViewRootImpl的心脏。</span>**   
 流程图如下  
-![添加图片](../../../../images/ViewRootImpl_setView.png)
+![添加图片](../../../../../article-detail/images/ViewRootImpl_setView.png)
 
 ## ViewRootImpl # performTraversals()
 
 performTraversals()首次绘制的大致流程，会依次调用performMeasure()，performLayout()，performDraw()三个方法，这三个方法分别完成顶级View的measure，layout和draw这三大流程。如下图。
-![performTraversals()流程图](../../../../images/performTraversals.png)
+![performTraversals()流程图](../../../../../article-detail/images/performTraversals.png)
 ### performMeasure()
 调用measure方法，在measure方法中又会调用onMeasure方法，在onMeasure方法中则会对所有的子元素进行measure过程，这个时候measure流程就从父容器传到子元素中了，这样就完成了一次measure过程。接着子View又会重复父容器的操作，如此往复，就完成了View的遍历。<span style="border-bottom:1px solid red;">Measure 决定了View的宽和高。 Measure完成以后，可以通过getMeasuredWidth和getMeasureHeight方法来获取到View测量后的宽高。</span>
 ### performLayout()
@@ -115,7 +115,7 @@ performTraversals()首次绘制的大致流程，会依次调用performMeasure()
 和performMeasure同理，唯一不同的是，performDraw()的传递过程是在draw()方法中通过dispatchDraw()来实现的。<span style="border-bottom:1px solid red;">Draw过程则决定了View的显示，只有draw方法完成以后View的内容才能呈现在屏幕上。</span>
 
 再贴一份更详细的流程图
-![performTraversals()流程图](../../../../images/performTraversals_1.png)
+![performTraversals()流程图](../../../../../article-detail/images/performTraversals_1.png)
 
 下面是源码
 ```java
@@ -162,10 +162,10 @@ private void performTraversals() {
 后面会详细讲这三大流程。
 perforMeasure() 是经由measureHierarchy() 调用的.这个会在下一篇讲
 
-[View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
-[View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
-[View 的绘制 - Layout 流程](../../../../2018/06/20/view_draw_procress_layout/)   
-[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
+[View 的绘制 - 概览](../../../../../article-detail/2018/06/09/view_draw_procress_performTraversals/)   
+[View 的绘制 - Measure 流程](../../../../../article-detail/2018/06/12/view_draw_procress_measure/)   
+[View 的绘制 - Layout 流程](../../../../../article-detail/2018/06/20/view_draw_procress_layout/)   
+[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../../article-detail/2018/06/29/view_draw_procress_draw/)
 ---
 搬运地址：    
 

@@ -262,7 +262,7 @@ ActivityRecord(ActivityManagerService _service ...) {
 ### TaskRecord
 Activity栈，内部维护一个`ArrayList<ActivityRecord>`。
 
-App启动一个Activity，会不会新建一个TaskRecord取决于launchMode，launchMode 详情查看 [Activity 的生命周期和启动模式](../../../../2018/03/17/Activity-lifecycle-task)。  默认的standard模式不会创建新的TaskRecord
+App启动一个Activity，会不会新建一个TaskRecord取决于launchMode，launchMode 详情查看 [Activity 的生命周期和启动模式](../../../../../article-detail/2018/03/17/Activity-lifecycle-task)。  默认的standard模式不会创建新的TaskRecord
 ### ActivityStack
 并不是一个Activity栈，真正意义上的Activity栈是TaskRecord。
 
@@ -282,13 +282,13 @@ App启动一个Activity，会不会新建一个TaskRecord取决于launchMode，l
 * 一个应用程序中只有一个 Instrumentation 对象
 * ActivityStack中会保存有要启动的Activity的信息，即ActivityRecord，
 
-![Alt text](../../../../images/activityrecord.png)
+![Alt text](../../../../../article-detail/images/activityrecord.png)
 
 ## Activity 工作流程
 #### Activity # startActivity()
 这一次不贴代码了，只看图。
 先来一张流程图：
-![Alt text](../../../../images/startActivity.png)
+![Alt text](../../../../../article-detail/images/startActivity.png)
 
 我们需要记住以下几点即可
 1. startActivity()有好几种重载，最终调用到了startActivityForResult()。然后执行到了 Instrumentation.execStartActivity()。
@@ -306,7 +306,7 @@ ApplicationThread.schedule***Activity()
 
 #### ApplicationThread # schedulePauseActivity()
 流程图走起
-![Alt text](../../../../images/schedulePauseActivity.png)
+![Alt text](../../../../../article-detail/images/schedulePauseActivity.png)
 
 用箭头表示就是如下：
 ```java
@@ -319,7 +319,7 @@ ApplicationThread # schedulePauseActivity()
 注意是先执行 onOnSaveInstanceState(),在执行 onPause()
 #### ApplicationThread # scheduleLaunchActivity()
 流程图如下
-![Alt text](../../../../images/scheduleLaunchActivity.png)
+![Alt text](../../../../../article-detail/images/scheduleLaunchActivity.png)
 用箭头表示就是如下：
 
 ```java
@@ -334,7 +334,7 @@ performLaunchActivity() 和 performResumeActivity()后面会详细说
 
 接下来我们先看performLaunchActivity()的流程
 #### ActivityThread # performLaunchActivity()
-![Alt text](../../../../images/performLunchActivity.png)
+![Alt text](../../../../../article-detail/images/performLunchActivity.png)
 可以猜出来，这里面会执行通过 Instrument 执行 Activity的onCreat(),onStart()方法
 
 但是我们没想到的是
@@ -366,7 +366,7 @@ perforResumeActivity()
 ```
 
 然而事实是：
-![Alt text](../../../../images/handleResumeActivity.png)
+![Alt text](../../../../../article-detail/images/handleResumeActivity.png)
 意外的点：
 1. 竟然是<span style="border-bottom:1px solid red;"> Activity.preformOnResume()-> Instrument.callActivityOnResume()-> Activity.onResume()</span>,又不按照套路出牌啊。为毛线啊？没想明白
 2. 执行 ApplicationThread 的scheduleStopActivity(),这里面我们就不详说了，肯定发送消息通知ActivityThread，然后执行Activity的perforStopActivity(),最后通过Instrument 执行上一个Activity的onStop()方法，不过这也符合整个生命周期跳转流程
@@ -375,7 +375,7 @@ perforResumeActivity()
 这里面还有一个没说到，就是如果是首次启动某个应用，那么这个进程都不存在，又进行了什么操作呢？
 将会通过AMS.startProcessLocked()创建一个进程，里面的操作就是就是通过socket发送消息给zygote,zygote将派生出一个子进程，
 子进程将通过反射调用ActivityThread的main()。具体的流程图如下
-![Alt text](../../../../images/startProcessLocked.png)
+![Alt text](../../../../../article-detail/images/startProcessLocked.png)
 
 通过反射调用了ActivityThread.main()方法，main()方法开始执行，
 * 创建Looper对象，
@@ -386,13 +386,13 @@ perforResumeActivity()
 
 ### AMS # attachApplicationLocked()
 流程图如下
-![Alt text](../../../../images/attachApplicationLocked.png)
+![Alt text](../../../../../article-detail/images/attachApplicationLocked.png)
 注意两点即可
 1. 通过ApplicationThread的bindApplication()方法 绑定Application ，还是通过发送handler消息，执行到ActivityThread中的handleApplication(),这个才是重点
 2. 创建Application之后，这样Application就启动了，就可以启动Activity，执行了ActivityStackSupervisor的attachApplicationLocked(app)，它会调用realStartActivityLocked(),这就到了上面那个流程图里面了
 
 ### ActivityThread # handleApplication()
-![Alt text](../../../../images/handleBindApplication.png)
+![Alt text](../../../../../article-detail/images/handleBindApplication.png)
 重点：
 1. 使用类加载器创建Instrument对象，handleApplication()只在进程创建的时候调用一次，一个应用中也只有一个Instrument对象。
 2. ContentProvider 的onCreate()比Application 的onCreat()执行的更早

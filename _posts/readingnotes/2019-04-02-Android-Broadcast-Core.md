@@ -8,7 +8,7 @@ tags: Android开发艺术探索   Broadcast
 {:toc}
 ## 类名解释
 ### AMS
-详情参照 [Android 四大组件之 Activity](../../../../2019/03/15/Android-Activity-Core/)
+详情参照 [Android 四大组件之 Activity](../../../../../article-detail/2019/03/15/Android-Activity-Core/)
 
 ### ReceiverDispatcher
 广播分发者,同时保留 BroadcastReceiver 和 InnerReceiver.
@@ -17,7 +17,7 @@ tags: Android开发艺术探索   Broadcast
 InnerReceiver 继承于IIntentReceiver.Stub。
 
 IIntentReceiver是一个Binder接口,所以InnerReceiver 是一个Binde类，可以用于用于Binder IPC通信如下图，
-![Alt text](../../../../images/broadcast_1.png)
+![Alt text](../../../../../article-detail/images/broadcast_1.png)
 
 ### BroadcastRecord
 
@@ -156,23 +156,23 @@ public Intent registerReceiver(IApplicationThread caller, String callerPackage,
 
 
 来份简单的流程图
-![Alt text](../../../../images/regeistreciver.png)
+![Alt text](../../../../../article-detail/images/regeistreciver.png)
 
 ### sendBroadcast()
 
 我们知道，注册广播方式有以上三种：
 * 发送普通广播/无序广播 Context.sendBroadcast()
-![Alt text](../../../../images/sendbroadcast.png)
+![Alt text](../../../../../article-detail/images/sendbroadcast.png)
 
 * 发送有序广播 Context.sendOrderedBroadcast()
-![Alt text](../../../../images/sendorderBroadcast.png)
+![Alt text](../../../../../article-detail/images/sendorderBroadcast.png)
 
 * 发送粘性广播 Context.sendStickyBroadcast()
-![Alt text](../../../../images/sendStickyBroadcast.png)
+![Alt text](../../../../../article-detail/images/sendStickyBroadcast.png)
 
 这三种方式的实现都是在ContextImpl这个类中，查看源码可知，这三种注册方式最终都是调用了ActivityManagerNative.getDefault().broadcastIntent()这个方法，如上图，注意我红框里面的
 从上图可知，唯一不同的就是红框中的，serialized和sticky来共同决定是普通广播，有序广播，还是Sticky广播，而这两个boolean值就可以表示三种类型的广播,具体如下表格
-![Alt text](../../../../images/broadcast_2.png)
+![Alt text](../../../../../article-detail/images/broadcast_2.png)
 
 #### AMS #broadcastIntent()
 ```java
@@ -362,7 +362,7 @@ final class Args extends BroadcastReceiver.PendingResult implements Runnable {
 4. 所以就通过post 一个Runnable对象Args 切换到主线程。然后执行 BroadcastRecord.onRecive()
 
 在LoadedApk.ReceiverDispatcher # performReceive()，还有要finish的，如下图
-![Alt text](../../../../images/performreceive.png)
+![Alt text](../../../../../article-detail/images/performreceive.png)
 
 流程如下
 
@@ -378,7 +378,7 @@ args.sendFinished(mgr) ->AMS.finishReceiver() -> BroadcastQueue.processNextBroad
 ```
 这个流程图如下
 
-![Alt text](../../../../images/sendbroadcast_2.png)
+![Alt text](../../../../../article-detail/images/sendbroadcast_2.png)
 
 
 

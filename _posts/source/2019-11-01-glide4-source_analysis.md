@@ -54,7 +54,7 @@ public static GlideRequests with(@NonNull Activity activity) {
 }
 ```
 
-在 [ 源码分析 - Glide4 之 概况 ](../../../../2019/07/10/glide4/)中我们知道，Glide 加载流程是
+在 [ 源码分析 - Glide4 之 概况 ](../../../../../article-detail/2019/07/10/glide4/)中我们知道，Glide 加载流程是
 
 ```
 model(数据源)-->data(转换数据)-->decode(解码)-->transformed(缩放)-->transcoded(转码)-->encoded(编码保存到本地)
@@ -222,7 +222,7 @@ public RequestManager get(@NonNull Context context) {
 2. 当传入的不是 Application对象的时候，就会执行相应的方法，但是这三个方法都最终执行到了`fragmentGet(activity, fm,  null, isActivityVisible(activity));或者 supportFragmentGet(activity, fm,  null, isActivityVisible(activity))`
 3. 如果是在子线程中，默认就当Application处理
 
-![](../../../../images/glide_requestmanagerretriever_get.png)
+![](../../../../../article-detail/images/glide_requestmanagerretriever_get.png)
 
 如图，get()最终都会执行到fragmentGet（）和supportFragmentGet（）这两个方法中。
 那么就看看这两个方法的区别啊
@@ -282,13 +282,13 @@ public RequestBuilder<Drawable> load(@Nullable String string) {
 isModelSet 设置为true ,这个变量在into()中还会用到，如果没有先执行load()，直接使用into(),那么就会报错。
 load()有很多重载方法，但是最后都是执行到了loadGeneric()中
 
-![](../../../../images/glide_load.png)
+![](../../../../../article-detail/images/glide_load.png)
 
 这就是Glide 流程的第一步，把 资源转换成一个model
 
 load()返回的是 RequestBuilder 对象，所以第三步 就是查看 RequestBuilder的into()方法
 
-详情查看  承接上文 [ 源码分析 - Glide4 之 into() ](../../../../2019/11/01/glide4-source_analysis_2/)
+详情查看  承接上文 [ 源码分析 - Glide4 之 into() ](../../../../../article-detail/2019/11/01/glide4-source_analysis_2/)
 
 
 ---

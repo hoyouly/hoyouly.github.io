@@ -11,25 +11,25 @@ tags: GitHub  图床
 
 在自己的 blog 文件夹目录下面新建一个专门用来存放图片的文件夹，例如就叫 images
 如下图
-![](../../../../images/github_image_1.png)
+![](../../../../../article-detail/images/github_image_1.png)
 放入的图片怎么引用呢？
 
 查看 `_site` 这个文件夹下面，就会出现一个 images 文件夹。
 如下图
-![](../../../../images/github_image_2.png)
+![](../../../../../article-detail/images/github_image_2.png)
 而写 blog 一般都是以一个日期开头的，例如我这篇blog 文件名 是 `2018-11-12-goodbye-qiniu.md`。 那么生成网页的文件路径就是：  `2018/11/12/goodbye-qiniu/index.html`
-![](../../../../images/github_image_3.png)
+![](../../../../../article-detail/images/github_image_3.png)
 index.html 后退四次，即  ‘../../../../’ 就和 images 文件夹 在同一个目录了。
 
 所以添加一张图片，只需要
 <font color="#ff000" >
-![](../../../../images/图片名)<br>
-![](../../../../images/图片名)<br>
-![](../../../../images/图片名)<br><br>
+![](../../../../../article-detail/images/图片名)<br>
+![](../../../../../article-detail/images/图片名)<br>
+![](../../../../../article-detail/images/图片名)<br><br>
 </font>
 重要的事情说三遍。 这样就行了
 例如上面三张，包括下面这张，都是使用这中格式添加图片。
-![](../../../../images/github_image_4.png)
+![](../../../../../article-detail/images/github_image_4.png)
 
 
 这样在本地预览的时候，查看图片地址 `http://localhost:4000/images/github_image.png`，加载的是本地图片。

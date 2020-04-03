@@ -26,7 +26,7 @@ MVC就是 Model（模型）-View（视图）-Controller（控制器）的缩写�
 * V 层 处理界面显示结果
 * C 层 起到桥梁作用，用来控制V 层和M 层通信已达到分离视图显示和业务逻辑层。
 
-![](../../../../images/mvc.png)  
+![](../../../../../article-detail/images/mvc.png)  
 
 原理就是：当用户出发事件的时候，View层会发送指令到Controller层，接着Controller去通知Model层更新数据，Model层更新完数据以后直接显示在view层上，这就是MVC的工作原理。
 所有通信都是单项的。
@@ -52,7 +52,7 @@ MVP  Model（模型）-View（视图）-Presenter（主持人）是从MVC演变�
 
 其核心就是 通过一个抽象的View接口（不是真正的View层）将Presenter与真正的View进行解耦。Presenter持有该View接口，对该接口进行操作，而不是直接操作View层，这样就可以把视图操作和业务逻辑解耦，从而让Activity称为真正的View层。
 
-![](../../../../images/mvp.png)
+![](../../../../../article-detail/images/mvp.png)
 ## MVP和MVC区别
 1. 各部分之间的通信都是双向的，但是MVC却是单项的。
 2. View与Model不发生通信，都是通过Presenter传递，但是MVC中View是可以直接和Model通信的
@@ -110,7 +110,7 @@ Model（模型）-View（视图）-ViewModle(),这个ViewModel可以理解为Vie
 
 MVVM 利用数据绑定（Data Binding） ,依赖属性（Dependency Property）,命令（Command），路由事件（Routed Event） 等新特性，打造一个更加灵活高效的架构
 
-![](../../../../images/mvvm.png)
+![](../../../../../article-detail/images/mvvm.png)
 
 采用双向绑定(Data Binding) ,View的变动，自动反映在ViewModel，反之依然，
 这种模式的关键就是 Data Binding，就是数据绑定，View的变换直接影响ViewModel，ViewModel的变换或者内容也会体现在View上，这种模式实际上就是框架应用开发者做了一些工作，开发者只需要少量的代码就能实现比较复杂的交互。

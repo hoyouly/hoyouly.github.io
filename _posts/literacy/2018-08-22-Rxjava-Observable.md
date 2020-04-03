@@ -88,7 +88,7 @@ D hoyouly : subscribe:onComplete
   如上所示，onNext 2 之后，调用了dispose，下游就收不到数据了，但是上游却还在发送数据。
 
 subscribe() 有很多重载方法
-![](../../../../images/observer_subscribe.png)
+![](../../../../../article-detail/images/observer_subscribe.png)
 
 这里面看到了又是 Action，又是 Consumer ，这两个区别，和 Observer 又是啥关系呢？
 
@@ -137,7 +137,7 @@ flowable.subscribe(new Consumer<String>() {
 这里就使用了 Consumer 和 Action，其实里面还是把这四个封装成了一个 Subscriber 对象，使用 Consumer 和 Action只不过是简化观察者而已。
 
 同理，subscribe() 有多重重载方法，如下
-![](../../../../images/flower_subscribe.png)
+![](../../../../../article-detail/images/flower_subscribe.png)
 
 ### 五种背压策略
 Flowable 支持背压，默认的背压策略是128。所以Flowable 的create()比 Observable 的多了一个参数，BackpressureStrategy.BUFFER，看着像是背压策略，一共有五种。

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 源码分析 - OkHttp 
+title: 源码分析 - OkHttp
 category: 源码分析
 tags: Android OkHttp
 ---
@@ -21,7 +21,7 @@ tags: Android OkHttp
 
 so easy
 
-OkHttp 的使用请参考 [扫盲系列 - OkHttp 基本用法](../../../../2018/03/25/OkHttp/)
+OkHttp 的使用请参考 [扫盲系列 - OkHttp 基本用法](../../../../../article-detail/2018/03/25/OkHttp/)
 
 以下是OKHTTP一个常见异步用法实例
 
@@ -55,7 +55,7 @@ okHttpClient.newCall(request).enqueue(new Callback() {
 
 这比把大象放入冰箱多了一步，就是找冰箱的过程。整体的流程图如下
 
-![](../../../../images/okhttp_liuchengtu.webp)
+![](../../../../../article-detail/images/okhttp_liuchengtu.webp)
 
 接下来就一步一步说
 
@@ -98,13 +98,13 @@ public Builder() {
 ```
 这些都是默认的，几乎都和OkHttp有关。可以通过build模式进行修改。如下就是对OkHttp的一些修改接口
 
-![](../../../../images/okhttp_build.png)
+![](../../../../../article-detail/images/okhttp_build.png)
 
 OkHttpClient 创建完成。接下来就是创建Request 对象
 
 ## 创建 Request 对象。
 这个和OkhttpClient差不多的，同样是通过Build模式，创建一个Request，里面设置了URL，还可以设置其他一些属性的，例如
-![](../../../../images/request_build.png)
+![](../../../../../article-detail/images/request_build.png)
 这个就不多讲了，
 接下来就看发送Request
 
@@ -222,7 +222,7 @@ public synchronized ExecutorService executorService() {
 
 AsyncCall  是RealCall的一个内部类，持有RealCall的引用，是对RealCall进行了封装
 
-ExecutorService 是一个核心线程数为0的线程池，其实就是 一个 CachedTheadPool类型的线程池，关于线程池的知识，可以查看  [ Android 线程池 ](../../../../2018/05/12/Android-ThreadPoolExecutor/)
+ExecutorService 是一个核心线程数为0的线程池，其实就是 一个 CachedTheadPool类型的线程池，关于线程池的知识，可以查看  [ Android 线程池 ](../../../../../article-detail/2018/05/12/Android-ThreadPoolExecutor/)
 
 在Dispatcher 中会根据情况，把Call加入请求队列还是等待队列，在请求队列中，就会在线程池中执行这个请求。
 
