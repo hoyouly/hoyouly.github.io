@@ -19,25 +19,13 @@ description: Android 性能优化
 
 ## 选择合适的布局类型
 
-简单界面 使用 LinearLayout 和 FrameLayout
-复杂界面 使用 ConstraintLayout，
+简单界面 使用 LinearLayout 和 FrameLayout   
+复杂界面 使用 ConstraintLayout
 
 LinearLayout 和 FrameLayout 能搞定的就使用这两个，
 如果需要嵌套 才能实现，那就使用 ConstraintLayout，而不是 RelativeLayout，因为 ConstraintLayout 的性能比 RelativeLayout 更好。
 
-
-
-## 布局嵌套
-1. 使用include+merge 标签
-2. 使用ViewStub标签
-3. 复杂界面考虑使用ConstrainLayout
-
-
-## 布局优化
-思想很简单，
-
-
-布局优化的方法
+## 减少布局文件层级
 1. 删除布局中无用的空间和层级
 2. 删除控件中无用的属性
 2. 选择使用性能高较低的 ViewGroup，如果 LinearLayout 和 RelativeLayout 都可以使用，那么就采用 LinearLayout，因为 RelativeLayout 的功能比较复杂，他的布局过程需要花费更多的 CPU 时间，但是如果通过一个 LinearLayout 不能实现，需要嵌套方式完成，建议使用 RelativeLayout，因为 ViewGroup 的嵌套相当于增加了布局的层级，不过现在都建议使用 ConstraintLayout来替换 RelativeLayout。
@@ -69,7 +57,7 @@ LinearLayout 和 FrameLayout 能搞定的就使用这两个，
 * 通过 ViewStub 就可以做到在使用的时候进行加载，提高程序的初始化的性能
 
 
-![Alt text](../../../../../article-detail/../images/1465729201927.png)
+![Alt text](../../../../../article-detail/images/1465729201927.png)
 
 stub_import 是ViewStub的id，panel_import 是layout_network_error这个布局的根元素的id，如何进行按需加载ViewStub的布局呢，可以有两种方式
 ``` java
@@ -78,18 +66,22 @@ stub_import 是ViewStub的id，panel_import 是layout_network_error这个布局�
 View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 ```
 1. 区别就是inflate()返回的是一个引用布局，从而可以通过findViewById()方法找到对应的控件
-2. 当ViewStub通过setVisibility()或者inflate()方法加载后，ViewStub就会被它内部的布局替换掉，这个时候ViewStub就不在是整个布局的结构的一部分了，所以再次调用inflate()就会报错。
-3. 目前不支持merge标签
+2. 当ViewStub 通过 setVisibility() 或者 inflate() 方法加载后，ViewStub 就会被它内部的布局替换掉，这个时候 ViewStub 就不在是整个布局的结构的一部分了，所以再次调用 inflate() 就会报错。
+3. 目前不支持 merge 标签
 
-### 常用的工具
+## 常用的工具
 
 1. 可以通过<font color="#ff000" >Hierarchy Viewer</font>查看布局的嵌套情况。 使用 [View Server](https://github.com/romainguy/ViewServer) 可以在普通的手机上使用 Hierarchy Viewer
+    注： Android Studio 3.1 或更高版本中，Hierarchy Viewer 已经被废弃，推荐在运行时使用 Layout Inspector 来检查应用程序的视图层次结构。
 2. 在开发者选项中的<font color="#ff000" >GPU过度可视化工具</font>，查看界面渲染情况，
 3. 可以使用<font color="#ff000" > Layout Inspector </font>辅助分析。捕捉当前页面快照。生成一个.li文件，通过AndroidStudio查看页面视图层次结构
+    打开布局检测器  
+    点击 Tools > Android > Layout Inspector。在出现的 Choose Process 对话框中，选择想要检查的应用进程，然后点击 OK。
 4. 使用<font color="#ff000" >Profile GPU Rendering </font>也是在开发者选项中打开。打开后的界面如下
-    ![Alt text](../../../../../article-detail/../images/carsetting_1.png)
+    ![Alt text](../../../../../article-detail/images/carsetting_1.png)
    各个颜色的意思
-    ![Alt text](../../../../../article-detail/../images/carsetting_2.png)
+    ![Alt text](../../../../../article-detail/images/carsetting_2.png)
+5. Lint 是 Android Studio 提供的一款代码扫描分析工具，可以扫描、发现代码结构和质量问题并提供解决方案。    
 
 
 ---   
