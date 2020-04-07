@@ -63,30 +63,7 @@ BroadcastRecevier ：10秒
 
 ## Bitmap
 
-### 基础知识
-一张图片Bitmap所占用的内存=图片的长度*图片宽度*一个像素点占用的字节数
-而Bitmap.Config正是单位像素占用的字节数的重要依据
-* ALPHA_8  表示8个alpha位图，即A=8，一个像素点占用一个字节，他没有颜色，只有透明度
-* ARGB_4444 表示16位的ARGB位图，即A=4,R=4，G=4,B=4，一个像素点占用4+4+4+4=16个位，即2字节
-* ARGB_8888  表示32位的ARGB位图，即A=8,R=8，G=8,B=，一个像素点占用8+8+8+8=32个位，即4字节
-* RGB_565  表示16位的ARGB位图，即R=5，G=6,B=4，一个像素点占用5+6+4=16个位，即2字节
-
-其中 A 表示透明度，R表示红色，G表示绿色，B表示蓝色
-如果以一个100*100 像素的图片计算所占用内存大小
-
-|Bitmap.Config|单位像素占用的字节数|分辨率100*100的图片所占用内存大小|
-|:----|:------:|:------|
-|ALPHA_8|1|100x100x1=10000B~=9.77KB|
-|ARGB_4444|2|100x100x2=20000B~=19.53KB|
-|ARGB_8888|4|100x100x4=40000B~=39.06KB||
-|RGB_565|2|100x100x2=20000B~=19.53KB|
-
-### 优化策略
-1. Bitmap.Config的配置  质量压缩
-2. 使用inJustDecoeBounds与判断Bitmap的大小以及使用inSampleSize进行压缩，边界压缩
-3. 对Density>240的设备进行Bitmap适配(缩放Densty)
-4. Bitmap的回收
-5. 使用libjepg.so库进行压缩
+详情： [ Android 性能优化 -- Bitmap 优化 ](../../../../../article-detail/2018/07/27/Android-performance-optimization-bitmap/)
 
 ## 线程优化
 采用线程池。
