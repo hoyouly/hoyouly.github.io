@@ -25,7 +25,7 @@ description: Android 性能优化
 
 加载资源图片的流程
 
-![添加图片](../../../../../article-detail/images/drawable_image.png)
+![添加图片](../../../../images/drawable_image.png)
 
 自己的设备的dpi
 ```java
@@ -62,12 +62,12 @@ Bitmap.Config正是单位像素占用的字节数的重要依据
 
 一张 1920 X 1080 放入不同的 mipmap 文件下面，
 
-<img src="../../../../../article-detail/images/mipmap_mdpi.png" alt="mipmap_mdpi" width="200" height="300" align="left" />
-<img src="../../../../../article-detail/images/mipmap_xhdpi.png" alt="mipmap_xhdpi" width="200" height="300" align="right" />
-<img src="../../../../../article-detail/images/mipmap_hdpi.png" alt="mipmap_hdpi" width="200" height="300" align="center" />
-<img src="../../../../../article-detail/images/mipmap_xxhdpi.png" alt="mipmap_xxhdpi" width="200" height="300" align="left" />
-<img src="../../../../../article-detail/images/mipmap_nohdpi.png" alt="mipmap_nohdpi" width="200" height="300" align="right" />
-<img src="../../../../../article-detail/images/mipmap_xxxhdpi.png" alt="mipmap_xxxhdpi" width="200" height="300" align="center" />
+<img src="../../../../images/mipmap_mdpi.png" alt="mipmap_mdpi" width="200" height="300" align="left" />
+<img src="../../../../images/mipmap_xhdpi.png" alt="mipmap_xhdpi" width="200" height="300" align="right" />
+<img src="../../../../images/mipmap_hdpi.png" alt="mipmap_hdpi" width="200" height="300" align="center" />
+<img src="../../../../images/mipmap_xxhdpi.png" alt="mipmap_xxhdpi" width="200" height="300" align="left" />
+<img src="../../../../images/mipmap_nohdpi.png" alt="mipmap_nohdpi" width="200" height="300" align="right" />
+<img src="../../../../images/mipmap_xxxhdpi.png" alt="mipmap_xxxhdpi" width="200" height="300" align="center" />
 
 
 由上可知:

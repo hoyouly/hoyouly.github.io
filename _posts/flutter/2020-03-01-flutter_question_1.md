@@ -9,7 +9,7 @@ tags: FlutterPluginRegistry FlutterEngine
 
 学习 Android 项目中混合 Flutter项目，参考的是[Flutter学习小计：Android原生项目引入Flutter](https://www.jianshu.com/p/7b6522e3e8f1),  
 不知道为啥，一直就报  FlutterPluginRegistry 无法转换为 FlutterEngine 这个错误，如下图所示
-![添加图片](../../../../../article-detail/images/flutter_quesioint_one.jpg)
+![添加图片](../../../../images/flutter_quesioint_one.jpg)
 感觉和版本有关，可是又不知道为啥。
 flutter 的版本如下
 ```

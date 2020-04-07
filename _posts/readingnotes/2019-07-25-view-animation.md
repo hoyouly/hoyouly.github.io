@@ -11,7 +11,7 @@ Android 动画分三种
 * 帧动画  属于View动画的一种，只不过他和平移，旋转等常见的View动画表现形式略有不同。通过顺序播放一系列图像从而产生动画效果，可以简单的理解为图片的切换动画，如果图片过大，可能导致OOM
 * 属性动画 通过动态改变对象的属性从而达到动画效果，API11 新特性，低版本可以使用兼容库
 
-这篇主要介绍 View 动画，下篇介绍 [ View 属性动画 ](../../../../../article-detail/2019/07/27/view-animator/)
+这篇主要介绍 View 动画，下篇介绍 [ View 属性动画 ](../../../../2019/07/27/view-animator/)
 
 # View 动画
 支持四种效果，平移动画，旋转动画，缩放动画和透明度动画，分别对应四个类，TranslateAnimation，RotateAnimation， ScaleAnimation，AlphaAnimation
@@ -26,7 +26,7 @@ Android 动画分三种
 
 使用View动画，创建创建XML文件，路径res/anim/filename.xml  
 View 动画的固定语法,既可以是单个动画，也可以是组合动画，
-![](../../../../../article-detail/images/animation_all.png)
+![](../../../../images/animation_all.png)
 
 这里面就使用到了 set 标签，translate 标签，alpa 标签 ，scale 标签，rotate 标签
 ## 常用的动画标签

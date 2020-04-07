@@ -55,7 +55,7 @@ public void draw(Canvas canvas) {
 }
 ```
 流程图如下：   
-![Alt text](../../../../../article-detail/images/draw.png)
+![Alt text](../../../../images/draw.png)
 里面注释很详细，流程图也有，就不多解释了。但是里面涉及两个新名词。脏区域和实心控件，这个需要解释一下
 
 ## View的脏区域和实心控件
@@ -327,7 +327,7 @@ private void draw(boolean fullRedrawNeeded) {
 ```
 
 整个流程图如下
-![Alt text](../../../../../article-detail/images/invalidate.png)
+![Alt text](../../../../images/invalidate.png)
 
 
 ## invalidate()  和 postInvalidate 区别
@@ -399,13 +399,13 @@ public void requestLayout() {
 ```
 看完代码我们就知道了，如果layout布局有变化，那么也会调用invalidate（）重绘的。
 整个流程图如下：
-![Alt text](../../../../../article-detail/images/layout.png)
+![Alt text](../../../../images/layout.png)
 
 
-[View 的绘制 - 概览](../../../../../article-detail/2018/06/09/view_draw_procress_performTraversals/)   
-[View 的绘制 - Measure 流程](../../../../../article-detail/2018/06/12/view_draw_procress_measure/)   
-[View 的绘制 - Layout 流程](../../../../../article-detail/2018/06/20/view_draw_procress_layout/)   
-[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../../article-detail/2018/06/29/view_draw_procress_draw/)
+[View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
+[View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
+[View 的绘制 - Layout 流程](../../../../2018/06/20/view_draw_procress_layout/)   
+[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
 
 ---
 搬运地址：    

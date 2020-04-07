@@ -11,7 +11,7 @@ author: hoyouly
 email: hoyouly@163.com
 
 # Build settings
-permalink: /article-detail/:year/:month/:day/:title/
+permalink: /:year/:month/:day/:title/
 exclude: ["README.md", "changelog.md", "server", "tools", "Pipfile"]
 plugins:
   - jekyll-paginate

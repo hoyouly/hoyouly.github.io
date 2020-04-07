@@ -125,7 +125,7 @@ public static int getChildMeasureSpec(int spec, int padding, int childDimension)
 3. 如果子布局设置的是warp_conent,那么子布局的MeasureSpce就是AT_MOST,可用大小就是父布局最大的可用大小，UNSPECIFIED除外，这种情况下还是UNSPECIFIED，并且可用大小为0
 
 换成表格形式就是如下。
-![](../../../../../article-detail/images/view_measurespce_parent_measurespce.png)
+![](../../../../images/view_measurespce_parent_measurespce.png)
 
 **MeasureSpce一旦确定，onMeasure()中就可以得到View的测量宽和高**
 
@@ -460,10 +460,10 @@ measure()的流程就说完了，但是如果有这样一个任务，在Activity
 ![Alt text](https://note.youdao.com/yws/public/resource/b0933b37ddd8ac810ca1d341288bbaa7/xmlnote/WEBRESOURCE751f50bcba2207aab617f8ca29d9083e/2444)
 
 
-[View 的绘制 - 概览](../../../../../article-detail/2018/06/09/view_draw_procress_performTraversals/)   
-[View 的绘制 - Measure 流程](../../../../../article-detail/2018/06/12/view_draw_procress_measure/)   
-[View 的绘制 - Layout 流程](../../../../../article-detail/2018/06/20/view_draw_procress_layout/)   
-[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../../article-detail/2018/06/29/view_draw_procress_draw/)
+[View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
+[View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
+[View 的绘制 - Layout 流程](../../../../2018/06/20/view_draw_procress_layout/)   
+[View 的绘制 - Draw 流程，invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
 
 ---
 搬运地址：    

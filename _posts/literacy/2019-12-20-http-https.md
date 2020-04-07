@@ -7,7 +7,7 @@ tags: Socket HTTP HTTPS
 * content
 {:toc}
 
-在上一篇文章中[ 扫盲系列 - TCP/IP ](../../../../../article-detail/2018/04/11/tcp-ip/)，我们知道以下几点
+在上一篇文章中[ 扫盲系列 - TCP/IP ](../../../../2018/04/11/tcp-ip/)，我们知道以下几点
 # HTTP
 超文本传输协议(Hypertext Transfer Protocol)  简称HTTP，这里面已经带有协议二字了，如果再说HTTP协议，那么就是超文本传输协议协议。重复了，
 是一个在计算机世界里面 专门在两点之间传输文字，图片，音频，视频等超文本数据的约定和规范。
@@ -24,11 +24,11 @@ HTTP的报文有两种
 * 请求报文---从客户端向服务器发送的报文
 * 响应报文---从服务器到客户端的回答  
 
-![](../../../../../article-detail/images/http_message_formate.png)
+![](../../../../images/http_message_formate.png)
 
 从网络中抓取的实际例子如下
 
-![](../../../../../article-detail/images/http_data_eg.png)  
+![](../../../../images/http_data_eg.png)  
 
 
 请求报文和响应报文都是由三部分组成
@@ -45,7 +45,7 @@ HTTP的报文有两种
 ### 参数写在 URL上
 下面是一个URL的结构图
 
-![](../../../../../article-detail/images/url_info.png)  
+![](../../../../images/url_info.png)  
 
 * http://www.example.com:8080 是用来描述 TCP/IP 需要的信息，
   * schme表示是否使用SSL建立连接，
@@ -134,7 +134,7 @@ table th:nth-of-type(3) {
 
 就是出栈和入栈的过程
 
-![](../../../../../article-detail/images/http_commite.jpeg)
+![](../../../../images/http_commite.jpeg)
 
 报文从 应用层到传输层，然后到网络层，链路层，传输层通过TCP三次握手建立连接，四次挥手释放连接。
 
@@ -187,7 +187,7 @@ HTTPS 是通过SSL或者TLS加密处理数据，更安全
 
 网上看了一些资料，例如信鸽解释HTTPS，还有其他的一些，最终自己画了一个类似的流程图，有请大名鼎鼎的小明同学登场。
 
-![](../../../../../article-detail/images/https_flow.png)
+![](../../../../images/https_flow.png)
 
 小明同学 要和小红同学通信，
 1. 小明同学给小红同学寄一个信鸽，但是不带任何信息，

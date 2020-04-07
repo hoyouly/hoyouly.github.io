@@ -8,13 +8,13 @@ tags:  Binder
 * content
 {:toc}
 
-之前已经写了一篇关于 [Android Binder 总结](../../../../../article-detail/2018/03/17/Android-Binder/)的文章，但是总感觉还是不太明白，于是就又想了一个感觉还不错的例子再来理解Binder流程。
+之前已经写了一篇关于 [Android Binder 总结](../../../../2018/03/17/Android-Binder/)的文章，但是总感觉还是不太明白，于是就又想了一个感觉还不错的例子再来理解Binder流程。
 
 我们来看个例子。
 
 小明同学要打电话的向公安局揭发有人聚众赌博这件事。
 
-然后结合 [Android AIDL 总结](../../../../../article-detail/2019/07/17/Android-AIDL/) 中的例子，一起说。
+然后结合 [Android AIDL 总结](../../../../2019/07/17/Android-AIDL/) 中的例子，一起说。
 
 ## 前提条件：
 一. 公安局 能处理聚众赌博这件事。                    

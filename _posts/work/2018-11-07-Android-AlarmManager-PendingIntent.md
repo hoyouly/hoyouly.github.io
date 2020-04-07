@@ -79,7 +79,7 @@ mPendingIntent = PendingIntent.getService(context,
   * Intent 相同的规则：如果两个Intent的ComponetName和intent-filter 都相同，那么这两个Intent就相同。
     **注意： Extras不参与Intent的匹配过程。只要Intent的ComponetName和intent-filter 相同，即使他们的Extras不相同，那么这两个Intent也会匹配成功的。**
 5. PendingIntent支持三种特定的意图，启动Activity，启动Service，发送Broadcast。如下图所示
-      ![添加图片](../../../../../article-detail/images/pendingintent_main_method.png)
+      ![添加图片](../../../../images/pendingintent_main_method.png)
 6.  参数中的 requestCode 和 flags的意思
   * requestCode PendingIntent 发送方的请求码，多数情况下为0，会影响到flags的效果
   * flags  常见的类型有四种

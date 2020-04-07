@@ -57,7 +57,7 @@ LinearLayout 和 FrameLayout 能搞定的就使用这两个，
 * 通过 ViewStub 就可以做到在使用的时候进行加载，提高程序的初始化的性能
 
 
-![Alt text](../../../../../article-detail/images/1465729201927.png)
+![Alt text](../../../../images/1465729201927.png)
 
 stub_import 是ViewStub的id，panel_import 是layout_network_error这个布局的根元素的id，如何进行按需加载ViewStub的布局呢，可以有两种方式
 ``` java
@@ -78,9 +78,9 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
     打开布局检测器  
     点击 Tools > Android > Layout Inspector。在出现的 Choose Process 对话框中，选择想要检查的应用进程，然后点击 OK。
 4. 使用<font color="#ff000" >Profile GPU Rendering </font>也是在开发者选项中打开。打开后的界面如下
-    ![Alt text](../../../../../article-detail/images/carsetting_1.png)
+    ![Alt text](../../../../images/carsetting_1.png)
    各个颜色的意思
-    ![Alt text](../../../../../article-detail/images/carsetting_2.png)
+    ![Alt text](../../../../images/carsetting_2.png)
 5. Lint 是 Android Studio 提供的一款代码扫描分析工具，可以扫描、发现代码结构和质量问题并提供解决方案。    
 
 

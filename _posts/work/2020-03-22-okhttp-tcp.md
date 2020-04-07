@@ -8,7 +8,7 @@ tags: OkHttp   TCP
 {:toc}
 
 我们都知道，OkHttp 是我们常用的网络请求框架，可是都是用在了HTTP请求上去了，但是我们的项目中既有HTTP，又有TCP请求，我已经使用了Retrofit+OkHttp+Rxjava的架构，难道再写一套网络请求框架吗，能再这上面改造一下，也同时支持TCP请求吗？然后就有了这篇研究。
-在这之前，对OkHttp了解少的，可以先查阅 [ 源码分析 - OkHttp ](../../../../../article-detail/2020/03/16/Okhttp-Source-Code-Analysis/) 对OkHttp 源码有一个基本认识。
+在这之前，对OkHttp了解少的，可以先查阅 [ 源码分析 - OkHttp ](../../../../2020/03/16/Okhttp-Source-Code-Analysis/) 对OkHttp 源码有一个基本认识。
 
 OkHttp 真正请求的地方是 CallServerInterceptor 中的。
 所有的 Interceptor 存放到了一个集合中，一个一个遍历，但是中间都会执行到 Chain.proceed(），这样才能进去到下一个 Interceptor 中，直到 CallServerInterceptor 这个拦截器中，然后请求网络，
@@ -30,7 +30,7 @@ OkHttp 真正请求的地方是 CallServerInterceptor 中的。
 这个就有点麻烦了，因为参数是 封装到了 RequestBody 中，所以在我们自定义的 Interceptor中，就需要解析RequestBody ，
 下图是 RequestBody的结构
 
-![okio](../../../../../article-detail/images/requestbody_1.png)
+![okio](../../../../images/requestbody_1.png)
 
 红框里面就是我们想要的参数数据！！！     
 可是怎么拿到红框里面的参数呢我们知道，这RequestBody 是一个 抽象类，这个实现类是  RequestBuilder.ContentTypeOverridingRequestBody, 可是这个类也仅仅是一个代理类而已，

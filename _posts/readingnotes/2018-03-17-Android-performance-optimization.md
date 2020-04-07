@@ -21,7 +21,7 @@ description: Android 性能优化
 
 
 ## 布局优化
-详情： [ Android 性能优化 -- 布局优化 ](../../../../../article-detail/2018/07/17/Android-performance-optimization-layout/)
+详情： [ Android 性能优化 -- 布局优化 ](../../../../2018/07/17/Android-performance-optimization-layout/)
 
 ## 绘制优化
 避免在onDraw方法中执行大量操作，
@@ -44,7 +44,7 @@ description: Android 性能优化
 2. 通过分析工具比如MAT来找出潜在的内存泄露继而解决
 
 ### 内存泄露的例子
-详情： [Android 内存泄漏总结](../../../../../article-detail/2018/03/17/android-memory-leak/)
+详情： [Android 内存泄漏总结](../../../../2018/03/17/android-memory-leak/)
 
 
 ## 响应速度优化和ANR日志分析
@@ -63,7 +63,7 @@ BroadcastRecevier ：10秒
 
 ## Bitmap
 
-详情： [ Android 性能优化 -- Bitmap 优化 ](../../../../../article-detail/2018/07/27/Android-performance-optimization-bitmap/)
+详情： [ Android 性能优化 -- Bitmap 优化 ](../../../../2018/07/27/Android-performance-optimization-bitmap/)
 
 ## 线程优化
 采用线程池。
