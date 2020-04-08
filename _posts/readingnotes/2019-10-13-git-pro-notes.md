@@ -96,7 +96,7 @@ git config --global alias.st  status     git st  相当于 git status
 <span style="border-bottom:1px solid red;">  git config --global alias.logf  'log --pretty=format:"%h - %an ,%ar : %s"' </span> , 那么输入 git logf 相当于 git log --pretty=format:"%h - %an ,%ar : %s"
 
 
-## 分支
+## 删除 分支
 git branch -d 分支名  删除本地分支，如果该分支没有merge到当前分支，会删除失败
 
 git branch -D 分支名  强制删除本地分支
@@ -106,6 +106,8 @@ git branch -D 分支名  强制删除本地分支
 像是一个书签，提醒这你上次连接远程长裤时上面各个分支的为位置
 
 git fetch  同步，获取尚未拥有的数据，更新你本地的数据库，但是不会合并，
+
+git push origin --delete 分支名    删除远程分支
 
 
 ## git rebase
@@ -118,10 +120,8 @@ git rebase dev server  检出server分支，然后在dev分支上重演
 
 永远不要rebase 那些已经推送到公共仓库的更新
 
-
 ## git reflog
 查看引用日志，可以理解为查看你最近几个月在当前项目中使用的git 命令
-
 
 
 ## git blam
@@ -129,6 +129,16 @@ git rebase dev server  检出server分支，然后在dev分支上重演
 git blam simplegit.rb  显示文件中对没一行进行修改的最近一次提交，
 
 git blam -L 12,22 simplegit.rb 查看文件simplegit.rb 的每一次提交，使用-L 选项限制输出范围在第12行到22行
+
+## .gitignore文件不起作用处理
+1. 先清除 本地 git 缓存
+git rm -r --cached .     
+
+2. 重新 add 和 commit 就行了
+git add .
+
+git commit
+
 
 ---
 
