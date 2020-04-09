@@ -166,6 +166,7 @@ public Response build() {
 * Request 容易 ，直接设置 ，`.request(request)`
 * code也容易，请求成功，当然是200，`.code(200)`
 * message 也简单，请求成功，直接返回 success ，为了能清楚是哪个action的，所以带上了action。即 `message(action + "  is success")`
+
 ### 定义protocol()
 protocol 比较头疼，因为 Protocol 是一个Enum，一共支持的协议一共就那么几种。
 ```java

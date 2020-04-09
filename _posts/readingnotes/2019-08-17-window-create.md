@@ -9,15 +9,16 @@ description: Window 创建过程
 * content
 {:toc}
 
-## Window的创建过程
-* View是Android的视图呈现方式，
-* View 不能单独存在，必须依附于Window这个抽象概念上面
-* 有视图的地方就有Window
-* Android提供视图的地方有Activity，Dialog，Toast，以及依托Window实现的视图，比如PopUpWindow，菜单
-* Activity，Dialog，Toast等视图都对应一个Window
+# Window 的一些结论
+* View 是 Android 的视图呈现方式，
+* View 不能单独存在，必须依附于 Window 这个抽象概念上面
+* 有视图的地方就有 Window
+* Android 提供视图的地方有 Activity，Dialog，Toast，以及依托 Window 实现的视图，比如 PopUpWindow，菜单
+* Activity，Dialog，Toast等视图都对应一个 Window
 
-### Activity的Window创建过程
-1. 分析Activity的Window的创建，必须了解Activity的启动过程，详细流程后续。可以先记住结论：<font color="#ff000" > Activity启动过程最终由ActivityThread中的performLaunchActivity()来完成启动,performLaunchActivity()内部会通过类加载器创建Activity的对象实例，并调用attach()为其关联运行过程中所依赖的一系列上下文环境变量</font>
+# Activity 的 Window 创建过程
+1. 分析Activity的Window的创建，必须了解 Activity 的启动过程，详细请看 [ Android 四大组件之 Activity ](http://hoyouly.fun/2019/03/15/Android-Activity-Core/)。   
+可以先记住结论：<font color="#ff000" > Activity 启动过程最终由 ActivityThread 中的 performLaunchActivity() 来完成启动, performLaunchActivity() 内部会通过类加载器创建 Activity 的对象实例，并调用 attach() 为其关联运行过程中所依赖的一系列上下文环境变量</font>   
 ```Java
 // ActivityThread # performLaunchActivity()
 private Activity performLaunchActivity(ActivityClientRecord r, Intent customIntent) {
@@ -40,8 +41,8 @@ private Activity performLaunchActivity(ActivityClientRecord r, Intent customInte
     return activity;
 }
 ```
-2.  在attach()里面，创建 Activity 所属的Window对象
 
+2.  在attach()里面，创建 Activity 所属的Window对象    
 ```Java
 //创建Activity所属的Window对象
 mWindow = PolicyManager.makeNewWindow(this);        
@@ -50,14 +51,14 @@ mWindow.setWindowControllerCallback(this);
 mWindow.setCallback(this);
 mWindow.setOnWindowDismissedCallback(this);
 mWindow.getLayoutInflater().setPrivateFactory(this);
-
 ```
-Callback接口中我们熟悉的，
+
+Callback接口中我们熟悉
 * onAttachedToWindow()
 * onDetachedFromWindow()
 * dispatchTouchEvent()
 
-Activity的Window通过PolicyManager的一个工厂方法来创建，这是一个策略类，PolicyManager中实现的几个工厂方法全部在策略接口IPolicy中声明，
+Activity 的 Window 通过 PolicyManager 的一个工厂方法来创建，这是一个策略类。PolicyManager中实现的几个工厂方法全部在策略接口 IPolicy 中声明，
 ```java
 public interface IPolicy {
     Window makeNewWindow(Context var1);
@@ -69,16 +70,16 @@ public interface IPolicy {
     FallbackEventHandler makeNewFallbackEventHandler(Context var1);
 }
 ```
-PolicyManager的真正实现是Policy类，Policy类中中的makeNewWindow方法如下，
+PolicyManager 的真正实现是 Policy 类，Policy 类中的 makeNewWindow() 方法如下，
 ```java
 Policy
 public Window makeNewWindow(Context context) {
     return new PhoneWindow(context);
 }
 ```
-由此可见，Window的具体实现是PhoneWindow
+由此可见，Window 的具体实现是 PhoneWindow
 
-注意，在attach()中还有这样一段代码
+注意，在 attach() 中还有这样一段代码
 ```java
 //设置WindowManager
 mWindow.setWindowManager((WindowManager) context.getSystemService(Context.WINDOW_SERVICE),//
@@ -86,23 +87,24 @@ mWindow.setWindowManager((WindowManager) context.getSystemService(Context.WINDOW
     (info.flags & ActivityInfo.FLAG_HARDWARE_ACCELERATED) != 0);
 ```
 这里说一下mToken 吧
-#### Token
-1. 在源码中token一般代表的是Binder对象，作用于IPC进程间数据通讯,并且它也包含着此次通讯所需要的信息。
-2. 在ViewRootImpl里，token用来表示mWindow(W类，即IWindow)，并且在WMS中只有符合要求的token才能让Window正常显示。
-3. 应用窗口 : token表示的是activity的mToken(ActivityRecord)
-4. 子窗口 : token表示的是父窗口的W对象，也就是mWindow(IWindow)
+## Token
+1. 在源码中 token 一般代表的是 Binder 对象，作用于 IPC 进程间数据通讯,并且它也包含着此次通讯所需要的信息。
+2. 在 ViewRootImpl 里，token 用来表示 mWindow(W类，即 IWindow)，并且在 WMS 中只有符合要求的 token 才能让 Window 正常显示。
+3. 在应用窗口中 token 表示的是 activity 的 mToken(ActivityRecord)
+4. 在子窗口中 token 表示的是父窗口的W对象，也就是 mWindow(IWindow)
 
+来一份图吧。
 ![添加图片](../../../../images/attach.png)
-到这里Window已经创建完成,在Activity启动的时候，通过attach()方法，使用PolicyManager.makeNewWindow(this) 创建一个PhoneWindow。
-#### Activity 显示到Window
-Window创建成功，Activity怎么显示到Window上呢?那就要说到我们经常用到的setContentView()了，
+到这里 Window 已经创建完成,在 Activity 启动的时候，通过 attach() 方法，使用 PolicyManager.makeNewWindow(this) 创建一个PhoneWindow。
+## Activity 显示到 Window
+Window创建成功，Activity 怎么显示到 Window 上呢?那就要说到我们经常用到的 setContentView()了，
 ```java
 public void setContentView(View view) {
   getWindow().setContentView(view);
   initWindowDecorActionBar();
 }
 ```
-Activity具体实现交给了Window处理，而Window的实现是PhoneWindow，
+Activity 具体实现交给了  Window 处理，而 Window 的实现是 PhoneWindow，
 ```java
 //PhoneWindow.java
 @Override
@@ -133,13 +135,10 @@ public void setContentView(int layoutResID) {
    }
 }
 ```
-上面注释很清楚了，接下来先说 installDecor()
-* 创建DecorView
-
-DecorView之前也说过。是Activity的顶级View。
-一般来说包含标题栏和内容栏，内容栏的id固定：android.R.id.content，
-
-DecorView的创建由installDecor完成，内部通过generateDecor方法直接创建DecorView，但是这个时候DecorView还是一个空白的FrameLayout
+上面注释很清楚了，接下来先说 installDecor()，主要包括以下几个步骤。
+1. 创建 DecorView
+DecorView 之前也说过。是 Activity 的顶级 View。一般来说包含标题栏和内容栏，id是 android.R.id.content 固定不变。   
+DecorView的创建由 installDecor() 完成，内部通过 generateDecor() 直接创建 DecorView，但是这个时候 DecorView 还是一个空白的 FrameLayout
 ```java
 private void installDecor() {
   if (mDecor == null) {
@@ -158,7 +157,7 @@ private void installDecor() {
   。。。
 }
 ```
-得到初始化DecorView后，PhoneWindow通过generateLayout()方法加载具体的布局文件到DecorView中
+2. 得到初始化 DecorView 后，PhoneWindow 通过 generateLayout() 方法加载具体的布局文件到 DecorView 中
 ```java
 protected ViewGroup generateLayout(DecorView decor) {
   ...
@@ -175,13 +174,12 @@ ID_ANDROID_CONTENT 定义如下，
 ```java
 public static final int ID_ANDROID_CONTENT = com.android.internal.R.id.content;
 ```
-这个id对应的ViewGroup就是mContentParent `mContentParent = generateLayout(mDecor);`
-* 这样 mContentParent 就不为null，就可以将View添加到DecorView的mContentparent中，
-在setContentView方法中`mLayoutInflater.inflate(layoutResID, mContentParent);`
+这个id对应的 ViewGroup 就是 mContentParent `mContentParent = generateLayout(mDecor);`
+3.  mContentParent 不为null，将 View 添加到 DecorView 的 mContentparent 中，
+在setContentView()方法中`mLayoutInflater.inflate(layoutResID, mContentParent);`
 
-
-*  回调Activity的onContentChanged方法通知Activity的视图已经发生改变
-由于Activity实现了Window的Callback接口，走到这里表示Activity的布局文件已经被添加到DecorView的mContentParent中，需要通知Activity，使其做相应处理，默认为空实现，
+4. 回调Activity的 onContentChanged() 方法通知 Activity 的视图已经发生改变
+由于 Activity 实现了 Window 的 Callback 接口，走到这里表示 Activity 的布局文件已经被添加到 DecorView 的 mContentParent 中，需要通知 Activity，使其做相应处理，默认为空实现，
 ```java
 final Callback cb = getCallback();
 if (cb != null && !isDestroyed()) {
@@ -192,8 +190,8 @@ if (cb != null && !isDestroyed()) {
 来份流程图吧。
 ![添加图片](../../../../images/setcontentview.png)
 
-虽然现在DecorView已经创建并且初始化，Activity的布局文件也添加到DecorView的mContentParent中，但这个时候DecorView还没有被WindowManager正式添加到Window中，而<span style="border-bottom:1px solid red;">真正完成DecorView添加和显示的是在ActivityThread的handleResumeActivity()方法中。
-handleResumeActivity()会先执行Activity的onResume()，然后执行Activity的makeVisible()方法，正是在makeVisible()方法中，DecorView才会被添加到WindowManager中。</span>
+虽然现在 DecorView 已经创建并且初始化，Activity 的布局文件也添加到 DecorView 的 mContentParent中，但这个时候 DecorView 还没有被 WindowManager 正式添加到 Window 中，而<span style="border-bottom:1px solid red;">真正完成 DecorView 添加和显示的是在 ActivityThread 的 handleResumeActivity() 方法中。
+handleResumeActivity() 会先执行 Activity 的 onResume()，然后执行 Activity 的 makeVisible() 方法，正是在 makeVisible() 方法中，DecorView 才会被添加到 WindowManager 中。</span>
 ```java
 void makeVisible() {
     if(!this.mWindowAdded) {
@@ -205,9 +203,8 @@ void makeVisible() {
 }
 ```
 
-### Dialog的Window创建过程
-和Activity的类似，
-不同的在于将DecorView添加到Window中，Dialog是在show方法中，
+# Dialog 的 Window 创建过程
+和 Activity 的类似。不同的在于将 DecorView 添加到 Window 中，Dialog 是在 show 方法中，
 ```java
 // Dialog # show
 try {
@@ -218,15 +215,15 @@ try {
                 ;
 }
 ```
-当Dialog关闭的时，它会通过WindowManager来移除DecorView。` this.mWindowManager.removeView(this.mDecor);`
+当 Dialog 关闭的时，它会通过 WindowManager 来移除 DecorView。` this.mWindowManager.removeView(this.mDecor);`
 
 
-### Toast的Window创建过程
-Toast和Dialog不同，虽然Toast也是基于Window来实现的，但是由于Toast具有定时取消功能，所以系统采用了Handler，Toast内部的两类IPC过程：
-1. Toast访问NotificationManagerService(NMS)
-2. NotificationManagerService(NMS)回调Toast里面的TN接口
+# Toast 的 Window 创建过程
+Toast 和 Dialog 不同，虽然 Toast 也是基于 Window 来实现的，但是由于 Toast 具有定时取消功能，所以系统采用了 Handler，Toast 内部的两类 IPC 过程：
+1. Toast 访问 NotificationManagerService(NMS)
+2. NotificationManagerService(NMS) 回调 Toast 里面的 TN 接口
 
-Toast属于系统Window，视图由两种方式指定，一种是系统默认的样式，
+Toast 属于系统 Window，视图由两种方式指定，一种是系统默认的样式，
 ```java
 public static Toast makeText(Context context, CharSequence text, @Duration int duration) {
     Toast result = new Toast(context);
@@ -243,13 +240,13 @@ public static Toast makeText(Context context, CharSequence text, @Duration int d
     return result;
 }
 ```
-另一种是通过setView方法指定一个自定义View，
+另一种是通过 setView() 指定一个自定义 View，
 ```java
 public void setView(View view) {
     mNextView = view;
 }
 ```
-不管哪种，都对应Toast的一个View类型的内部成员mNextView,Toast提供show和cancel分别用于显示和隐藏Toast，内部都是IPC过程
+不管哪种，都对应 Toast 的一个 View 类型的内部成员 mNextView,Toast 提供 show() 和 cancel() 分别用于显示和隐藏 Toast，内部都是 IPC 过程
 ```java
 public void show() {
     if (mNextView == null) {
@@ -277,10 +274,10 @@ public void cancel() {
     }
 }
 ```
-1. 显示和隐藏Toast都需要通过NMS来实现
-2. NMS运行在系统进程中，只能远程调用显示和隐藏Toast
-3. TN是一个Binder类，在Toast和NMS进行IPC的过程中，当 NMS 处理Toast的显示或者隐藏请求的时候会跨进程回调TN中的方法，这个时候由于TN运行在Binder线程池中，所以需要通过Handler将其切换到当前线程，即发送Toast请求所在的线程。<span style="border-bottom:1px solid red;">由于使用的Handler。所以Toast无法在没有Looper的线程中弹出。</span>
-4. Toast在显示过程中，调用了NMS的enqueueToast()方法，enqueueToast()第一个参数是当前应用的包名，第二个参数tn表示远程回调，第三个参数表示Toast时长。
+1. 显示和隐藏 Toast 都需要通过 NMS 来实现
+2. NMS 运行在系统进程中，只能远程调用显示和隐藏 Toast
+3. TN 是一个 Binder 类，在 Toast 和 NMS 进行 IPC 的过程中，当 NMS 处理 Toast 的显示或者隐藏请求的时候会跨进程回调 TN 中的方法，这个时候由于 TN 运行在 Binder 线程池中，所以需要通过 Handler 将其切换到当前线程，即发送 Toast 请求所在的线程。<span style="border-bottom:1px solid red;">由于使用的 Handler。所以 Toast 无法在没有 Looper 的线程中弹出。</span>
+4. Toast 在显示过程中，调用了 NMS 的  enqueueToast()方法，enqueueToast() 第一个参数是当前应用的包名，第二个参数 tn 表示远程回调，第三个参数表示 Toast 时长。
 
 ```Java
 //NotificationManagerService.java    # INotificationManager.Stub()
@@ -319,7 +316,7 @@ public void enqueueToast(String pkg, ITransientNotification callback, int durati
 3. 通过showNextToastLocked()来显示当前的Toast
 
 接下来就看看 怎么显示toast，并且会定时取消这个toast的吧
-#### Toast 显示
+## Toast 显示
 
 ```java
 //NotificationManagerService.java    # INotificationManager.Stub()
@@ -394,7 +391,7 @@ Toast. TN 先切到主线程中，然后执行handleShow()方法
 5. 调用WindowManager.addView()方法，在这里会把Toast这个View显示出来。
 
 这样Toast就显示出来了。
-#### Toast 自动取消
+## Toast 自动取消
 但是Toast 怎么自动取消的呢？
 
 这就要说到在调用showNextToastLocked()中执行了record.callback.show()之后，又执行了发送延迟消息的方法scheduleTimeoutLocked()
