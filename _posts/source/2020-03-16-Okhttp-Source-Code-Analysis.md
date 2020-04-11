@@ -14,29 +14,29 @@ tags: Android OkHttp
 2. 把大象放进去
 3. 关上冰箱门
 
-其实OkHttp 请求也很简单
-1. 装配Request（涉及到了请求方法，url，cookie请求）
-2. Client 端发送Request请求
-3. 接收服务端返回的Response数据
+其实 OkHttp 请求也很简单
+1. 装配Request（涉及到了请求方法， url ， cookie 请求）
+2. Client 端发送 Request 请求
+3. 接收服务端返回的 Response 数据
 
 so easy
 
 OkHttp 的使用请参考 [扫盲系列 - OkHttp 基本用法](../../../../2018/03/25/OkHttp/)
 
-以下是OKHTTP一个常见异步用法实例
+以下是 OKHTTP 一个常见异步用法实例
 
 ```java
-OkHttpClient okHttpClient = new OkHttpClient();//创建OkHttpClient对象
+OkHttpClient okHttpClient = new OkHttpClient();//创建 OkHttpClient 对象
 Request request = new Request.Builder()//
     .url("http://www.baidu.com")//请求接口，如果需要传递参数，拼接到后面
-    .build();//创建Request对象
-    //发送Request请求
+    .build();//创建 Request 对象
+    //发送 Request 请求
 okHttpClient.newCall(request).enqueue(new Callback() {
 
     @Override
     public void onFailure(Call call, IOException e) {
     }
-    //接收返回的Response 数据
+    //接收返回的 Response 数据
     @Override
     public void onResponse(Call call, Response response) throws IOException {
         if (response.isSuccessful()) {//请求成功
@@ -50,8 +50,8 @@ okHttpClient.newCall(request).enqueue(new Callback() {
 ```
 1. 创建 OkHttpClient 对象    这个相当于弄一个冰箱
 2. 创建 Request 请求        打开冰箱门
-3. 发送Request          放入大象
-4. 接收Response         关闭冰箱门
+3. 发送 Request 放入大象
+4. 接收 Response 关闭冰箱门
 
 这比把大象放入冰箱多了一步，就是找冰箱的过程。整体的流程图如下
 
@@ -61,7 +61,7 @@ okHttpClient.newCall(request).enqueue(new Callback() {
 
 
 ## 创建 OkHttpClient 对象
-这个就没啥好说的，可以通过直接new 一个OkHttpClient,也可以通过OkHttpClient.Builder  build()一个，建造者模式嘛。
+这个就没啥好说的，可以通过直接 new 一个 OkHttpClient ,也可以通过OkHttpClient.Builder  build()一个，建造者模式嘛。
 
 ```java
 
@@ -96,38 +96,38 @@ public Builder() {
    pingInterval = 0;
   }
 ```
-这些都是默认的，几乎都和OkHttp有关。可以通过build模式进行修改。如下就是对OkHttp的一些修改接口
+这些都是默认的，几乎都和 OkHttp 有关。可以通过 build 模式进行修改。如下就是对 OkHttp 的一些修改接口
 
 ![](../../../../images/okhttp_build.png)
 
-OkHttpClient 创建完成。接下来就是创建Request 对象
+OkHttpClient 创建完成。接下来就是创建 Request 对象
 
 ## 创建 Request 对象。
-这个和OkhttpClient差不多的，同样是通过Build模式，创建一个Request，里面设置了URL，还可以设置其他一些属性的，例如
+这个和 OkhttpClient 差不多的，同样是通过 Build 模式，创建一个 Request ，里面设置了 URL ，还可以设置其他一些属性的，例如
 ![](../../../../images/request_build.png)
 这个就不多讲了，
 接下来就看发送Request
 
 ## newCall
-在发送Request之前，需要有一个创建一个Call对象，使用这个Call对象来发送Request，
-所以可以看到 newCall()中先创建了一个Call对象，即 RealCall，它包装了Request和OKHttpClient这两个类的实例。这点很重要
+在发送 Request 之前，需要有一个创建一个 Call 对象，使用这个 Call 对象来发送 Request ，
+所以可以看到 newCall() 中先创建了一个 Call 对象，即 RealCall ，它包装了 Request 和 OKHttpClient 这两个类的实例。这点很重要
 
 ```java
 //OkHttpClient.java
 @Override public Call newCall(Request request) {
-   return RealCall.newRealCall(this, request, false /* for web socket */);
+   return RealCall.newRealCall(this, request , false /* for web socket */);
  }
 
 //RealCall.java
- static RealCall newRealCall(OkHttpClient client, Request originalRequest, boolean forWebSocket) {
+ static RealCall newRealCall(OkHttpClient client, Request originalRequest , boolean forWebSocket) {
    // Safely publish the Call instance to the EventListener.
-   RealCall call = new RealCall(client, originalRequest, forWebSocket);
+   RealCall call = new RealCall(client, originalRequest , forWebSocket);
    call.eventListener = client.eventListenerFactory().create(call);
    return call;
  }
 
 ```
-RealCall 实现了Call 这个接口，大部分的操作都在这个Call，这个接口是OkHttp框架的操作核心。
+RealCall 实现了 Call 这个接口，大部分的操作都在这个 Call ，这个接口是 OkHttp 框架的操作核心。
 ```java
 
 public interface Call extends Cloneable {
@@ -141,7 +141,7 @@ public interface Call extends Cloneable {
   }
 }
 ```
-接下来就是异步执行了 enqueue(),用来发送Request。
+接下来就是异步执行了 enqueue() ,用来发送 Request 。
 ## 发送Request
 异步请求enqueue().
 
@@ -157,7 +157,7 @@ public interface Call extends Cloneable {
 }
 ```
 
-client.dispatcher()  就是  Dispatcher ，它是一个分发器，它持有线程池，异步任务队列和同步任务队列，会依照不同的策略执行。
+client.dispatcher()  就是 Dispatcher ，它是一个分发器，它持有线程池，异步任务队列和同步任务队列，会依照不同的策略执行。
 
 ### Dispatcher
 中有三个队列,等待异步执行的队列
@@ -212,7 +212,7 @@ private boolean promoteAndExecute() {
 
 public synchronized ExecutorService executorService() {
     if (executorService == null) {
-      executorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60, TimeUnit.SECONDS,
+      executorService = new ThreadPoolExecutor(0, Integer.MAX_VALUE, 60 , TimeUnit.SECONDS,
           new SynchronousQueue<Runnable>(), Util.threadFactory("OkHttp Dispatcher", false));
     }
     return executorService;
@@ -220,11 +220,11 @@ public synchronized ExecutorService executorService() {
 
 ```
 
-AsyncCall  是RealCall的一个内部类，持有RealCall的引用，是对RealCall进行了封装
+AsyncCall 是 RealCall 的一个内部类，持有 RealCall 的引用，是对 RealCall 进行了封装
 
-ExecutorService 是一个核心线程数为0的线程池，其实就是 一个 CachedTheadPool类型的线程池，关于线程池的知识，可以查看  [ Android 线程池 ](../../../../2018/05/12/Android-ThreadPoolExecutor/)
+ExecutorService 是一个核心线程数为 0 的线程池，其实就是 一个 CachedTheadPool 类型的线程池，关于线程池的知识，可以查看  [ Android 线程池 ](../../../../2018/05/12/Android-ThreadPoolExecutor/)
 
-在Dispatcher 中会根据情况，把Call加入请求队列还是等待队列，在请求队列中，就会在线程池中执行这个请求。
+在 Dispatcher 中会根据情况，把 Call 加入请求队列还是等待队列，在请求队列中，就会在线程池中执行这个请求。
 
 
 ```java
@@ -248,7 +248,7 @@ void executeOn(ExecutorService executorService) {
   }
 ```
 
-因为 AsyncCall extends NamedRunnable  ，NamedRunnable 实现了Runnable，所以就可以直接查看run()方法了。
+因为 AsyncCall extends NamedRunnable ， NamedRunnable 实现了 Runnable ，所以就可以直接查看 run() 方法了。
 
 ```java
 //，NamedRunnable.java
@@ -263,7 +263,7 @@ void executeOn(ExecutorService executorService) {
 }
 ```
 
-最终执行到了 AsyncCall 的execute()方法
+最终执行到了 AsyncCall 的 execute() 方法
 
 ```java
 @Override protected void execute() {
@@ -294,9 +294,9 @@ void executeOn(ExecutorService executorService) {
 
 ```
 
-感觉已经很靠近了，因为我们看到了 onResponse()/onFailure() 这两个方法， 这个responseCallback 就是在enqueue()中传递过来的 Callback responseCallback，
+感觉已经很靠近了，因为我们看到了 onResponse()/onFailure() 这两个方法， 这个 responseCallback 就是在 enqueue() 中传递过来的 Callback responseCallback ，
 
-那么请求网络的地方，就是  getResponseWithInterceptorChain() 这个了，
+那么请求网络的地方，就是 getResponseWithInterceptorChain() 这个了，
 
 
 ```java
@@ -305,62 +305,62 @@ Response getResponseWithInterceptorChain() throws IOException {
   List<Interceptor> interceptors = new ArrayList<>();
   //添加开发者应用层自定义的Interceptor
   interceptors.addAll(client.interceptors());
-  //这个Interceptor是处理请求失败的重试，重定向
+  //这个 Interceptor 是处理请求失败的重试，重定向
   interceptors.add(retryAndFollowUpInterceptor);
-  //这个Interceptor工作是添加一些请求的头部或其他信息
-  //并对返回的Response做一些友好的处理（有一些信息你可能并不需要）
+  //这个 Interceptor 工作是添加一些请求的头部或其他信息
+  //并对返回的 Response 做一些友好的处理（有一些信息你可能并不需要）
   interceptors.add(new BridgeInterceptor(client.cookieJar()));
-  //这个Interceptor的职责是判断缓存是否存在，读取缓存，更新缓存等等
+  //这个 Interceptor 的职责是判断缓存是否存在，读取缓存，更新缓存等等
   interceptors.add(new CacheInterceptor(client.internalCache()));
-  //这个Interceptor的职责是建立客户端和服务器的连接
+  //这个 Interceptor 的职责是建立客户端和服务器的连接
   interceptors.add(new ConnectInterceptor(client));
   if (!forWebSocket) {
     //添加开发者自定义的网络层拦截器
     interceptors.addAll(client.networkInterceptors());
   }
-  //这个Interceptor的职责是向服务器发送数据，并且接收服务器返回的Response
+  //这个 Interceptor 的职责是向服务器发送数据，并且接收服务器返回的Response
   interceptors.add(new CallServerInterceptor(forWebSocket));
-  //一个包裹这request的chain
-  Interceptor.Chain chain = new RealInterceptorChain(interceptors, null, null, null, 0,
-      originalRequest, this, eventListener, client.connectTimeoutMillis(),
+  //一个包裹这 request 的chain
+  Interceptor.Chain chain = new RealInterceptorChain(interceptors, null , null , null , 0 ,
+ originalRequest , this , eventListener , client.connectTimeoutMillis(),
       client.readTimeoutMillis(), client.writeTimeoutMillis());
-  //把chain传递到第一个Interceptor手中
+  //把 chain 传递到第一个 Interceptor 手中
   return chain.proceed(originalRequest);
 }
 ```
-1. Interceptor 的执行是有顺序的。也就意味这当我们自定义Interceptor是需要注意添加顺序
-2. 在开发者自定义的Interceptor,是有两种不同的拦截器可以自定义的。
+1. Interceptor 的执行是有顺序的。也就意味这当我们自定义 Interceptor 是需要注意添加顺序
+2. 在开发者自定义的 Interceptor ,是有两种不同的拦截器可以自定义的。
 
 ## 拦截器
-使用责任链模式模式，添加了各种 interceptors，然后执行了 RealInterceptorChain 的 proceed()
+使用责任链模式模式，添加了各种 interceptors ，然后执行了 RealInterceptorChain 的 proceed()
 
 ```java
 //RealInterceptorChain.java
 @Override public Response proceed(Request request) throws IOException {
-    return proceed(request, streamAllocation, httpCodec, connection);
+    return proceed(request, streamAllocation , httpCodec , connection);
   }
-  //这个方法用来获取list中下一个Interceptor，并调用它的intercept（）方法
+  //这个方法用来获取 list 中下一个 Interceptor ，并调用它的intercept（）方法
 
-public Response proceed(Request request, StreamAllocation streamAllocation, HttpCodec httpCodec,
+public Response proceed(Request request, StreamAllocation streamAllocation , HttpCodec httpCodec ,
       RealConnection connection) throws IOException {
     if (index >= interceptors.size()) throw new AssertionError();
 
     calls++;
 
-    //如果我们已经有一个stream。确定即将到来的request会使用它
+    //如果我们已经有一个 stream 。确定即将到来的 request 会使用它
     if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
       throw new IllegalStateException("network interceptor " + interceptors.get(index - 1) + " must retain the same host and port");
     }
 
-  //如果我们已经有一个stream， 确定chain.proceed()唯一的call
+  //如果我们已经有一个 stream ， 确定chain.proceed()唯一的call
     if (this.httpCodec != null && calls > 1) {
       throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)+ " must call proceed() exactly once");
     }
 
     // Call the next interceptor in the chain.取出来下一个拦截器，然后执行 intercept()
-    RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation, httpCodec,
-        connection, index + 1, request, call, eventListener, connectTimeout, readTimeout, writeTimeout);
-  //从list中获取到第一个Interceptor
+    RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation , httpCodec ,
+ connection , index + 1, request , call , eventListener , connectTimeout , readTimeout , writeTimeout);
+  //从 list 中获取到第一个Interceptor
     Interceptor interceptor = interceptors.get(index);
     Response response = interceptor.intercept(next);
 
@@ -386,45 +386,45 @@ public Response proceed(Request request, StreamAllocation streamAllocation, Http
 
 关键代码是  
 ```java
-// 实例化下一个拦截器对应的RealIterceptorChain对象， index刚开始是0，这里加一，下次取的时候就是下一个 interceptors
-RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation, httpCodec,
-    connection, index + 1, request, call, eventListener, connectTimeout, readTimeout,
+// 实例化下一个拦截器对应的 RealIterceptorChain 对象， index 刚开始是 0 ，这里加一，下次取的时候就是下一个 interceptors
+RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation , httpCodec ,
+ connection , index + 1, request , call , eventListener , connectTimeout , readTimeout ,
     writeTimeout);
 //得到当前的拦截器：
 Interceptor interceptor = interceptors.get(index);
-//调用当前拦截器的intercept()方法，并将下一个拦截器的RealIterceptorChain对象传递下去
+//调用当前拦截器的 intercept() 方法，并将下一个拦截器的 RealIterceptorChain 对象传递下去
 Response response = interceptor.intercept(next);
 ```
-1. 实例化下一个拦截器对应的RealIterceptorChain对象，这个对象会再传递给当前的拦截器
+1. 实例化下一个拦截器对应的 RealIterceptorChain 对象，这个对象会再传递给当前的拦截器
 2. 得到当前的拦截器：interceptors是存放拦截器的ArryList
-3. 调用当前拦截器的intercept()方法，并将下一个拦截器的RealIterceptorChain对象传递下去
-4. 在下一个Interceptor的 intercept()中，会执行 chain.proceed(request)，这样就进入到下次循环中了
+3. 调用当前拦截器的 intercept() 方法，并将下一个拦截器的 RealIterceptorChain 对象传递下去
+4. 在下一个 Interceptor 的 intercept() 中，会执行 chain.proceed(request)，这样就进入到下次循环中了
 
-这也是为啥，我们自定义的Interceptor ，在intercept()中，都会执行  chain.proceed(request) 这行代码的缘故
+这也是为啥，我们自定义的 Interceptor ，在 intercept() 中，都会执行  chain.proceed(request) 这行代码的缘故
 如果不执行这行代码，那么责任链模式就没办法进行了。
-说到这里，就可以解释一下  addInterceptor()和 addNetworkInterceptor()区别了
+说到这里，就可以解释一下 addInterceptor() 和 addNetworkInterceptor() 区别了
 
-### addInterceptor()和 addNetworkInterceptor()区别
+### addInterceptor()和 addNetworkInterceptor() 区别
 addInterceptor() 添加应用拦截器
 * 不需要担心中间过程的响应，如重定向和重试
-* 总是只调用一次，即便是HTTP从缓存中获取
-* 观察应用程序的初衷，不关心Okhttp注入信息的头信息，如If-NONE-Match
+* 总是只调用一次，即便是 HTTP 从缓存中获取
+* 观察应用程序的初衷，不关心 Okhttp 注入信息的头信息，如If-NONE-Match
 * 允许短路而不调用Chain.proceed(),即终止调用
 * 允许重试，试Chain.proceed()调用多次
-addNetworkInterceptor()  添加网络拦截器
+addNetworkInterceptor() 添加网络拦截器
 * 能够操作中间过程的响应，如重定向和重试
 * 当网络短路而返回缓存的时候不调用
 * 只观察在网络传输中的数据
 * 携带请求来访问连接
 
 
-注意，如果添加的 addInterceptor()中不执行 chain.proceed(request) ，那么就不会执行到下面的 网络重试，以及最关键的 CallServerInterceptor 这个Interceptor了。
+注意，如果添加的 addInterceptor() 中不执行 chain.proceed(request) ，那么就不会执行到下面的 网络重试，以及最关键的 CallServerInterceptor 这个 Interceptor 了。
 
 
-一个Interceptor集合，从第一个开始，然后执行 intercept()的方法，里面会创建 RealInterceptorChain,然后执行下一个proceed()方法，就这样一直到了最后一个，
-也就是 CallServerInterceptor中，
+一个 Interceptor 集合，从第一个开始，然后执行 intercept() 的方法，里面会创建 RealInterceptorChain ,然后执行下一个 proceed() 方法，就这样一直到了最后一个，
+也就是 CallServerInterceptor 中，
 
-除了 在client中自己设置的interceptor,第一个调用的就是retryAndFollowUpInterceptor
+除了 在 client 中自己设置的 interceptor ,第一个调用的就是retryAndFollowUpInterceptor
 
 
 ### RetryAndFollowUpInterceptor
@@ -440,7 +440,7 @@ addNetworkInterceptor()  添加网络拦截器
     while (true) {
       ...
       try {
-        response = realChain.proceed(request, streamAllocation, null, null);
+        response = realChain.proceed(request, streamAllocation , null , null);
         releaseConnection = false;
       } catch (RouteException e) {
         ...
@@ -464,7 +464,7 @@ addNetworkInterceptor()  添加网络拦截器
 @Override public Response intercept(Chain chain) throws IOException {
     Request userRequest = chain.request();
     Request.Builder requestBuilder = userRequest.newBuilder();
-    //检查request。将用户的request转换为发送到server的请求
+    //检查 request 。将用户的 request 转换为发送到 server 的请求
     RequestBody body = userRequest.body();
     ...
     Response networkResponse = chain.proceed(requestBuilder.build());
@@ -501,7 +501,7 @@ addNetworkInterceptor()  添加网络拦截器
       closeQuietly(cacheCandidate.body()); // The cache candidate wasn't applicable. Close it.
     }
 
-    //如果我们禁止使用网络，且缓存为null，失败
+    //如果我们禁止使用网络，且缓存为 null ，失败
     if (networkRequest == null && cacheResponse == null) {
       return new Response.Builder()
           .request(chain.request())
@@ -531,7 +531,7 @@ addNetworkInterceptor()  添加网络拦截器
       }
     }
 
-    //如果我们有一个缓存的response，然后我们正在做一个条件GET
+    //如果我们有一个缓存的 response ，然后我们正在做一个条件GET
     if (cacheResponse != null) {
       if (networkResponse.code() == HTTP_NOT_MODIFIED) {
         Response response = cacheResponse.newBuilder()
@@ -577,11 +577,11 @@ addNetworkInterceptor()  添加网络拦截器
 
 ```
 缓存策略
-1. 根据request来判断cache中是否有缓存的response，如果设置了缓存，即 在OkHttpClient.Builder 中 执行了cache()，那么 cache 就不为null，
-2. 如果有，得到这个response，然后进行判断当前response是否有效，没有将cacheCandate赋值为空
-3. 根据request判断缓存的策略，是否要使用了网络，缓存 或两者都使用
+1. 根据 request 来判断 cache 中是否有缓存的 response ，如果设置了缓存，即 在OkHttpClient.Builder 中 执行了 cache() ，那么 cache 就不为 null ，
+2. 如果有，得到这个 response ，然后进行判断当前 response 是否有效，没有将 cacheCandate 赋值为空
+3. 根据 request 判断缓存的策略，是否要使用了网络，缓存 或两者都使用
 4. 调用下一个拦截器，决定从网络上来得到response
-5. 如果本地已经存在cacheResponse，那么让它和网络得到的networkResponse做比较，决定是否来更新缓存的cacheResponse
+5. 如果本地已经存在 cacheResponse ，那么让它和网络得到的 networkResponse 做比较，决定是否来更新缓存的cacheResponse
 6. 缓存未经缓存过的response
 
 同样也是执行了 chain.proceed(networkRequest)，继续传递下一个，即 ConnectInterceptor
@@ -597,19 +597,19 @@ addNetworkInterceptor()  添加网络拦截器
 
   // We need the network to satisfy this request. Possibly for validating a conditional GET.
   boolean doExtensiveHealthChecks = !request.method().equals("GET");
-  HttpCodec httpCodec = streamAllocation.newStream(client, chain, doExtensiveHealthChecks);
+  HttpCodec httpCodec = streamAllocation.newStream(client, chain , doExtensiveHealthChecks);
   RealConnection connection = streamAllocation.connection();
 
-  return realChain.proceed(request, streamAllocation, httpCodec, connection);
+  return realChain.proceed(request, streamAllocation , httpCodec , connection);
 }
 ```
 
-其实就是创建了一个 HttpCodec对象。 是对HTTP协议的一种抽象，有两个实现：Http1Codec和Http2Codec，顾名思义，它们分别对应 HTTP/1.1 和 HTTP/2 版本的实现
-也执行了 realChain.proceed(），那么继续，如果不是webSocket,那么就是 NetworkInterceptors
+其实就是创建了一个 HttpCodec 对象。 是对 HTTP 协议的一种抽象，有两个实现：Http1Codec和 Http2Codec ，顾名思义，它们分别对应 HTTP/1.1 和 HTTP/2 版本的实现
+也执行了 realChain.proceed(），那么继续，如果不是 webSocket ,那么就是 NetworkInterceptors
 
 ### NetworkInterceptors
 
-配置OkHttpClient时设置的 NetworkInterceptors。这里面一般也会执行的，如果不执行realChain.proceed(），那么就执行不到下一步了，即CallServerInterceptor，真正的发送和接收数据
+配置 OkHttpClient 时设置的 NetworkInterceptors 。这里面一般也会执行的，如果不执行realChain.proceed(），那么就执行不到下一步了，即 CallServerInterceptor ，真正的发送和接收数据
 ### CallServerInterceptor
 发送和接收数据
 ```java
@@ -709,7 +709,7 @@ addNetworkInterceptor()  添加网络拦截器
 
 ```
 
-这里面没有执行 chain.proceed(request)，所以责任链到此结束，在这个Intercept中，真正得到网络数据，然后再通过 chain.proceed(request)一级一级返回 response，最后到   RealCall 的 getResponseWithInterceptorChain()中，这样就能继续执行下面的操作了，即返回这个result，还是执行callFailed().
+这里面没有执行 chain.proceed(request)，所以责任链到此结束，在这个 Intercept 中，真正得到网络数据，然后再通过 chain.proceed(request)一级一级返回 response ，最后到 RealCall 的 getResponseWithInterceptorChain() 中，这样就能继续执行下面的操作了，即返回这个 result ，还是执行callFailed().
 
 
 
@@ -718,12 +718,12 @@ addNetworkInterceptor()  添加网络拦截器
 搬运地址：    
 
 
-[从OKHttp框架看代码设计](https://juejin.im/post/581311cabf22ec0068826aff)
+[从 OKHttp 框架看代码设计](https://juejin.im/post/581311cabf22ec0068826aff)
 
 [OKHttp源码解析](https://www.jianshu.com/p/27c1554b7fee)
 
-[OkHttp中的Socket连接](https://blog.csdn.net/qqqq245425070/article/details/100162964)
+[OkHttp中的 Socket 连接](https://blog.csdn.net/qqqq245425070/article/details/100162964)
 
 [Andriod 网络框架 OkHttp 源码解析](https://juejin.im/post/5bc89fbc5188255c713cb8a5)
 
-[Retrofit使用 addInterceptor和addNetworkInterceptor的区别](https://blog.csdn.net/qq_38219041/article/details/72935142)
+[Retrofit使用 addInterceptor 和 addNetworkInterceptor 的区别](https://blog.csdn.net/qq_38219041/article/details/72935142)

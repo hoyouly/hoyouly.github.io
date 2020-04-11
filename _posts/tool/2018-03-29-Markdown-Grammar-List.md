@@ -27,12 +27,12 @@ tags: Markdown
 
 
 ## 文字下面划线，
-使用的是 span 标签，html 也不熟悉，都有啥属性自己查吧
+使用的是 span 标签， html 也不熟悉，都有啥属性自己查吧
 
 <span style="border-bottom:1px solid red;">我只知道下面的属性是代表划一条实体红色的线</span>
 
 border-bottom  设置下边框的样式：
-1px  就是下边框线宽度是1px
+1px 就是下边框线宽度是1px
 solid : 代表的是实体线，还有其他类型可以设置，例如
     * dotted（由点组成的虚线）、
     * dashed（由短线组成的虚线）、

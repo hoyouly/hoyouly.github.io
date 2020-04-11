@@ -34,7 +34,7 @@ description:
 
 ### 查看端口的占用
 
-    lsof -i:8087  查看8087端口的使用
+    lsof -i:8087  查看 8087 端口的使用
 
 ### 批量杀死进程
 
@@ -42,7 +42,7 @@ description:
 
 ### 查看当前时间
 
-    date       时间
+date 时间
     date +%s   时间戳
     date -d "2010-07-20 10:25:30" +%s  指定时间时间戳
     date -d "@1279592730"    时间戳转时间
@@ -53,14 +53,14 @@ description:
     top -d 1 -p pid [,pid ...]
     pmap pid
     ps aux|grep process_name
-    查看/proc/process_id/文件夹下的status文件
+    查看/proc/process_id/文件夹下的 status 文件
 
-### 查看Linux内核版本或发布版本
+### 查看 Linux 内核版本或发布版本
 
     lsb_release -a
     uname -a
 
-### 一句话实现一个HTTP服务，把当前文件夹作为根目录
+### 一句话实现一个 HTTP 服务，把当前文件夹作为根目录
 
     python -m SimpleHTTPServer
 
@@ -82,7 +82,7 @@ description:
 
 ### 查看进程执行的时间
 
-    ps -A -opid,stime,etime,args | grep python
+    ps -A -opid, stime , etime ,args | grep python
 
 ### 创建守护进程
 
@@ -116,10 +116,10 @@ description:
 
     nc -z -v -n 127.0.0.1 20-100
 
-### 负载测试，30秒内向Google发起20个并发连接
+### 负载测试， 30 秒内向 Google 发起 20 个并发连接
 
     siege -c20 www.google.co.uk -b -t30s
 
-### 封禁一个ip的访问
+### 封禁一个 ip 的访问
 
     iptables -I INPUT -s 211.1.0.0 -j DROP

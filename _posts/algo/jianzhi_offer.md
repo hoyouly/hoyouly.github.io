@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 剑指offer 笔记
+title: 剑指 offer 笔记
 category: 算法
 tags:
 ---

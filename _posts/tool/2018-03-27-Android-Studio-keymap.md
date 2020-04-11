@@ -22,8 +22,8 @@ tags: AndroidStudio 快捷键
 |隐藏所有窗口|CMD + Shift + F12|Ctrl + shift + F12|
 |Surround With..|cmd + alt + t|ctrl + alt + t|
 
-## 修改toString()模板为JSON格式
-参考： [IDEA修改toString方法模板为JSON格式](https://blog.csdn.net/masonqaq/article/details/77975030)
+## 修改 toString() 模板为 JSON 格式
+参考： [IDEA修改 toString 方法模板为 JSON 格式](https://blog.csdn.net/masonqaq/article/details/77975030)
 
 ## 自定义模板
 
@@ -38,12 +38,12 @@ tags: AndroidStudio 快捷键
   ```
 
 3. 右侧勾选 Reformat according to style 和  Shorten RA names
-4. 点击下面的 Define   选择 java中的 statment，然后点击保存就可以了。
+4. 点击下面的 Define 选择 java 中的 statment ，然后点击保存就可以了。
 
-这样在编辑框中，输入logz就直接输出来 android.util.Log.d("hoyouly",getClass().getName()+" -> "+android.util.Log.getStackTraceString(new Throwable())); 这行代码了。
+这样在编辑框中，输入 logz 就直接输出来 android.util.Log.d("hoyouly",getClass().getName()+" -> "+android.util.Log.getStackTraceString(new Throwable())); 这行代码了。
 
-当然也可以修改Android studio的代码，例如logd 中的模板我已经改成了 android.util.Log.d("hoyouly", getClass().getName()+" -> $METHOD_NAME$: $content$");
-这样输出log 的时候我就可以不用再考虑TAG 的事情了
+当然也可以修改 Android studio 的代码，例如 logd 中的模板我已经改成了 android.util.Log.d("hoyouly", getClass().getName()+" -> $METHOD_NAME$: $content$");
+这样输出 log 的时候我就可以不用再考虑 TAG 的事情了
 
 
 搬运地址：    

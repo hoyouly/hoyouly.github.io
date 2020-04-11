@@ -12,8 +12,8 @@ tags: Mac  terminal 快捷键
 * 行首ctrl + a
 * 行尾ctrl + e
 * 单词为单位移动：option + 方向键
-* open src_code -a webStorm    使用 webStorm 打开 src_code文件夹
-* open config -a Sublime\ Text   使用sublime 打开 config
+* open src_code -a webStorm    使用 webStorm 打开 src_code 文件夹
+* open config -a Sublime\ Text   使用 sublime 打开 config
 
 
 # Vim 编辑快捷键
@@ -22,7 +22,7 @@ tags: Mac  terminal 快捷键
 2. 移动到段首"{"，移动到段尾"}"
 3. 移动到下一个词"w"，移动到上一个词"b"
 4. 移动到文档开始"gg"，移动到文档结束"G"
-5. 跳到第n行"ngg" 或 "nG" 或 ":n"
+5. 跳到第 n 行"ngg" 或 "nG" 或 ":n"
 6. 移动光标到屏幕顶端"H"，移动到屏幕中间"M"，移动到底部"L"
 7. 移动到上次编辑文件的位置 `
 

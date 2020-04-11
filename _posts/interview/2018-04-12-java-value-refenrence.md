@@ -32,7 +32,7 @@ public static void change(String str, char[] c) {
 为毛线啊，不着急，且听我慢慢道来。。  
 话说 Java 的数据类型分为两种
 * 基本数据类型
-  * 整型 ：byte,int，short,long
+  * 整型 ：byte, int ， short ,long
   * 浮点型： float,double
   * 字符型： char
   * 布尔型： boolean
@@ -44,11 +44,11 @@ public static void change(String str, char[] c) {
 * 基本数据类型，值就直接保存到变量中   
 * 引用数据类型，变量中保存中的是实际对象的地址。一般称为这种变量为引用。引用指向实际类型，实际类型保存着内容，
 
-局部变量和方法参数都是JVM在栈中开启空间存储的，随着方法进入开辟，退出回收。以32位JVM为例，boolean/byte/int/short/char/float 以及引用都是在内存中开辟4个字节的空间，long/double 则是8个字节的空间，对于每个方法来说，最多占据多少空间是一定的，这在编译时期都计算好了，
+局部变量和方法参数都是 JVM 在栈中开启空间存储的，随着方法进入开辟，退出回收。以 32 位 JVM 为例，boolean/byte/int/short/char/float 以及引用都是在内存中开辟 4 个字节的空间，long/double 则是 8 个字节的空间，对于每个方法来说，最多占据多少空间是一定的，这在编译时期都计算好了，
 
 每一个线程都分配一个独享的栈，所有的线程共享一个堆，对于每个方法的局部变量，是觉得不可能被其他方法，甚至其他线程的同一个方法所访问的，更别说修改了。
 
-我们在方法中声明一个int i=0;或者Object obj=null的时候，仅仅涉及到栈，不影响到堆。当我们new Object()的时候，实际上是在堆中开辟一个块内存并初始化Object对象，当我们将这个对象赋值给obj变量的时候，仅仅是栈中代表obj的四个字节变更为这个对象的地址。
+我们在方法中声明一个int i=0;或者Object obj=null的时候，仅仅涉及到栈，不影响到堆。当我们 new Object() 的时候，实际上是在堆中开辟一个块内存并初始化 Object 对象，当我们将这个对象赋值给 obj 变量的时候，仅仅是栈中代表 obj 的四个字节变更为这个对象的地址。
 
 方法的参数分为
 * 形式参数  定义方法时写的参数
@@ -57,7 +57,7 @@ public static void change(String str, char[] c) {
 一般情况下，在数据作为参数传递的时候，
 * 基本数据类型是值传递，
 * 引用数据类型是引用传递（地址传递）
-* String,Integer,Double 等Immutable类型因为没有提供自身修改的函数，所以每次操作都是生成一个新的对象，所以需要特殊对待，可以认为是值传递  
+* String, Integer , Double 等 Immutable 类型因为没有提供自身修改的函数，所以每次操作都是生成一个新的对象，所以需要特殊对待，可以认为是值传递  
 
 接下来一个一个通过代码解释：
 ## 基本数据类型
@@ -89,7 +89,7 @@ num1 = 10
 num2 = 20
 ```
 ## 解析
-因为a,b 是从num1和num2 复制过来的，所以a,b 不管怎么改变，不会影响到num1,num2,这就相当于你拿着身份证复印件去办理一项业务，很多情况下，为了安全，我们都会在身份证复印件上写上“该复印件只能用来办理xxx业务”之类的话，写的这话显示到你的身份证复印件上，可是你的身份证上并没有因此改变一个道理。只要记住是复制，不是本身，就好理解。
+因为 a , b 是从 num1 和 num2 复制过来的，所以 a , b 不管怎么改变，不会影响到 num1 , num2 ,这就相当于你拿着身份证复印件去办理一项业务，很多情况下，为了安全，我们都会在身份证复印件上写上“该复印件只能用来办理 xxx 业务”之类的话，写的这话显示到你的身份证复印件上，可是你的身份证上并没有因此改变一个道理。只要记住是复制，不是本身，就好理解。
 
 ## 引用数据类型
 ```java
@@ -116,7 +116,7 @@ public  static class Employee {
 changeEmployee  age = 1000
 age = 100
 ```
-然后我们再添加一些log,查看运行结果
+然后我们再添加一些 log ,查看运行结果
 ```java
 public  static class Employee {
     public int age;
@@ -151,10 +151,10 @@ employee: top.hoyouly.sina.JavaReferenceTest$Employee@6a998c1    age = 10
 ```
 这应该能看出来点眉目吧
 ## 解析
-* 因为 Employee 是一个类，创建该对象，这个对象会存入到堆中一个地址里面，而这个地址就是 6a998c1，然后把该对象赋值给变量employee，于是employee这个变量指向这个对象的地址，即6a998c1，  
-* 引用数据类型在参数传递的时候传递的是引用地址，也就是在执行changeEmployee()方法时，变量employee会把引用的地址复制一份给emp，于是changeEmployee()方法第一行输出的emp地址就和变量employee变量一样
-* 然而changeEmployee()的第二行确实重新再创建一个对象，在堆内存的地址是6a998c1，然后把这个对象赋值给emp,也就是从这一刻开始，emp指向的地址变量由原来的6a998c1变成了6a998c1，那么以后对emp的操作，都是对686baa51 地址的操作。所以尽管emp设置了age为50，但是这个设置是对686baa51地址的对象操作的，而非6a998c1地址的对象，
-* changeEmployee() 执行完成后，尽管686baa51对象的age值变化了，可是6a998c1 对象的age依旧没改变，还是10  
+* 因为 Employee 是一个类，创建该对象，这个对象会存入到堆中一个地址里面，而这个地址就是 6a998c1 ，然后把该对象赋值给变量 employee ，于是 employee 这个变量指向这个对象的地址，即 6a998c1 ，  
+* 引用数据类型在参数传递的时候传递的是引用地址，也就是在执行 changeEmployee() 方法时，变量 employee 会把引用的地址复制一份给 emp ，于是 changeEmployee() 方法第一行输出的 emp 地址就和变量 employee 变量一样
+* 然而 changeEmployee() 的第二行确实重新再创建一个对象，在堆内存的地址是 6a998c1 ，然后把这个对象赋值给 emp ,也就是从这一刻开始， emp 指向的地址变量由原来的 6a998c1 变成了 6a998c1 ，那么以后对 emp 的操作，都是对 686baa51 地址的操作。所以尽管 emp 设置了 age 为 50 ，但是这个设置是对 686baa51 地址的对象操作的，而非 6a998c1 地址的对象，
+* changeEmployee() 执行完成后，尽管 686baa51 对象的 age 值变化了，可是 6a998c1 对象的 age 依旧没改变，还是10  
 
 举个栗子：   
 你说你会清理抽烟机，我刚好需要，就告诉你我家地址。而你知道我家地址，可是竟然没来我家，去了另外一家，然后把油烟机清理干净了，但是我家的油烟机还是脏兮兮的啊，其实就是这个道理。
@@ -198,7 +198,7 @@ changeEmployee end top.hoyouly.sina.JavaReferenceTest$Employee@2f63e9a1
 changeEmployee emp = top.hoyouly.sina.JavaReferenceTest$Employee@2f63e9a1  age: 50
 employee: top.hoyouly.sina.JavaReferenceTest$Employee@2f63e9a1    age = 50
 ```
-其实这就好理解了，还以刚才清理油烟机的例子，这次请你清理油烟机，你学乖了，不敢私自改地址了，整个运行过程中，对象的地址一直都是2f63e9a1， 乖乖来我家了，把油烟机清理干净了，那样理所当然的我家的油烟机就干净了啊。
+其实这就好理解了，还以刚才清理油烟机的例子，这次请你清理油烟机，你学乖了，不敢私自改地址了，整个运行过程中，对象的地址一直都是 2f63e9a1 ， 乖乖来我家了，把油烟机清理干净了，那样理所当然的我家的油烟机就干净了啊。
 
 引用数据类型包括类，数组和接口，类刚才说过了，接口也属于类的一种，就不多解释了，
 然后说一下数组
@@ -219,12 +219,12 @@ public static void main(String[] args) {
 c[0]: d  c :[C@528f2588
 ch= dbc  ch的地址： [C@528f2588
 ```
-看到了没，change()中c的地址和main()中ch地址一样，所以在change()中对c的修改直接影响main()中ch,所以ch的值就变成了dbc ,
+看到了没， change() 中 c 的地址和 main() 中 ch 地址一样，所以在 change() 中对 c 的修改直接影响 main() 中 ch ,所以 ch 的值就变成了 dbc ,
 
-然后看第三种，特殊的类，没有提供自身修改的函数的类，例如 String,Integer,Double 等Immutable类型
+然后看第三种，特殊的类，没有提供自身修改的函数的类，例如 String , Integer , Double 等 Immutable 类型
 
 ## 没有提供自身修改函数的类
-说最简单的吧，String类型，
+说最简单的吧， String 类型，
 ```java
 public static void main(String[] args) {
     String str = new String("abc");
@@ -246,10 +246,10 @@ before s 96354  s: abc
 end  s 48690  s: 123
 end str: 96354   str: abc
 ```
-同样，进入到change()后，s 的hashcode变了，可以理解为不是同一个对象了，change()中s值该为“123”，但是str 并没有改变。
+同样，进入到 change() 后， s 的 hashcode 变了，可以理解为不是同一个对象了， change() 中 s 值该为“123”，但是 str 并没有改变。
 
 ## 解析
-String 中API中有这样一句话: "their values cannot be changed after they are created",意思是 String类的值创建后就不能被改变了。也就是说对String对象s的任何修改都等同于创建一个新对象，并将新的地址赋给s。String 对象一旦创建，内容不可更改，每一次内容更改都是重新创建新的对象。
+String 中 API 中有这样一句话: "their values cannot be changed after they are created",意思是 String 类的值创建后就不能被改变了。也就是说对 String 对象 s 的任何修改都等同于创建一个新对象，并将新的地址赋给 s 。 String 对象一旦创建，内容不可更改，每一次内容更改都是重新创建新的对象。
 
 ---
 搬运地址：    

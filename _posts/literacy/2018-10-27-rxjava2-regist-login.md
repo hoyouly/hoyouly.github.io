@@ -37,7 +37,7 @@ private void flatMapTest(final int value) {
             .flatMap(new Function<Integer, ObservableSource<String>>() {
                 @Override
                 public ObservableSource<String> apply(Integer integer) {
-                  //把每一个上游发送过来的事件转换成一个新的三个String事件，不保证事件顺序
+                  //把每一个上游发送过来的事件转换成一个新的三个 String 事件，不保证事件顺序
                     Log.d(TAG, "flatMap apply: " + Thread.currentThread().getName() + "  " + integer);
                     if (integer % 2 == 0) {//执行下一步操作
                         final List<String> list = new ArrayList<>();
@@ -75,7 +75,7 @@ private void flatMapTest(final int value) {
             });
 }
 ```
-最后执行的结果是，如果value 为1的时候，
+最后执行的结果是，如果 value 为 1 的时候，
 ```java
  flatMapTest() :   value 1
  onSubscribe: main   0
@@ -84,8 +84,8 @@ private void flatMapTest(final int value) {
  flatMap apply: RxCachedThreadScheduler-2  1
  停止，不再分发:
 ```
-后面的onNext()  onError()  onComplete() 三个方法都没执行   
-但是如果传递的value是 2的时候，后面的onNext()就能顺利执行
+后面的 onNext()  onError()  onComplete() 三个方法都没执行   
+但是如果传递的 value 是 2 的时候，后面的 onNext() 就能顺利执行
 ```java
  flatMapTest() :   value 2
  onSubscribe: main   0
@@ -104,7 +104,7 @@ private void flatMapTest(final int value) {
             .flatMap(new Function<Integer, ObservableSource<String>>() {
                 @Override
                 public ObservableSource<String> apply(Integer integer) {
-                  //把每一个上游发送过来的事件转换成一个新的三个String事件，不保证事件顺序
+                  //把每一个上游发送过来的事件转换成一个新的三个 String 事件，不保证事件顺序
                     Log.d(TAG, "flatMap apply: " + Thread.currentThread().getName() + "  " + integer);
                     if (integer % 2 == 0) {//执行下一步操作
                         final List<String> list = new ArrayList<>();
@@ -114,14 +114,14 @@ private void flatMapTest(final int value) {
                         return Observable.fromIterable(list).delay(3, TimeUnit.SECONDS);
                     } else {
                         Log.d(TAG, "停止，不再分发: ");
-                        return  Observable.error(new Exception("停止分发"));//这个会执行到onError()方法，
+                        return  Observable.error(new Exception("停止分发"));//这个会执行到 onError() 方法，
                     }
                 }
             })//
             ...
 }
 ```
-这个唯一的不同就是执行了Observable.error()后，后面会执行onError()方法
+这个唯一的不同就是执行了Observable.error()后，后面会执行 onError() 方法
 ```java
  flatMapTest() :   value 1
  onSubscribe: main   0
@@ -133,19 +133,19 @@ private void flatMapTest(final int value) {
 
 ```
 
-### 使用CompositeDisposable来处理
+### 使用 CompositeDisposable 来处理
 
-CompositeDisposable  对我们订阅的请求统一管理。 使用步骤
-1. 在UI层创建 CompositeDisposable 对象，比如在onCreat()
-2. 把subiscribe() 订阅返回的Disposable对象加入管理器
+CompositeDisposable 对我们订阅的请求统一管理。 使用步骤
+1. 在 UI 层创建 CompositeDisposable 对象，比如在onCreat()
+2. 把 subiscribe() 订阅返回的 Disposable 对象加入管理器
 3. 不需要的时候清空订阅对象。
 
 也只贴了核心代码。
-这次是在doOnNext()中处理compositeDisposable.clear();
+这次是在 doOnNext() 中处理compositeDisposable.clear();
 
 ```java
 private void flatMapTest(final int value) {
-  //创建CompositeDisposable 对象
+  //创建 CompositeDisposable 对象
   final CompositeDisposable compositeDisposable = new CompositeDisposable();
             ...
             .doOnNext(new Consumer<Integer>() {
@@ -163,7 +163,7 @@ private void flatMapTest(final int value) {
             .observeOn(Schedulers.io())//下面的代码再切换到子线程中执行。
             .flatMap(new Function<Integer, ObservableSource<String>>() {
                @Override
-               public ObservableSource<String> apply(Integer integer) {//把每一个上游发送过来的事件转换成一个新的三个String事件，不保证事件顺序
+               public ObservableSource<String> apply(Integer integer) {//把每一个上游发送过来的事件转换成一个新的三个 String 事件，不保证事件顺序
                    Log.d(TAG, "flatMap apply: " + Thread.currentThread().getName() + "  " + integer);
                    final List<String> list = new ArrayList<>();
                    for (int i = 0; i < 2; i++) {
@@ -177,7 +177,7 @@ private void flatMapTest(final int value) {
                @Override
                public void onSubscribe(Disposable d) {
                    Log.d(TAG, "onSubscribe: " + Thread.currentThread().getName() + "   " + d);
-                   compositeDisposable.add(d);//把Disposable对象加入管理器
+                   compositeDisposable.add(d);//把 Disposable 对象加入管理器
                }
         ...
 ```
@@ -189,4 +189,4 @@ private void flatMapTest(final int value) {
  doOnNext accept: main  value: 1
  停止，不再分发:
 ```
-这个连flatMap()方法都没执行到，推荐使用这种。
+这个连 flatMap() 方法都没执行到，推荐使用这种。

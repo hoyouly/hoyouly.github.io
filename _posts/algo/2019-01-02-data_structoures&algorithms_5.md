@@ -32,7 +32,7 @@ tags: 数据结构 算法
 * 只会对相邻两个元素进行操作
 * 比较相邻两个元素大小，
 * 不满足就互换，
-* 一次冒泡至少让一个元素移动到他应该在的位置。重复n 次，就完成了n个数据的排序工作
+* 一次冒泡至少让一个元素移动到他应该在的位置。重复 n 次，就完成了 n 个数据的排序工作
 
 * 属于原地排序，并且具有稳定性，
 时间复杂度： 最好情况O(n),最坏情况 O(n^2)
@@ -45,7 +45,7 @@ public void bubbleSore(int[] arr){
   int length=arr.length;
   for(int i=0;i<length;i++){
     boolean flag;
-    for(int j=i;j<length-i-1;j++){//从第i 个开始，一直到length-i-1的位置
+    for(int j=i;j<length-i-1;j++){//从第 i 个开始，一直到length-i-1的位置
       if(arr[j]>arr[j+1]){//说明前面的数据大于后面的数据，那么就需要交换，
         int temp=arr[j];
         arr[j]=arr[j+1];
@@ -99,7 +99,7 @@ public void insertSort(int[] arr){
         break;// 找到未排序区间中元素的位置，
       }
     }
-    //已经确定value要插入的位置，j+1
+    //已经确定 value 要插入的位置，j+1
     arr[j+i]=value;//
   }
 }
@@ -120,9 +120,9 @@ public void selectSort(int[] arr){
   int length=arr.length;
 
   for(int i=0;i<length;i++){//未排序区间
-    int min=i;//默认是i的位置是最小值
-    for(int j=i+1;j<length;j++){//遍历后面的数据，找到比i 更小的index
-      if(arr[j]<arr[min]){//说明找到更小的index，那么最小值就只这个j
+    int min=i;//默认是 i 的位置是最小值
+    for(int j=i+1;j<length;j++){//遍历后面的数据，找到比 i 更小的index
+      if(arr[j]<arr[min]){//说明找到更小的 index ，那么最小值就只这个j
         min=j;
       }
     }
@@ -134,7 +134,7 @@ public void selectSort(int[] arr){
 ```
 ## 为啥插入排序比冒泡排序更受欢迎
 虽然他们两个时间复杂度一样，都是原地排序，也都是稳定性算法，但是插入排序更受欢迎一些，原因如下：
-冒泡排序交换数据比插入排序复杂的多，冒泡需要三个赋值操作，而插入只需要一个移动操作，这也就是所谓的同一阶数的时间复杂度，需要把系数，常数，低阶等考虑进去，冒泡排序的常数是3，而插入排序的常数是1
+冒泡排序交换数据比插入排序复杂的多，冒泡需要三个赋值操作，而插入只需要一个移动操作，这也就是所谓的同一阶数的时间复杂度，需要把系数，常数，低阶等考虑进去，冒泡排序的常数是 3 ，而插入排序的常数是1
 
 ```java
 冒泡排序中数据的交换操作：
@@ -168,19 +168,19 @@ if (a[j] > value) {
     if(arr==null||arr.length==0){
       return;
     }
-    mergeSort(arr,0,n-1)
+    mergeSort(arr, 0 ,n-1)
   }
 
-  public void mergeSort(int [] arr,int start,int end){
+  public void mergeSort(int [] arr, int start ,int end){
       if(start>=end)return;
       int mid=(end+start)/2;
-      mergeSort(arr,start,mid);
-      mergeSort(arr,mid,end);
-      merge(arr,start,mid,end);
+      mergeSort(arr, start ,mid);
+      mergeSort(arr, mid ,end);
+      merge(arr, start , mid ,end);
   }
 
-  public void merge(int []arr,int start,int mid,int end){
-    //用p 和q 分别指数两部分的第一个元素
+  public void merge(int []arr, int start , int mid ,int end){
+    //用 p 和 q 分别指数两部分的第一个元素
       int p=start;
       int q=mid+1;
       int [] array=new int[end-start+1];
@@ -219,8 +219,8 @@ if (a[j] > value) {
   * 属于稳定性算法
   * 时间复杂度计算 O(nlogn)
   不仅递推的代码可以写成递推公式，递归的时间复杂度也可以写成递推公式。
-  假设n个元素的时间复杂度是T(n),那么分解成两个子集的时间复杂度就是T(x/2)
-  T(x)=T(x/2)+k  k就是merge方法合并的时候的所消耗的时间。我们知道，merge()合并两个有序数组，时间复杂度是O(n),所以k=O(n)
+  假设 n 个元素的时间复杂度是T(n),那么分解成两个子集的时间复杂度就是T(x/2)
+  T(x)=T(x/2)+k  k就是 merge 方法合并的时候的所消耗的时间。我们知道， merge() 合并两个有序数组，时间复杂度是O(n),所以k=O(n)
   T(x)=T(x/2)+n
       =2*（T(x/4)+n/2）+n=2*T(x/4)+2n
       =4*(T(x/8)+n/4)+2n=4*T(x/8)+3n
@@ -232,39 +232,39 @@ if (a[j] > value) {
 核心：找到在无序数组中找到一个数，然后将比他小的数字放在他的左边，比他大的数字放在他的右边。然后递归的对左右两边进行继续排序
 ```java
 public void quickSort(int[] arr) {
-   quickSort(arr, 0, arr.length - 1);
+   quickSort(arr, 0 , arr.length - 1);
 }
 
-private void quickSort(int[] arr, int low, int high) {
+private void quickSort(int[] arr, int low , int high) {
    int pivor;
    if (low < high) {
-       //将low high 一分为二，算出关键字，该值的位置固定，不需要变化
-       pivor = parition(arr, low, high);
-       quickSort(arr, low, pivor - 1);
+       //将 low high 一分为二，算出关键字，该值的位置固定，不需要变化
+       pivor = parition(arr, low , high);
+       quickSort(arr, low , pivor - 1);
        quickSort(arr, pivor + 1, high);
    }
 }
 
 //选择一个关键字，把他放到一个位置，使其左边 的值都小于这个值，右边的值都大于这个值
-private int parition(int[] arr, int low, int high) {
+private int parition(int[] arr, int low , int high) {
    int privorKey;
    privorKey = arr[low];
    ////顺序很重要，要先从右边找
    while (low < high) {
-       while (low < high && arr[high] >= privorKey) {////从后往前找到比key小的放到前面去
+       while (low < high && arr[high] >= privorKey) {////从后往前找到比 key 小的放到前面去
            high--;
        }
-       swap(arr, low, high);
-       while (low < high && arr[low] <= privorKey) {//从前往后找到比key大的 放到后面去
+       swap(arr, low , high);
+       while (low < high && arr[low] <= privorKey) {//从前往后找到比 key 大的 放到后面去
            low++;
        }
-       swap(arr, low, high);
+       swap(arr, low , high);
 
-   }//遍历所有记录  low的位置即为 key所在位置, 且固定,不用再改变
+   }//遍历所有记录 low 的位置即为 key 所在位置, 且固定,不用再改变
    return low;
 }
 
-private void swap(int[] arr, int i, int j) {
+private void swap(int[] arr, int i , int j) {
    int temp = arr[i];
    arr[i] = arr[j];
    arr[j] = temp;

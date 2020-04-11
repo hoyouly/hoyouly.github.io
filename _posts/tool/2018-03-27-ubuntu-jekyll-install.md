@@ -25,8 +25,8 @@ sudo apt-get install rubygems
 Reading package lists... Done
 Building dependency tree       
 Reading state information... Done
-Package rubygems is not available, but is referred to by another package.
-This may mean that the package is missing, has been obsoleted, or
+ Package rubygems is not available , but is referred to by another package.
+ This may mean that the package is missing , has been obsoleted , or
 is only available from another source
 However the following packages replace it:
   ruby
@@ -48,20 +48,20 @@ sudo gem install jekyll
 ERROR:  Error installing jekyll:
   public_suffix requires Ruby version >= 2.1.
 ```
-于是我查看了一下自己的Ruby 版本，ruby -v
-结果发现还真是低啊，才1.9.3 那就想办法升级Ruby 的版本吧，然后就找到了下面的命令
+于是我查看了一下自己的 Ruby 版本，ruby -v
+结果发现还真是低啊，才1.9.3 那就想办法升级 Ruby 的版本吧，然后就找到了下面的命令
 
 ```shell
 dpkg --get-selections | grep -i ruby
 ```
-当提示下面的信息的时候，说明最新版本的Ruby安装成功了
+当提示下面的信息的时候，说明最新版本的 Ruby 安装成功了
 ```shell
 Install of ruby-2.4.1 - #complete
-Ruby was built without documentation, to build it run: rvm docs generate-ri
+ Ruby was built without documentation , to build it run: rvm docs generate-ri
 Creating alias default for ruby-2.4.1...
 
   * To start using RVM you need to run `source /home/hoyouly/.rvm/scripts/rvm`
-    in all your open shell windows, in rare cases you need to reopen all shell windows.
+ in all your open shell windows , in rare cases you need to reopen all shell windows.
 ```
 虽然英语不咋地，但是发现
 1.  Install of ruby-2.4.1 - #complete  说明Ruby 2.4.1 版本安装成功
@@ -69,7 +69,7 @@ Creating alias default for ruby-2.4.1...
 ```shell
 source /home/hoyouly/.rvm/scripts/rvm
 ```
-为了保险期间，还是查看Ruby 版本
+为了保险期间，还是查看 Ruby 版本
 
 ```shell
 ruby -v
@@ -77,17 +77,17 @@ ruby -v
 ruby 2.4.1p111 (2017-03-22 revision 58053) [x86_64-linux]
 
 ```
-版本号变了，2.4.1 ，版本好变了就行，那就继续安装jekyll吧，
+版本号变了，2.4.1 ，版本好变了就行，那就继续安装 jekyll 吧，
 
 ```shell
 sudo gem install  jekyll
 ```
-TNN 的又报错了，还是和之前的错误一样，WTF，不是版本号已经变了，怎么还提示`public_suffix requires Ruby version >= 2.1`这个错误呢，
-终于在github上找到原因了，
+TNN 的又报错了，还是和之前的错误一样， WTF ，不是版本号已经变了，怎么还提示`public_suffix requires Ruby version >= 2.1`这个错误呢，
+终于在 github 上找到原因了，
 
-原来尽管你 `ruby -v` 得到的版本号是 2.4.1 ，可是当你  `sudo ruby -v`   结果还是1.9.3 而你安装jekyll的时候，使用了sudo 命令，会自动查找 sudo ruby -v 对应的版本，所以安装jekyll的时候，不使用sudo 就可以了，  
+原来尽管你 `ruby -v` 得到的版本号是 2.4.1 ，可是当你  `sudo ruby -v`   结果还是1.9.3 而你安装 jekyll 的时候，使用了 sudo 命令，会自动查找 sudo ruby -v 对应的版本，所以安装 jekyll 的时候，不使用 sudo 就可以了，  
 具体原因参考  [glynhudson 的回答](https://github.com/jekyll/jekyll/issues/4724)
-那就执行 真正的安装jekyll的命令吧,`注意注意，千万不能加 sudo`
+那就执行 真正的安装 jekyll 的命令吧,`注意注意，千万不能加 sudo`
 
 ```shell
 gem install  jekyll
@@ -96,11 +96,11 @@ gem install  jekyll
 
 ```shell
 Installing ri documentation for jekyll-3.7.3
-Done installing documentation for public_suffix, addressable, colorator, http_parser.rb, eventmachine, em-websocket, concurrent-ruby, i18n, rb-fsevent, ffi, rb-inotify, sass-listen, sass, jekyll-sass-converter, ruby_dep, listen, jekyll-watch, kramdown, liquid, mercenary, forwardable-extended, pathutil, rouge, safe_yaml, jekyll after 32 seconds
+ Done installing documentation for public_suffix , addressable , colorator , http_parser.rb, eventmachine , em-websocket, concurrent-ruby, i18n , rb-fsevent, ffi , rb-inotify, sass-listen, sass , jekyll-sass-converter, ruby_dep , listen , jekyll-watch, kramdown , liquid , mercenary , forwardable-extended, pathutil , rouge , safe_yaml , jekyll after 32 seconds
 25 gems installed
 
 ```
-同样，为了保险期间，还是查看一个jekyll 的版本号
+同样，为了保险期间，还是查看一个 jekyll 的版本号
 
 ```shell
 jekyll -v
@@ -108,8 +108,8 @@ jekyll -v
 //结果如下
 jekyll 3.7.3
 ```
-这次就说明真的在Ubuntu上安装成功jekyll了，那就试一把把
-进入到我的bolg文件目录下面，执行
+这次就说明真的在 Ubuntu 上安装成功 jekyll 了，那就试一把把
+进入到我的 bolg 文件目录下面，执行
 
 ```shell
 jekyll build
@@ -121,7 +121,7 @@ Deprecation: The 'gems' configuration option has been renamed to 'plugins'. Plea
 Dependency Error: Yikes! It looks like you don't have jekyll-sitemap or one of its dependencies installed. In order to use Jekyll as currently configured, you'll need to install this gem. The full error message from Ruby is: 'cannot load such file - jekyll-sitemap' If you run into trouble, you can find helpful resources at https://jekyllrb.com/help/!
 
 ```
-Deprecation 这个先不管它，可是下面却有一个 error message ，这是为啥呢，继续百度，Google咯，既然`cannot load such file - jekyll-sitemap` ，那我就install一个这样的文件不就得了，
+Deprecation 这个先不管它，可是下面却有一个 error message ，这是为啥呢，继续百度， Google 咯，既然`cannot load such file - jekyll-sitemap` ，那我就 install 一个这样的文件不就得了，
 ```shell
 gem install  jekyll-sitemap
 ```

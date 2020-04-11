@@ -14,10 +14,10 @@ public ViewTarget<ImageView, TranscodeType> into(@NonNull ImageView view) {
     Util.assertMainThread();
     Preconditions.checkNotNull(view);
     BaseRequestOptions<?> requestOptions = this;
-    //在没有调用transform方法，并且变换可用的情况下，如果设置了scaletype，就会根据你的设置对图片进行处理
+    //在没有调用 transform 方法，并且变换可用的情况下，如果设置了 scaletype ，就会根据你的设置对图片进行处理
     if (!requestOptions.isTransformationSet()&& requestOptions.isTransformationAllowed()&& view.getScaleType() != null) {
       switch (view.getScaleType()) {
-        //用clone方法来保证不会影响之后的视图显示效果
+        //用 clone 方法来保证不会影响之后的视图显示效果
         case CENTER_CROP:
           requestOptions = requestOptions.clone().optionalCenterCrop();
           break;
@@ -42,15 +42,15 @@ public ViewTarget<ImageView, TranscodeType> into(@NonNull ImageView view) {
     return into(
         glideContext.buildImageViewTarget(view, transcodeClass),
         /*targetListener=*/ null,
-        requestOptions,
+ requestOptions ,
         Executors.mainThreadExecutor());
   }
 ```
 如图，当我们调用into(target)的时候，我们可知
 1. 必须在主线程中
-2. targetListener 是null,是用来加载图片的监听器
-3. 根据View的getScaleType来判断是设置requestOptions
-4. 根据View 和transcodeClass来构建一个ViewTarget
+2. targetListener 是 null ,是用来加载图片的监听器
+3. 根据 View 的 getScaleType 来判断是设置requestOptions
+4. 根据 View 和 transcodeClass 来构建一个ViewTarget
 
 先看看 buildImageViewTarget() 是干嘛的吧
 
@@ -74,15 +74,15 @@ ImageViewTargetFactory
      }
    }
 ```
-根据clazz构建不同的ViewTarget，这个clazz是在创建RequestBuilder()的时候传递过来的，如果加载图片的时候使用asBtimap(),那么就会创建BitmapImageViewTarget,如果调用asDrawable(),或者asGif(),那么就创建一个DrawableImageViewTarget，否则抛出异常。
+根据 clazz 构建不同的 ViewTarget ，这个 clazz 是在创建 RequestBuilder() 的时候传递过来的，如果加载图片的时候使用 asBtimap() ,那么就会创建 BitmapImageViewTarget ,如果调用 asDrawable() ,或者 asGif() ,那么就创建一个 DrawableImageViewTarget ，否则抛出异常。
 
 接下来看真正的into()
 
 四个参数我们也大概能猜出来到底干嘛的
-target  要加载的载体，比如ImageView
-targetListener   加载时候的监听
-options   加载时候的配置，比如是否圆角，圆形图片等
-callbackExecutor  因为加载图片可能耗时，所以需要在子线程中进行，那么就需要线程池进行管理
+target 要加载的载体，比如ImageView
+targetListener 加载时候的监听
+options 加载时候的配置，比如是否圆角，圆形图片等
+callbackExecutor 因为加载图片可能耗时，所以需要在子线程中进行，那么就需要线程池进行管理
 
 
 ```java
@@ -90,12 +90,12 @@ private <Y extends Target<TranscodeType>> Y into(@NonNull Y target,
       @Nullable RequestListener<TranscodeType> targetListener,
       BaseRequestOptions<?> options,Executor callbackExecutor) {
     Preconditions.checkNotNull(target);
-    //若load方法没有调用会抛出异常
+    //若 load 方法没有调用会抛出异常
     if (!isModelSet) {
       throw new IllegalArgumentException("You must call #load() before calling #into()");
     }
 
-    Request request = buildRequest(target, targetListener, options, callbackExecutor);
+    Request request = buildRequest(target, targetListener , options , callbackExecutor);
 
     Request previous = target.getRequest();
     //若上一个请求和新建请求一致并且使用了内存缓存或者上一个请求没有完成则将新建请求回收，并保证上一个请求的运行
@@ -106,7 +106,7 @@ private <Y extends Target<TranscodeType>> Y into(@NonNull Y target,
       }
       return target;
     }
-    //清除target之前的请求并设置新的请求
+    //清除 target 之前的请求并设置新的请求
     requestManager.clear(target);
     target.setRequest(request);
     requestManager.track(target, request);
@@ -114,7 +114,7 @@ private <Y extends Target<TranscodeType>> Y into(@NonNull Y target,
   }
 
 ```
-通过 buildRequest()创建一个 Request ，用于发起一个加载请求，通过后面的代码也可以知道，真正返回的是 SingleRequest
+通过 buildRequest() 创建一个 Request ，用于发起一个加载请求，通过后面的代码也可以知道，真正返回的是 SingleRequest
 
 ### buildRequest()
 
@@ -125,14 +125,14 @@ private Request buildRequest(
       BaseRequestOptions<?> requestOptions,
       Executor callbackExecutor) {
     return buildRequestRecursive(
-        target,
-        targetListener,
+ target ,
+ targetListener ,
         /*parentCoordinator=*/ null,
-        transitionOptions,
+ transitionOptions ,
         requestOptions.getPriority(),
         requestOptions.getOverrideWidth(),
         requestOptions.getOverrideHeight(),
-        requestOptions,
+ requestOptions ,
         callbackExecutor);
   }
 
@@ -161,7 +161,7 @@ private Request buildRequest(
   }
 
 ```
-* 如果我们调用了error()方法，errorBuilder就不会为null，
+* 如果我们调用了 error() 方法， errorBuilder 就不会为 null ，
 * errorRequest 则是处理错误显示的请求，
 * mainRequest 则是包含了缩略图和目标图的请求，
 
@@ -218,7 +218,7 @@ private Request buildThumbnailRequestRecursive(...) {
     }
   }
 ```
-我们发现大部分都会执行到obtainRequest(),这个obtainRequest可以获取到一个Request对象。
+我们发现大部分都会执行到 obtainRequest() ,这个 obtainRequest 可以获取到一个 Request 对象。
 
 ```java
 private Request obtainRequest(...) {
@@ -234,8 +234,8 @@ public static <R> SingleRequest<R> obtain(...) {
   return request;
 }
 ```
-先从对象池中得到对象，如果不存在，则创建，然后init,使用的享元模式，处于对内存的节省，先从对象池中取，有则共享，减少new对象的成本，
-创建完成Request后，然后就是  requestManager # track()
+先从对象池中得到对象，如果不存在，则创建，然后 init ,使用的享元模式，处于对内存的节省，先从对象池中取，有则共享，减少 new 对象的成本，
+创建完成 Request 后，然后就是  requestManager # track()
 
 ### RequestManager # track()
 
@@ -245,16 +245,16 @@ target.setRequest(request);
 requestManager.track(target, request);
 
 synchronized void track(@NonNull Target<?> target, @NonNull Request request) {
-  //保存target的记录，方便清除请求
+  //保存 target 的记录，方便清除请求
    targetTracker.track(target);
    requestTracker.runRequest(request);
  }
 
 public void runRequest(@NonNull Request request) {
   requests.add(request);
-  //判断Glide当前是不是处理暂停状态
+  //判断 Glide 当前是不是处理暂停状态
   if (!isPaused) {
-    //调用Request的begin()方法来执行Request
+    //调用 Request 的 begin() 方法来执行Request
     request.begin();
   } else {
     //Request添加到待执行队列里面，等暂停状态解除了之后再执行
@@ -263,7 +263,7 @@ public void runRequest(@NonNull Request request) {
   }
 }
 ```
-注释都写上去了，就不多解释了。因为我们创建的是 SingleRequest,所以进入到了SingleRequest的begin中,执行 request.
+注释都写上去了，就不多解释了。因为我们创建的是 SingleRequest ,所以进入到了 SingleRequest 的 begin 中,执行 request.
 ### SingleRequest # begin()
 ```java
 public synchronized void begin() {
@@ -289,11 +289,11 @@ public synchronized void begin() {
       return;
     }
     status = Status.WAITING_FOR_SIZE;
-    //是否使用了override() API为图片指定了一个固定的宽高
+    //是否使用了 override() API 为图片指定了一个固定的宽高
     if (Util.isValidDimensions(overrideWidth, overrideHeight)) {
       onSizeReady(overrideWidth, overrideHeight);
     } else {
-      //没有的话，会根据ImageView的layout_width和layout_height值做一系列的计算，来算出图片应该的宽高。在计算完之后，它也会调用onSizeReady()方法
+      //没有的话，会根据 ImageView 的 layout_width 和 layout_height 值做一系列的计算，来算出图片应该的宽高。在计算完之后，它也会调用 onSizeReady() 方法
       target.getSize(this);
     }
 
@@ -303,12 +303,12 @@ public synchronized void begin() {
   }
 
 ```
-这个主要是根据status 进行判断
-* 如果COMPLETE已完成，则直接回调 onResourceReady()
-* 如果是WAITING_FOR_SIZE，则会执行onSizeReady()，最后通过 Engine的 load()方法，然后同样执行 onResourceReady(),
+这个主要是根据 status 进行判断
+* 如果 COMPLETE 已完成，则直接回调 onResourceReady()
+* 如果是 WAITING_FOR_SIZE ，则会执行 onSizeReady() ，最后通过 Engine 的 load() 方法，然后同样执行 onResourceReady() ,
 
 
-* 如果model 为null，则调用 onLoadFailed()
+* 如果 model 为 null ，则调用 onLoadFailed()
 
 ### onLoadFailed()
 
@@ -326,10 +326,10 @@ private synchronized void onLoadFailed(GlideException e, int maxLogLevel) {
       boolean anyListenerHandledUpdatingTarget = false;
       if (requestListeners != null) {
         for (RequestListener<R> listener : requestListeners) {
-          anyListenerHandledUpdatingTarget |=listener.onLoadFailed(e, model, target, isFirstReadyResource());
+          anyListenerHandledUpdatingTarget |=listener.onLoadFailed(e, model , target , isFirstReadyResource());
         }
       }
-      anyListenerHandledUpdatingTarget |= targetListener != null && targetListener.onLoadFailed(e, model, target, isFirstReadyResource());
+      anyListenerHandledUpdatingTarget |= targetListener != null && targetListener.onLoadFailed(e, model , target , isFirstReadyResource());
 
       if (!anyListenerHandledUpdatingTarget) {
         setErrorPlaceholder();
@@ -361,10 +361,10 @@ private synchronized void onLoadFailed(GlideException e, int maxLogLevel) {
     target.onLoadFailed(error);
   }
 ```
-里面调用了setErrorPlaceholder()，会先去获取一个fallback图，若获取不到fallback图则获取error的占位图，如果获取不到的话会再去获取一个loading占位图。
+里面调用了 setErrorPlaceholder() ，会先去获取一个 fallback 图，若获取不到 fallback 图则获取 error 的占位图，如果获取不到的话会再去获取一个 loading 占位图。
 
 
-target.onLoadStarted()方法，这个方法传入了一个loading占位图，在也就说，在图片请求开始之前，会先使用这张占位图代替最终的图片显示。
+target.onLoadStarted()方法，这个方法传入了一个 loading 占位图，在也就说，在图片请求开始之前，会先使用这张占位图代替最终的图片显示。
 
 ### onSizeReady()
 ```java
@@ -392,8 +392,8 @@ public synchronized void onSizeReady(int width, int height) {
 public synchronized <R> LoadStatus load(...) {
     long startTime = VERBOSE_IS_LOGGABLE ? LogTime.getLogTime() : 0;
 
-    EngineKey key = keyFactory.buildKey(model, signature, width, height, transformations,
-        resourceClass, transcodeClass, options);
+    EngineKey key = keyFactory.buildKey(model, signature , width , height , transformations ,
+ resourceClass , transcodeClass , options);
     //从活跃资源中获取
     EngineResource<?> active = loadFromActiveResources(key, isMemoryCacheable);
     if (active != null) {
@@ -406,7 +406,7 @@ public synchronized <R> LoadStatus load(...) {
       cb.onResourceReady(cached, DataSource.MEMORY_CACHE);
       return null;
     }
-    //看EngineJob中是否已经包含当前任务
+    //看 EngineJob 中是否已经包含当前任务
     EngineJob<?> current = jobs.get(key, onlyRetrieveFromCache);
     if (current != null) {
       current.addCallback(cb, callbackExecutor);
@@ -426,9 +426,9 @@ public synchronized <R> LoadStatus load(...) {
 
 ```
 
-activeResources是一个以弱引用为值的map,他是用于存储使用中的资源，
+activeResources 是一个以弱引用为值的 map ,他是用于存储使用中的资源，
 
-MemoryCache是一个LruResourceCache，先从activeResources中获取，获取不到则到MemoryCache中获取，获取到了则将资源缓存到activeResources，获取到后均会进行引用计数，获取不到则看EngineJob中是否已经包含当前任务，如果有则替换回调，没有则新建任务，
+MemoryCache 是一个 LruResourceCache ，先从 activeResources 中获取，获取不到则到 MemoryCache 中获取，获取到了则将资源缓存到 activeResources ，获取到后均会进行引用计数，获取不到则看 EngineJob 中是否已经包含当前任务，如果有则替换回调，没有则新建任务，
 
 
 ```Java
@@ -438,7 +438,7 @@ public synchronized void start(DecodeJob<R> decodeJob) {
   executor.execute(decodeJob);
 }
 ```
-主要根据是否有缓存来决定从磁盘上加载资源或是从网络上加载资源，接下来我们看decodeJob的run方法：
+主要根据是否有缓存来决定从磁盘上加载资源或是从网络上加载资源，接下来我们看 decodeJob 的 run 方法：
 ```Java
 public void run() {
   ...
@@ -464,7 +464,7 @@ private void runWrapped() {
   }
 }
 ```
-INITIALIZE 和 SWITCH_TO_SOURCE_SERVICE最终都执行到了runGenerators(),如果DECODE_DATA，那么执行到decodeFromRetrievedData()中
+INITIALIZE 和 SWITCH_TO_SOURCE_SERVICE 最终都执行到了 runGenerators() ,如果 DECODE_DATA ，那么执行到 decodeFromRetrievedData() 中
 #### runGenerators()
 ```java
 private void runGenerators() {
@@ -486,7 +486,7 @@ private void runGenerators() {
     }
   }
 ```
-重点看 currentGenerator.startNext()，而currentGenerator有三种类型，
+重点看 currentGenerator.startNext()，而 currentGenerator 有三种类型，
 
 * SourceGenerator    加载磁盘上原大小资源
 * DataCacheGenerator  加载磁盘上调整后大小资源
@@ -496,7 +496,7 @@ private void runGenerators() {
 // SourceGenerator.java
 @Override
 public boolean startNext() {
-   //当dataToCache不为空的时候，将dataToCache放入内存中
+   //当 dataToCache 不为空的时候，将 dataToCache 放入内存中
    if (dataToCache != null) {
      Object data = dataToCache;
      dataToCache = null;
@@ -510,7 +510,7 @@ public boolean startNext() {
 
    loadData = null;
    boolean started = false;
-   //获取能够用的LoadData对象，然后调用它的LoadData（）
+   //获取能够用的 LoadData 对象，然后调用它的LoadData（）
    while (!started && hasNextModelLoader()) {
      loadData = helper.getLoadData().get(loadDataListIndex++);
      if (loadData != null && (
@@ -523,7 +523,7 @@ public boolean startNext() {
 }
 
 ```
-SourceGenerator实现了DataCallBack接口
+SourceGenerator 实现了 DataCallBack 接口
 
 `class SourceGenerator implements DataFetcherGenerator,
     DataFetcher.DataCallback<Object>,
@@ -539,13 +539,13 @@ SourceGenerator实现了DataCallBack接口
       // reschedule to get back onto Glide's thread.
       cb.reschedule();
     } else {
-      cb.onDataFetcherReady(loadData.sourceKey, data, loadData.fetcher,
+      cb.onDataFetcherReady(loadData.sourceKey, data , loadData.fetcher,
           loadData.fetcher.getDataSource(), originalKey);
     }
   }
 
 ```
-获取到数据可以被缓存的情况下就会将data赋值给dataToCache，如果不能被赋就回调传入的FetcherReadyCallback对象的onReadyCallback方法。
+获取到数据可以被缓存的情况下就会将 data 赋值给 dataToCache ，如果不能被赋就回调传入的 FetcherReadyCallback 对象的 onReadyCallback 方法。
 
 ```Java
 public boolean startNext() {
@@ -580,19 +580,19 @@ public boolean startNext() {
 ```
 流程基本一致，
 1. 通过helper.getDiskCache().get(originalKey) 得到缓存文件
-2. 如果不为null，则通过DecodeHelper来获得List中的ModelLoader，即helper.getModelLoaders(cacheFile)
-3. modelLoader.buildLoadData获取LoadData，最后通过loadData.fetcher.loadData来加载资源
+2. 如果不为 null ，则通过 DecodeHelper 来获得 List 中的 ModelLoader ，即helper.getModelLoaders(cacheFile)
+3. modelLoader.buildLoadData获取 LoadData ，最后通过loadData.fetcher.loadData来加载资源
 
-loadData有很多实现，在加载好资源后最终都会回调 callback.onDataReady(result);这个方法会回调onDataFetcherReady方法，
+loadData 有很多实现，在加载好资源后最终都会回调 callback.onDataReady(result);这个方法会回调 onDataFetcherReady 方法，
 ```Java
-public void onDataFetcherReady(Key sourceKey, Object data, DataFetcher<?> fetcher,
-     DataSource dataSource, Key attemptedKey) {
+public void onDataFetcherReady(Key sourceKey, Object data , DataFetcher<?> fetcher,
+ DataSource dataSource , Key attemptedKey) {
    this.currentSourceKey = sourceKey;
    this.currentData = data;
    this.currentFetcher = fetcher;
    this.currentDataSource = dataSource;
    this.currentAttemptingKey = attemptedKey;
-   //如果DecodeJob的线程不是当前线程，则重新加载，
+   //如果 DecodeJob 的线程不是当前线程，则重新加载，
    if (Thread.currentThread() != currentThread) {
      runReason = RunReason.DECODE_DATA;
      callback.reschedule(this);
@@ -611,7 +611,7 @@ public void onDataFetcherReady(Key sourceKey, Object data, DataFetcher<?> fetche
 private void decodeFromRetrievedData() {
     Resource<R> resource = null;
     try {
-      resource = decodeFromData(currentFetcher, currentData, currentDataSource);
+      resource = decodeFromData(currentFetcher, currentData , currentDataSource);
     } catch (GlideException e) {
       e.setLoggingDetails(currentAttemptingKey, currentDataSource);
       throwables.add(e);
@@ -623,11 +623,11 @@ private void decodeFromRetrievedData() {
     }
   }
 ```
-通过decodeFromData方法来解码资源，如果执行完成则执行notifyEncodeAndRelease()，否则，执行runGenerators()
+通过 decodeFromData 方法来解码资源，如果执行完成则执行 notifyEncodeAndRelease() ，否则，执行runGenerators()
 
 #### decodeFromData()
 ```java
-private <Data> Resource<R> decodeFromData(DataFetcher<?> fetcher, Data data,
+private <Data> Resource<R> decodeFromData(DataFetcher<?> fetcher, Data data ,
      DataSource dataSource) throws GlideException {
    try {
      if (data == null) {
@@ -688,7 +688,7 @@ private void notifyComplete(Resource<R> resource, DataSource dataSource) {
     EngineResource<?> localResource;
     synchronized (this) {
       ...
-    listener.onEngineJobComplete(this, localKey, localResource);
+    listener.onEngineJobComplete(this, localKey , localResource);
 
     for (final ResourceCallbackAndExecutor entry : copy) {
       entry.executor.execute(new CallResourceReady(entry.cb));
@@ -696,7 +696,7 @@ private void notifyComplete(Resource<R> resource, DataSource dataSource) {
     decrementPendingCallbacks();
   }
 ```
-CallResourceReady 是EngineJob的一个内部类，然后我就查看这个内部类的run方法
+CallResourceReady 是 EngineJob 的一个内部类，然后我就查看这个内部类的 run 方法
 ```java
 @Override
    public void run() {
@@ -751,7 +751,7 @@ public synchronized void onResourceReady(Resource<?> resource, DataSource dataSo
  }
 
 
- private synchronized void onResourceReady(Resource<R> resource, R result, DataSource dataSource) {
+ private synchronized void onResourceReady(Resource<R> resource, R result , DataSource dataSource) {
      // We must call isFirstReadyResource before setting status.
      boolean isFirstResource = isFirstReadyResource();
      status = Status.COMPLETE;
@@ -762,11 +762,11 @@ public synchronized void onResourceReady(Resource<?> resource, DataSource dataSo
        boolean anyListenerHandledUpdatingTarget = false;
        if (requestListeners != null) {
          for (RequestListener<R> listener : requestListeners) {
-           anyListenerHandledUpdatingTarget |=listener.onResourceReady(result, model, target, dataSource, isFirstResource);
+           anyListenerHandledUpdatingTarget |=listener.onResourceReady(result, model , target , dataSource , isFirstResource);
          }
        }
        anyListenerHandledUpdatingTarget |=
-           targetListener != null&& targetListener.onResourceReady(result, model, target, dataSource, isFirstResource);
+ targetListener != null&& targetListener.onResourceReady(result, model , target , dataSource , isFirstResource);
 
        if (!anyListenerHandledUpdatingTarget) {
          Transition<? super R> animation =animationFactory.build(dataSource, isFirstResource);
@@ -779,7 +779,7 @@ public synchronized void onResourceReady(Resource<?> resource, DataSource dataSo
      notifyLoadSuccess();
    }
 ```
-调用了target.onResourceReady(),我们进入ImageViewTarget中
+调用了target.onResourceReady(),我们进入 ImageViewTarget 中
 ```java
 public void onResourceReady(@NonNull Z resource, @Nullable Transition<? super Z> transition) {
    if (transition == null || !transition.transition(resource, this)) {
@@ -797,7 +797,7 @@ public void onResourceReady(@NonNull Z resource, @Nullable Transition<? super Z>
  }
 
 ```
-setResource()是一个抽象方法，所以需要到子类中去查找
+setResource() 是一个抽象方法，所以需要到子类中去查找
 ```java
 BitmapImageViewTarget
 protected void setResource(Bitmap resource) {
@@ -827,15 +827,15 @@ protected void setResource(Bitmap resource) {
 ---
 搬运地址：    
 
-[Glide4.0源码全解析（一），GlideAPP和.with()方法背后的故事](https://blog.csdn.net/github_33304260/article/details/77869221)
+[Glide4.0源码全解析（一）， GlideAPP 和.with()方法背后的故事](https://blog.csdn.net/github_33304260/article/details/77869221)
 
-[Glide4.0源码全解析（二），load()背后的故事](https://blog.csdn.net/github_33304260/article/details/77992717)
+[Glide4.0源码全解析（二）， load() 背后的故事](https://blog.csdn.net/github_33304260/article/details/77992717)
 
 [Glide源码解析(三)](https://blog.csdn.net/pmx_121212/article/details/79085947)
 
-[Android图片加载库Glide 知其然知其所以然 开篇](https://juejin.im/post/5cbea88cf265da03555c7f58)
+[Android图片加载库 Glide 知其然知其所以然 开篇](https://juejin.im/post/5cbea88cf265da03555c7f58)
 
-[Android 图片加载库Glide知其然知其所以然之加载](https://juejin.im/post/5cd51235e51d456e831f69f6)
+[Android 图片加载库 Glide 知其然知其所以然之加载](https://juejin.im/post/5cd51235e51d456e831f69f6)
 
 [Glide架构设计艺术](https://www.jianshu.com/p/5c8ce241199e)
 

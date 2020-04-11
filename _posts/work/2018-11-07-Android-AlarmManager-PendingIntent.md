@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 工作填坑 - Android 高版本中 AlarmManager，PendingIntent 的坑
+title: 工作填坑 - Android 高版本中 AlarmManager ， PendingIntent 的坑
 category: 工作填坑
 tags: AlarmManager PendingIntent
 ---
@@ -11,27 +11,27 @@ tags: AlarmManager PendingIntent
 这两天要做一个需求，简单来讲，就是定时的往服务器上传数据，原本以为是一个很简单的需求，选择合适的定时器，然后传递数据，执行网络操作，结果发现遇到了各种坑
 
 ## 定时器选择
-Android上能做定时器的有好几种方式，大概有以下几种，
+Android 上能做定时器的有好几种方式，大概有以下几种，
 1. Timer
 2. AlarmManager
 3. Handler
 4. Thread   
 
 这几种方式的优劣可以参考  [Android实现定时器的几种方法](https://blog.csdn.net/u011315960/article/details/52121717) 里面写的很详细。   
-最终我选择了 AlarmManager方式，原因不解释
+最终我选择了 AlarmManager 方式，原因不解释
 
 ## AlarmManager
 使用方式，这个就简单了。可是谁知道，越是简单的东西，往往坑越多，先看我们通用的实现定时器的方式吧。
 
-### 1. 得到AlarmManager对象
+### 1. 得到 AlarmManager 对象
 这个简单，
 ```java
 AlarmManager mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 ```
 ### 2. 选择要开启的组件
-是一个Activity，还是Service，或者Broadcast，
+是一个 Activity ，还是 Service ，或者 Broadcast ，
 因为要执行网络操作，耗时的，肯定在子线程中，那最明智的选择就是IntentService
-因为这个IntentService 要处理相应的上传操作，我又不想创建新的网络操作对象，就直接写了一个内部类，结果一个坑就在这里了，后面会将解释
+因为这个 IntentService 要处理相应的上传操作，我又不想创建新的网络操作对象，就直接写了一个内部类，结果一个坑就在这里了，后面会将解释
 ```java
 public class TimerActivity extends AppCompatActivity {
     private static final String TAG = "hoyouly";
@@ -57,7 +57,7 @@ public class TimerActivity extends AppCompatActivity {
     }
 }
 ```
-然后通过Intent 启动这个Service
+然后通过 Intent 启动这个Service
 ```java
 mIntent = new Intent(context, TimerActivity.UploadService.class);
 ```
@@ -66,49 +66,49 @@ mIntent = new Intent(context, TimerActivity.UploadService.class);
 这个说是简单，主要是这几个参数的意思。
 ```java
 mPendingIntent = PendingIntent.getService(context,
-                  0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+ 0 , mIntent , PendingIntent.FLAG_UPDATE_CURRENT);
 ```
 #### PendingIntent 的 补充
-1. 典型的使用场景就是给RemoteView添加点击事件。
+1. 典型的使用场景就是给 RemoteView 添加点击事件。
 2. 通过send /cancel 发送或者取消特定的Intent.
-3. PendingIntent 和Intent 的区别
+3. PendingIntent 和 Intent 的区别
   * PendingIntent :将来的某个不确定时间发生
   * Intent: 立刻发生
 4. PendingIntent的 匹配规则
-  * PendingIntent 的 匹配规则: 如果两个PendingIntent 内部的Intent相同并且requestCode 也相同，那么这两个PendingIntent 就是相同。
-  * Intent 相同的规则：如果两个Intent的ComponetName和intent-filter 都相同，那么这两个Intent就相同。
-    **注意： Extras不参与Intent的匹配过程。只要Intent的ComponetName和intent-filter 相同，即使他们的Extras不相同，那么这两个Intent也会匹配成功的。**
-5. PendingIntent支持三种特定的意图，启动Activity，启动Service，发送Broadcast。如下图所示
+  * PendingIntent 的 匹配规则: 如果两个 PendingIntent 内部的 Intent 相同并且 requestCode 也相同，那么这两个 PendingIntent 就是相同。
+  * Intent 相同的规则：如果两个 Intent 的 ComponetName 和intent-filter 都相同，那么这两个 Intent 就相同。
+    **注意： Extras不参与 Intent 的匹配过程。只要 Intent 的 ComponetName 和intent-filter 相同，即使他们的 Extras 不相同，那么这两个 Intent 也会匹配成功的。**
+5. PendingIntent支持三种特定的意图，启动 Activity ，启动 Service ，发送 Broadcast 。如下图所示
       ![添加图片](../../../../images/pendingintent_main_method.png)
-6.  参数中的 requestCode 和 flags的意思
-  * requestCode PendingIntent 发送方的请求码，多数情况下为0，会影响到flags的效果
+6.  参数中的 requestCode 和 flags 的意思
+  * requestCode PendingIntent 发送方的请求码，多数情况下为 0 ，会影响到 flags 的效果
   * flags  常见的类型有四种
         1. FLAG_ONE_SHOT   
-        当前描述的PendingIntent 只能被使用一次，然后就会被自动cancel。如果后续还有相同的PendingIntent，那么后续的send方法就会发送失败。对于通知栏来说，采用这种个标记，那么同类通知只能出现一次，后续的通知单击后将无法打开
+        当前描述的 PendingIntent 只能被使用一次，然后就会被自动 cancel 。如果后续还有相同的 PendingIntent ，那么后续的 send 方法就会发送失败。对于通知栏来说，采用这种个标记，那么同类通知只能出现一次，后续的通知单击后将无法打开
         2. FLAG_NO_CREATE   
-        当前描述的PendingIntent不会主动创建，如果当前的PendingIntent不存在，那么getActivity(),getService(),getBroadcast() 就会返回null，即获取PendingIntent失败，这个很少使用。
+        当前描述的 PendingIntent 不会主动创建，如果当前的 PendingIntent 不存在，那么 getActivity() , getService() , getBroadcast() 就会返回 null ，即获取 PendingIntent 失败，这个很少使用。
         3. FLAG_CANCEL_CURRENT     
-        如果当前描述的PendingIntent已经存在，那么他们都会被取消，然后系统会自动创建一个新的PendingIntent，对于通知栏来说，那些被cancel的消息将无法打开。后续的通知单击后将无法打开
+        如果当前描述的 PendingIntent 已经存在，那么他们都会被取消，然后系统会自动创建一个新的 PendingIntent ，对于通知栏来说，那些被 cancel 的消息将无法打开。后续的通知单击后将无法打开
         4. FLAG_UPDATE_CURRENT  
-        当前描述的PendingIntent 如果已经存在，那么他们都会被更新，即他们的intent中的Extras会被更新。
+        当前描述的 PendingIntent 如果已经存在，那么他们都会被更新，即他们的 intent 中的 Extras 会被更新。
 
 
 ### 4. 设置定时器
-好久不用mAlarmManager了，第一次直接使用的 set方法，后来发现这个只能使用一次，不能重复，要使用setRepeating()方法才行。坑又来了，后面会说道这个坑。
+好久不用 mAlarmManager 了，第一次直接使用的 set 方法，后来发现这个只能使用一次，不能重复，要使用 setRepeating() 方法才行。坑又来了，后面会说道这个坑。
 ```java
 mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-              SystemClock.elapsedRealtime(),TIME_INTERVAL, mPendingIntent);
+              SystemClock.elapsedRealtime(), TIME_INTERVAL , mPendingIntent);
 ```
 思路理清了，开始写代码吧。
 ## 写代码
 
-1. 我把这一部分都封装起来，成了一个AlarmManagerWrapper类
+1. 我把这一部分都封装起来，成了一个 AlarmManagerWrapper 类
 
 ```java
 public class AlarmManagerWrapper {
     private static AlarmManagerWrapper mInstance;
 
-    //循环上报的间隔，先定10秒，方便自测。
+    //循环上报的间隔，先定 10 秒，方便自测。
     private static final long TIME_INTERVAL = 10 * 1000;
 
     private PendingIntent mPendingIntent;
@@ -119,7 +119,7 @@ public class AlarmManagerWrapper {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mIntent = new Intent(context, TimerActivity.UploadService.class);
         mPendingIntent = PendingIntent.getService(context,
-                              0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+ 0 , mIntent , PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static AlarmManagerWrapper getInstance(Context context) {
@@ -145,11 +145,11 @@ public class AlarmManagerWrapper {
      */
     public void startAlarm() {
         mAlarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                      SystemClock.elapsedRealtime(),TIME_INTERVAL, mPendingIntent);
+                      SystemClock.elapsedRealtime(), TIME_INTERVAL , mPendingIntent);
     }
 }
 ```
-2. 在Activity中设置了两个点击事件，开始和结束    
+2. 在 Activity 中设置了两个点击事件，开始和结束    
 
 ```java
 public class TimerActivity extends AppCompatActivity {
@@ -187,12 +187,12 @@ public class TimerActivity extends AppCompatActivity {
     }
 }
 ```
-3. 在AndroidManifest.xml中注册该Service，这点不能忘记。
+3. 在AndroidManifest.xml中注册该 Service ，这点不能忘记。
 
 ```java
 <service android:name=".TimerActivity$UploadService"/>
 ```
-满心欢喜的以为这样就行了，可是谁知道，运行后，点击开始按钮，然后崩了，瞬间心情就不好了，但是没办法，咱的工作就是写bug然后改bug的啊。好吧
+满心欢喜的以为这样就行了，可是谁知道，运行后，点击开始按钮，然后崩了，瞬间心情就不好了，但是没办法，咱的工作就是写 bug 然后改 bug 的啊。好吧
 `adb logcat -b crash` 查看崩溃日志吧,然后就看到了
 
 ```java
@@ -202,7 +202,7 @@ java.lang.Class<***.TimerActivity$UploadService> has no zero argument constructo
 第一个坑出现了。
 ### 坑一：内部类的组件必须得是static
 
-这是毛线啊，我明明设置无参构造函数了啊。不懂简单，Google吧。于是就有了大神的解释，简单的来说就是内部Service需要设置成静态的，原因参考大神的解释   [No empty constructor when create a service](https://stackoverflow.com/questions/11859403/no-empty-constructor-when-create-a-service)。
+这是毛线啊，我明明设置无参构造函数了啊。不懂简单， Google 吧。于是就有了大神的解释，简单的来说就是内部 Service 需要设置成静态的，原因参考大神的解释   [No empty constructor when create a service](https://stackoverflow.com/questions/11859403/no-empty-constructor-when-create-a-service)。
 好吧，那就设置成静态的吧，其实我是不太想设置成静态的，因为如果设置成静态的，那么我前面的请求网络的变量也的设置成静态的，可是这样好像不太好，但是又没有其他的好处理的办法。   
 注：没有直接在这个内部类中创建一个新的网络请求参数变量，是因为我们业务逻辑中，这个网络请求变量创建需要很多参数，太麻烦，就想直接使用外部类中的那个变量。
 
@@ -245,22 +245,22 @@ public class TimerActivity extends AppCompatActivity {
     }
 }
 ```
-`注意内部类 加上了static 关键字，`   
+`注意内部类 加上了 static 关键字，`   
 log 是打印出来了，
 ```java
 11-07 18:54:02.892 13581 13613 D hoyouly : onHandleIntent:
 11-07 18:55:32.467 13581 13660 D hoyouly : onHandleIntent:
 11-07 18:56:04.088 13581 13678 D hoyouly : onHandleIntent:
 ```
-但是感觉不对啊，我设置的10秒请求，可是这间隔也太长了吧，一分钟半才执行一次，这是个毛线问题啊。第二个坑来了
-### 坑二：Android 6.0 为了性能优化修改AlarmManager的定时API
-继续Google吧。原来在Android 6.0 后，Google为了 对低电耗模式和应用待机模式进行针对性优化，改API了，需要使用setExactAndAllowWhileIdle()这个API定时发送才行，具体原因查看 [关于使用 AlarmManager 的注意事项](https://juejin.im/entry/588628e8128fe10065eb62a9)。   
-按照这上面的重新修改后的代码如下，AlarmManagerWrapper和UploadService都需要改
+但是感觉不对啊，我设置的 10 秒请求，可是这间隔也太长了吧，一分钟半才执行一次，这是个毛线问题啊。第二个坑来了
+### 坑二：Android 6.0 为了性能优化修改 AlarmManager 的定时API
+继续 Google 吧。原来在Android 6.0 后， Google 为了 对低电耗模式和应用待机模式进行针对性优化，改 API 了，需要使用 setExactAndAllowWhileIdle() 这个 API 定时发送才行，具体原因查看 [关于使用 AlarmManager 的注意事项](https://juejin.im/entry/588628e8128fe10065eb62a9)。   
+按照这上面的重新修改后的代码如下， AlarmManagerWrapper 和 UploadService 都需要改
 ```java
 public class AlarmManagerWrapper {
     private static AlarmManagerWrapper mInstance;
 
-    //循环上报的间隔，先定10秒，方便自测。
+    //循环上报的间隔，先定 10 秒，方便自测。
     private static final long TIME_INTERVAL = 10 * 1000;
 
     private PendingIntent mPendingIntent;
@@ -271,7 +271,7 @@ public class AlarmManagerWrapper {
         mAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mIntent = new Intent(context, TimerActivity.UploadService.class);
         mPendingIntent = PendingIntent.getService(context,
-                              0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+ 0 , mIntent , PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static AlarmManagerWrapper getInstance(Context context) {
@@ -324,7 +324,7 @@ public static class UploadService extends IntentService {
    }
 ```
 
-这样log 看起来就正常了，每10秒打印一次。
+这样 log 看起来就正常了，每 10 秒打印一次。
 ```java
 11-07 19:02:36.930 14109 14138 D hoyouly : onHandleIntent:
 11-07 19:02:46.938 14109 14145 D hoyouly : onHandleIntent:
@@ -334,22 +334,22 @@ public static class UploadService extends IntentService {
 11-07 19:03:26.975 14109 14172 D hoyouly : onHandleIntent:
 ```
 可我还想再每次上传数据的时候传递一些参数过去啊，
-## 通过PendingIntent 传递参数
-这个应该简单了吧，通过Intent，然后putExtra()，不管是基本数据类型，还是Parcelable类型的，Serializable类型的，都可以，因为业务需要传递一个Parcelable类型实体对象比较合适。那就传递吧，简单。
-1. 在startAlarm()中接受一个实现 Parcelable类型的对象（Trip.java），然后放到Intent中    
+## 通过 PendingIntent 传递参数
+这个应该简单了吧，通过 Intent ，然后 putExtra() ，不管是基本数据类型，还是 Parcelable 类型的， Serializable 类型的，都可以，因为业务需要传递一个 Parcelable 类型实体对象比较合适。那就传递吧，简单。
+1. 在 startAlarm() 中接受一个实现 Parcelable 类型的对象（Trip.java），然后放到 Intent 中    
 
 ```java
 public void startAlarm(Trip data) {
      mIntent = new Intent(mContext, TimerActivity.UploadService.class);
      mIntent.putExtra("trip",data);
-     mPendingIntent = PendingIntent.getService(mContext, 0, mIntent
+     mPendingIntent = PendingIntent.getService(mContext, 0 , mIntent
                                   , PendingIntent.FLAG_UPDATE_CURRENT);
      mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP
                                   , SystemClock.elapsedRealtime(), mPendingIntent);
  }
 ```
 
-2. 在调用该方法的地方创建一个Trip对象，传递过去
+2. 在调用该方法的地方创建一个 Trip 对象，传递过去
 
 ```java
 public void start(View view) {
@@ -357,7 +357,7 @@ public void start(View view) {
         mWrapper.startAlarm(trip);
     }
 ```
-3. 在UpdateService中接受这个对象
+3. 在 UpdateService 中接受这个对象
 
 ```java
 @Override
@@ -387,18 +387,18 @@ protected void onHandleIntent(@Nullable Intent intent) {
 11-07 22:46:18.045  8596  8720 D hoyouly : onHandleIntent: null
 11-07 22:46:28.056  8596  8723 D hoyouly : onHandleIntent: null
 ```
-怎么一直是null呢，不应该啊，断点调试，发现在创建PendingIntent的时候，那个mIntent对象里面是有这个trip的啊，第三个坑出现了。
+怎么一直是 null 呢，不应该啊，断点调试，发现在创建 PendingIntent 的时候，那个 mIntent 对象里面是有这个 trip 的啊，第三个坑出现了。
 
-### 坑三：Android 7.0 后通过PendingIntent传递Parcelable类型数据为null
+### 坑三：Android 7.0 后通过 PendingIntent 传递 Parcelable 类型数据为null
 
-继续Google，PendingIntent 参数为null，网上说了一大堆，和什么创建PendingIntent的时候的requestCode 或者flags有关，可是按照他们说的做了，还是为null。
+继续 Google ， PendingIntent 参数为 null ，网上说了一大堆，和什么创建 PendingIntent 的时候的 requestCode 或者 flags 有关，可是按照他们说的做了，还是为 null 。
 
-最后无意间发现了，原来是一个bug ,可以参照  [Android 7.0 pendingIntent bug(AlarmManager通过PendingIntent传递数据（跨进程数据传递)](https://blog.csdn.net/m190607070/article/details/78492887) 上面的解释，按照上面的方法做，不传递Parcelable类型的对象，而是把对象转换成String。
+最后无意间发现了，原来是一个 bug ,可以参照  [Android 7.0 pendingIntent bug(AlarmManager通过 PendingIntent 传递数据（跨进程数据传递)](https://blog.csdn.net/m190607070/article/details/78492887) 上面的解释，按照上面的方法做，不传递 Parcelable 类型的对象，而是把对象转换成 String 。
 ```java
 public void startAlarm(String data) {
        mIntent = new Intent(mContext, TimerActivity.UploadService.class);
        mIntent.putExtra("trip",data);
-       mPendingIntent = PendingIntent.getService(mContext, 0, mIntent
+       mPendingIntent = PendingIntent.getService(mContext, 0 , mIntent
                                   , PendingIntent.FLAG_UPDATE_CURRENT);
        mAlarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP
                                   , SystemClock.elapsedRealtime(), mPendingIntent);
@@ -416,7 +416,7 @@ public void startAlarm(String data) {
 11-07 22:56:18.507  9151  9203 D hoyouly : onHandleIntent: {"time":1,"name":"hello"}
 11-07 22:56:28.524  9151  9205 D hoyouly : onHandleIntent: {"time":1,"name":"hello"}
 ```
-目前为止，坑终于平晚了，主要还是Android 新版本的一些问题，原本熟悉的正常的代码到了新版本，尤其是Android 6.0 以后，就会遇到各种坑。不过总算解决了，唯一美中不足的是，要把Service变成静态内部类，这样他使用的所有外部类的变量都得成静态的，可是我又没办法把Service变成单独的类，如果这样，需要创建的变量会更麻烦，所以只能这样了。
+目前为止，坑终于平晚了，主要还是 Android 新版本的一些问题，原本熟悉的正常的代码到了新版本，尤其是Android 6.0 以后，就会遇到各种坑。不过总算解决了，唯一美中不足的是，要把 Service 变成静态内部类，这样他使用的所有外部类的变量都得成静态的，可是我又没办法把 Service 变成单独的类，如果这样，需要创建的变量会更麻烦，所以只能这样了。
 
 
 ---
@@ -426,4 +426,4 @@ public void startAlarm(String data) {
 
 [关于使用 AlarmManager 的注意事项](https://juejin.im/entry/588628e8128fe10065eb62a9)   
 
-[Android 7.0 pendingIntent bug(AlarmManager通过PendingIntent传递数据（跨进程数据传递](https://blog.csdn.net/m190607070/article/details/78492887)
+[Android 7.0 pendingIntent bug(AlarmManager通过 PendingIntent 传递数据（跨进程数据传递](https://blog.csdn.net/m190607070/article/details/78492887)

@@ -63,7 +63,7 @@ description:
 defaults write com.apple.finder _FXShowPosixPathInTitle -bool YES
 ```
 
-### 修改Dock隐藏和出现时间
+### 修改 Dock 隐藏和出现时间
 
 ```bash
 defaults write com.apple.dock autohide-delay -int 0
@@ -72,11 +72,11 @@ killall Dock
 ```
 
 
-### 设置iterm中option为alt(meta)键
+### 设置 iterm 中 option 为alt(meta)键
 
 ![option-to-meta](http://7u2ho6.com1.z0.glb.clouddn.com/resource-set-meta-to-alt.png)
 
-### 删除dropbox冲突文件
+### 删除 dropbox 冲突文件
 
     find . -type f -name "* conflicted *" -exec rm -f {} \;
 
@@ -88,9 +88,9 @@ killall Dock
 
     rm -f ~/Library/Application\ Support/Dock/*.db && killall Dock
 
-### 修改Finder中文件夹显示语言
+### 修改 Finder 中文件夹显示语言
 
-    # 以Desktop为例
+    # 以 Desktop 为例
     touch ~/Desktop/.localized
     chmod 600 ~/Desktop/.localized
 

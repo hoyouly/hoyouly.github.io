@@ -20,7 +20,7 @@ description:
 
     mkdir test; mkdir test; rmdir test;
 
-虽然第二条指令会报错，但是不会影响后面的指令，最后test目录不存在
+虽然第二条指令会报错，但是不会影响后面的指令，最后 test 目录不存在
 
 ### 出错停止后面指令
 

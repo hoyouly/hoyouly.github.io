@@ -7,7 +7,7 @@ tags:  RxJava
 * content
 {:toc}
 ## backpressure 背压
-背压，这个玩意是Rxjava 绕不过去的坎。面试被问到了几次，都没说明白，因为糊里糊涂的。只知道 Rxjava 2.0 支持背压，Rxjava 1.0 不支持背压。但是为啥，怎么支持，就不清楚了。所以就想着查查资料搞懂这个玩意
+背压，这个玩意是 Rxjava 绕不过去的坎。面试被问到了几次，都没说明白，因为糊里糊涂的。只知道 Rxjava 2.0 支持背压，Rxjava 1.0 不支持背压。但是为啥，怎么支持，就不清楚了。所以就想着查查资料搞懂这个玩意
 
 什么是背压呢？
 
@@ -16,7 +16,7 @@ tags:  RxJava
 背压是流速控制的一种策略
 
 * 背压的一个前提是异步，也就是说观察者和被观察者在不同的线程。如果 观察者和被观察者在同一个线程中，这个时候被观察者发送的事件，必须等到观察者接收处理完以后才能发送下一个事件
-* 背压并是不像flatmap一样可以在程序中直接使用的操作符，他只是一种控制事件流速的策略
+* 背压并是不像 flatmap 一样可以在程序中直接使用的操作符，他只是一种控制事件流速的策略
 
 主要目的是控制流量的，水缸的控制能力毕竟有限，因此还得从源头控制。
 
@@ -37,13 +37,13 @@ Rxjava 2.0 支持背压，Rxjava 1.0 不支持背压。可是 在 Rxjava 1.0 上
 
 ### 缓存
 主要包括一下两个操作符
-* buffer  将多个事件打包放入一个List中，再一起发射
-* window  将多个事件打包放入一个Observable中，再一起发射
+* buffer  将多个事件打包放入一个 List 中，再一起发射
+* window  将多个事件打包放入一个 Observable 中，再一起发射
 
 ### 使用背压操作符
 通过一些背压操作符，来转化成支持背压的Observable
-* onBackpressurebuffer() 把Observable 发送过来的事件做缓存，当Request方法被调用的时候，给下层流发送一个item,如果给设置了缓存区的大小，那么超过这个缓冲区大小就会抛出异常
-* onBackpressureDrop()  将Observable 的事件抛弃掉，直到Subscriber再次调用 request(n)方法的时候，就会发送给它这之后的n个事件
+* onBackpressurebuffer() 把 Observable 发送过来的事件做缓存，当 Request 方法被调用的时候，给下层流发送一个 item ,如果给设置了缓存区的大小，那么超过这个缓冲区大小就会抛出异常
+* onBackpressureDrop()  将 Observable 的事件抛弃掉，直到 Subscriber 再次调用 request(n)方法的时候，就会发送给它这之后的 n 个事件
 * onBackpressureLatest()  只保留最新的事件，
 
 ## Rxjava 2.0 对背压的操作
@@ -85,10 +85,10 @@ hoyouly : Flowable : onNext test1
 hoyouly : Flowable : onNext test2
 hoyouly : Flowable : onComplete
 ```
-Subscription  和 Disposable 一样，也是一个开关，调用 cancel()就可以切断上下游直接的关系。
+Subscription 和 Disposable 一样，也是一个开关，调用 cancel() 就可以切断上下游直接的关系。
 ，通过调用 request() 来控制流速
 
-注意 request()一定要在 onStart()中通知被观察者发送第一个事件，并且在onNext()最后通知被观察者发送下一个事件。否则就会出现著名的 MissingBackpressureException
+注意 request() 一定要在 onStart() 中通知被观察者发送第一个事件，并且在 onNext() 最后通知被观察者发送下一个事件。否则就会出现著名的 MissingBackpressureException
 
 如果 onSubscribe() 中没有执行 request() ,输出的结果如下
 
@@ -97,25 +97,25 @@ hoyouly : Flowable : onSubscribe 0
 hoyouly : Flowable : onError create: could not emit value due to lack of requests
 ```
 
-如果 onSubscribe() 中执行了 request()，但是 onNext()中没有执行 request(),那么输出的结果如下
+如果 onSubscribe() 中执行了 request() ，但是 onNext() 中没有执行 request() ,那么输出的结果如下
 
 ```java
 hoyouly : Flowable : onSubscribe 0
 hoyouly : Flowable : onNext test1
 hoyouly : Flowable : onError create: could not emit value due to lack of requests
 ```
-onNext 执行了一次，这一次是因为  onSubscribe()中的 request(),
+onNext 执行了一次，这一次是因为 onSubscribe() 中的 request() ,
 ### request（）
 request() 就是开启循环的钥匙，
 
-记得我们通过 handler 发送循环消息的时候，首先通过 handler.sendMessage(),然后在 handleMessage()中，处理完Message，还会执行 handler.sendMessage()，这样才能循环执行。
+记得我们通过 handler 发送循环消息的时候，首先通过 handler.sendMessage(),然后在 handleMessage() 中，处理完 Message ，还会执行 handler.sendMessage()，这样才能循环执行。
 
-这个 request()就相当于 sendMessage(), handleMessage()相当于 onNext(),这样是不是就容易理解了。
+这个 request() 就相当于 sendMessage() , handleMessage() 相当于 onNext() ,这样是不是就容易理解了。
 
-request()同时是一种能力，告诉上游能处理几个，而被观察者一直发送数据。
+request() 同时是一种能力，告诉上游能处理几个，而被观察者一直发送数据。
 
 ### Flowable 的新思想
-RxJava的观察者模型中，被观察者是主动的推送数据给观察者，观察者是被动接收，
+RxJava 的观察者模型中，被观察者是主动的推送数据给观察者，观察者是被动接收，
 
 而 Flowable 刚好相反，是响应式拉取 观察者主动从被观察者那里拉取数据，而被观察者变成被动的等待通知发送数据。
 
@@ -128,9 +128,9 @@ RxJava的观察者模型中，被观察者是主动的推送数据给观察者�
 ---
 搬运地址：
 
-[关于RxJava最友好的文章](https://juejin.im/post/580103f20e3dd90057fc3e6d)
+[关于 RxJava 最友好的文章](https://juejin.im/post/580103f20e3dd90057fc3e6d)
 
-[关于RxJava最友好的文章——背压（Backpressure）](https://juejin.im/post/582d413c8ac24700619cceed)
+[关于 RxJava 最友好的文章——背压（Backpressure）](https://juejin.im/post/582d413c8ac24700619cceed)
 
 [关于 RxJava 最友好的文章—— RxJava 2.0 全新来袭](https://juejin.im/post/582b2c818ac24700618ff8f5)
 

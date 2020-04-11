@@ -39,14 +39,14 @@ float ydpi = getResources().getDisplayMetrics().ydpi;
 ```
 
 Bitmap.Config正是单位像素占用的字节数的重要依据
-* ALPHA_8  表示8个alpha位图，即A=8，一个像素点占用一个字节，他没有颜色，只有透明度
-* ARGB_4444 表示16位的ARGB位图，即A=4,R=4，G=4,B=4，一个像素点占用4+4+4+4=16个位，即2字节 ，已废弃
-* ARGB_8888  表示32位的ARGB位图，即A=8,R=8，G=8,B=，一个像素点占用8+8+8+8=32个位，即4字节，24位真彩色
-* RGB_565  表示16位的ARGB位图，即R=5，G=6,B=4，一个像素点占用5+6+4=16个位，即2字节 ，简易RGB色调
-* RGBA_F16 占用8个字节大小，Android 8.0 新增（更丰富的色彩表现HDR）
+* ALPHA_8  表示 8 个 alpha 位图，即A=8，一个像素点占用一个字节，他没有颜色，只有透明度
+* ARGB_4444 表示 16 位的 ARGB 位图，即A=4,R=4，G=4,B=4，一个像素点占用4+4+4+4=16个位，即 2 字节 ，已废弃
+* ARGB_8888  表示 32 位的 ARGB 位图，即A=8,R=8，G=8,B=，一个像素点占用8+8+8+8=32个位，即 4 字节， 24 位真彩色
+* RGB_565  表示 16 位的 ARGB 位图，即R=5，G=6,B=4，一个像素点占用5+6+4=16个位，即 2 字节 ，简易 RGB 色调
+* RGBA_F16 占用 8 个字节大小，Android 8.0 新增（更丰富的色彩表现HDR）
 * HARDWARE   Android 8.0 新增 （Bitmap直接存储在graphic memory）
 
-其中 A 表示透明度，R表示红色，G表示绿色，B表示蓝色
+其中 A 表示透明度， R 表示红色， G 表示绿色， B 表示蓝色
 
 如果以一个 100*100 像素的图片计算所占用内存大小
 
@@ -73,14 +73,14 @@ Bitmap.Config正是单位像素占用的字节数的重要依据
 由上可知:
 * 同一张图片，放在不同资源目录下，其所在内存大小是不同的，并且随着资源目录分辨率的变大而减小
 * 资源目录分辨率越高，其解析后的宽高越小，甚至会小于图片原有的尺寸（即缩放），从而内存占用也相应减少
-* 图片不特别放置任何资源目录时，其默认使用mdpi分辨率：160
+* 图片不特别放置任何资源目录时，其默认使用 mdpi 分辨率：160
 * 资源目录分辨率和设备分辨率一致时，图片尺寸不会缩放
 * mipmap_nohdpi 目录下面，宽高就是原始图片宽高。
 
 ### 不同目录下的宽高计算公式
 
 图片的宽高计算公式 就是 原始的宽 * 设备分辨率 / 资源目录分辨率  
-例如在 mipmap_mdpi， 设备分辨率是 420，资源目录分辨率是 160，图片的宽是1080，所以在 mipmap_mdpi 下面的得到的宽= 1080*420/160 = 2835
+例如在 mipmap_mdpi ， 设备分辨率是 420 ，资源目录分辨率是 160 ，图片的宽是 1080 ，所以在 mipmap_mdpi 下面的得到的宽= 1080*420/160 = 2835
 
 所以,前面的图片所占内存计算公式，也可以写成这样。
 ```
@@ -89,14 +89,14 @@ Bitmap.Config正是单位像素占用的字节数的重要依据
 
 # 优化方案
 ## 降低色彩解析模式
-使用低色差的解析模式，比如 RGB565  ，减少单个像素的字节大小
+使用低色差的解析模式，比如 RGB565 ，减少单个像素的字节大小
 
-Android 默认使用 ARGB8888 配置来处理色彩，如果改为 RGB565，内存大概减少一半，代价是显示的色彩减少，适用于对色彩丰富程度要求不高的场景
+Android 默认使用 ARGB8888 配置来处理色彩，如果改为 RGB565 ，内存大概减少一半，代价是显示的色彩减少，适用于对色彩丰富程度要求不高的场景
 
 ## 资源文件合理放置
 资源文件合理放置，高分辨率图片可以放到高分辨率目录下面
 
-Android 默认放置的资源目录对应的是 160 dpi, 理论上，图片放置的资源分辨率越高，其占用的内存会越小，但分辨率的图片也会因此被拉伸，显示出现失真。另一方面，高分辨率的图片意味着其占用的本地存储也变大。
+Android 默认放置的资源目录对应的是 160 dpi , 理论上，图片放置的资源分辨率越高，其占用的内存会越小，但分辨率的图片也会因此被拉伸，显示出现失真。另一方面，高分辨率的图片意味着其占用的本地存储也变大。
 
 ## 图片尺寸压缩
 图片缩放，减少尺寸。就是我们经常说的图片质量和图片体积压缩。典型代码如下
@@ -105,10 +105,10 @@ Android 默认放置的资源目录对应的是 160 dpi, 理论上，图片放�
 BitmapFactory.Options options = new BitmapFactory.Options();
 options.inPreferredConfig = Bitmap.Config.RGB_565;
 options.inJustDecodeBounds = true;
-BitmapFactory.decodeResource(getResources(), resId,options);
+BitmapFactory.decodeResource(getResources(), resId ,options);
 options.inJustDecodeBounds = false;
 options.inSampleSize = BitmapUtil.computeSampleSize(options, -1, imageView.getWidth() * imageView.getHeight());
-Bitmap newBitmap = BitmapFactory.decodeResource(getResources(), resId, options);
+Bitmap newBitmap = BitmapFactory.decodeResource(getResources(), resId , options);
 ```
 ## 复用和缓存
 就是所谓的 LRU 算法，详情可以查看 [ Bitmap 的加载和 Cache 处理 ](http://hoyouly.fun/article-detail/2018/03/17/Bitmap-loading-and-Cache/)
@@ -120,9 +120,9 @@ Android 开发艺术探索
 
 Android 群英传     
 
-[Android性能优化系列之Bitmap图片优化](https://blog.csdn.net/u012124438/article/details/66087785)   
+[Android性能优化系列之 Bitmap 图片优化](https://blog.csdn.net/u012124438/article/details/66087785)   
 
-[ Android中Bitmap内存优化 ](https://www.jianshu.com/p/3f6f6e4f1c88)
+[ Android中 Bitmap 内存优化 ](https://www.jianshu.com/p/3f6f6e4f1c88)
 
 [Android mipmap技巧](https://www.jianshu.com/p/7fa3417d2ca4)
 

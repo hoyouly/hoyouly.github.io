@@ -37,7 +37,7 @@ public class Singleton {
 ```
 volatile 的两层含义:
 *  可见性。即一个线程修改了某个变量的值后，这新值对其他线程来说是立即可见的。
-*  禁止指令重排优化，但是这个语义直到jdk1.5以后才能正确工作。此前的JDK中即使将变量声明为 volatile 也无法完全避免重排序所导致的问题。所以，在jdk1.5版本前，双重检查锁形式的单例模式是无法保证线程安全的。不过好在现在使用JDK1.5 之前版本的很少很少了。
+*  禁止指令重排优化，但是这个语义直到jdk1.5以后才能正确工作。此前的 JDK 中即使将变量声明为 volatile 也无法完全避免重排序所导致的问题。所以，在jdk1.5版本前，双重检查锁形式的单例模式是无法保证线程安全的。不过好在现在使用JDK1.5 之前版本的很少很少了。
 
 singleton 这个变量添加 volatile 的原因就是为了避免在 Singleton 的构造函数中出现异步任务(尽管一般不会人不会这么写)，导致虽然加锁了，但是也可能产生两种情况。   
 使用 volatile 关键字就可以保证就算构造函数中有异步任务，但是只要有一个线程中执行完成，也会立即通知其他线程，这样就避免了创建多个对象。
@@ -68,18 +68,18 @@ public enum Singleton {
 * 使用枚举除了线程安全和防止反射强行调用构造器之外，
 * 提供了自动序列化机制，防止反序列化的时候创建新的对象。
 
-<span style="border-bottom:1px solid red;">因此，Effective Java推荐尽可能地使用枚举来实现单例。   
-尽管枚举写法有点这么多，但是在Android平台上却不被推荐使用。</span>
+<span style="border-bottom:1px solid red;">因此， Effective Java 推荐尽可能地使用枚举来实现单例。   
+尽管枚举写法有点这么多，但是在 Android 平台上却不被推荐使用。</span>
 
-原因 [Android 官方API指南](https://developer.android.com/topic/performance/memory.html) 明确指出：`Enums often require more than twice as much memory as static constants. You should strictly avoid using enums on Android. 翻译过来就是枚举通常需要比静态常量多两倍的内存。 你应该严格避免在Android上使用枚举。`简单来说就是枚举耗内存，而Android最缺的就是内存。
+原因 [Android 官方 API 指南](https://developer.android.com/topic/performance/memory.html) 明确指出：`Enums often require more than twice as much memory as static constants. You should strictly avoid using enums on Android. 翻译过来就是枚举通常需要比静态常量多两倍的内存。 你应该严格避免在 Android 上使用枚举。`简单来说就是枚举耗内存，而 Android 最缺的就是内存。
 
 
 建议
-* 如果是在Android应用上，建议使用双重校验锁 DCL  或者静态内部类，这两个效果是一样的。
-* 如果是java程序，建议使用 枚举类型写法
+* 如果是在 Android 应用上，建议使用双重校验锁 DCL 或者静态内部类，这两个效果是一样的。
+* 如果是 java 程序，建议使用 枚举类型写法
 
 
-下面是我在Android源码中看到的，看着像是懒汉式的二次封装，可以参考一下
+下面是我在 Android 源码中看到的，看着像是懒汉式的二次封装，可以参考一下
 ##  Android源码中的单例模式
 ```java
 //android.util.Singleton.java
@@ -100,7 +100,7 @@ public abstract class Singleton<T> {
 public abstract class ActivityManagerNative extends Binder implements IActivityManager {
   private static final Singleton<IActivityManager> gDefault = new Singleton<IActivityManager>() {
     protected IActivityManager create() {
-      //通过应用程序中的0号引用，可以向SMgr获取服务端（Server）的Binder引用。
+      //通过应用程序中的 0 号引用，可以向 SMgr 获取服务端（Server）的 Binder 引用。
       IBinder b = ServiceManager.getService("activity");
       IActivityManager am = asInterface(b);
       return am;

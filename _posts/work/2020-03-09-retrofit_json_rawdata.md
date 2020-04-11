@@ -11,7 +11,7 @@ tags: Retrofit
 
 然后就想着自己封装的框架能不能同时兼容 Json 格式和非 Json 格式呢？
 
-感觉应该是可以的，因为我们通常使用Retrofit 解析json格式是按照下面的方式，
+感觉应该是可以的，因为我们通常使用 Retrofit 解析 json 格式是按照下面的方式，
 ```java
 retrofit = new Retrofit.Builder()
             .baseUrl(sBaseUrl)
@@ -20,7 +20,7 @@ retrofit = new Retrofit.Builder()
             .client(httpClientBuilder.build())
             .build();
 ```
-里面都是 addConverterFactory() 和 addCallAdapterFactory()，是add而不是set,并且通过看源码也能看出来，是把Factory 添加到一个集合里面，所以，应该是可以支持多次add的，
+里面都是 addConverterFactory() 和 addCallAdapterFactory() ，是 add 而不是 set ,并且通过看源码也能看出来，是把 Factory 添加到一个集合里面，所以，应该是可以支持多次 add 的，
 
 ```java
 public Builder addConverterFactory(Converter.Factory factory) {
@@ -31,7 +31,7 @@ public Builder addConverterFactory(Converter.Factory factory) {
 
 那么就需要研究一下，在什么情况下，使用 GsonConverterFactory 去解析，什么时候，使用另外一种方式解析数据。
 
-在解决这个问题之前，我们就需要了解 addConverterFactory()到底是干嘛的
+在解决这个问题之前，我们就需要了解 addConverterFactory() 到底是干嘛的
 它主要是对数据转化用的，请求网络的数据，在这里转换成我们需要的数据类型，
 
 ## addConverterFactory()
@@ -39,7 +39,7 @@ public Builder addConverterFactory(Converter.Factory factory) {
 ### 源码解析
 闲话少说，看代码咯。
 
-看过Retofit代码的人，应该也都知道，执行某个接口的时候，最终会通过动态代理，执行到
+看过 Retofit 代码的人，应该也都知道，执行某个接口的时候，最终会通过动态代理，执行到
 ```java
   ServiceMethod<Object, Object> serviceMethod =(ServiceMethod<Object, Object>) loadServiceMethod(method);
   OkHttpCall<Object> okHttpCall = new OkHttpCall<>(serviceMethod, args);
@@ -64,8 +64,8 @@ ServiceMethod<?, ?> loadServiceMethod(Method method) {
     return result;
   }
 ```
-因为首次调用该接口的时候，serviceMethodCache 没有该方法，所以会执行到build()方法,创建一个，然后添加到serviceMethodCache里面。[ Retrofit 中对 addCallAdapterFactory() 的理解 ](../../../../2020/03/10/retrofit_addCall/)
-我们继续查看 build()方法
+因为首次调用该接口的时候， serviceMethodCache 没有该方法，所以会执行到 build() 方法,创建一个，然后添加到 serviceMethodCache 里面。[ Retrofit 中对 addCallAdapterFactory() 的理解 ](../../../../2020/03/10/retrofit_addCall/)
+我们继续查看 build() 方法
 
 ```java
 public ServiceMethod build() {
@@ -88,17 +88,17 @@ private Converter<ResponseBody, T> createResponseConverter() {
 
 //Retrofit.java
 public <T> Converter<ResponseBody, T> responseBodyConverter(Type type, Annotation[]annotations) {
-    return nextResponseBodyConverter(null, type, annotations);
+    return nextResponseBodyConverter(null, type , annotations);
 }
 
 public <T> Converter<ResponseBody, T> nextResponseBodyConverter(
-      @Nullable Converter.Factory skipPast, Type type, Annotation[] annotations) {
+      @Nullable Converter.Factory skipPast, Type type , Annotation[] annotations) {
 ...
   int start = converterFactories.indexOf(skipPast) + 1;
   for (int i = start, count = converterFactories.size(); i < count; i++) {
     //这行代码是关键
     Converter<ResponseBody, ?> converter =
-        converterFactories.get(i).responseBodyConverter(type, annotations, this);
+        converterFactories.get(i).responseBodyConverter(type, annotations , this);
     if (converter != null) {
       return (Converter<ResponseBody, T>) converter;
     }
@@ -109,18 +109,18 @@ public <T> Converter<ResponseBody, T> nextResponseBodyConverter(
 
 ```
 流程就是
-1. 先通过 addConverterFactory()往 converterFactories 中添加Factory
-2. 在调用该接口的时候，第一次缓存中没有，通过ServiceMethod build()方法创建一个
-3. 在创建的过程中，通过 createResponseConverter()创建一个 Converter
+1. 先通过 addConverterFactory() 往 converterFactories 中添加Factory
+2. 在调用该接口的时候，第一次缓存中没有，通过 ServiceMethod build() 方法创建一个
+3. 在创建的过程中，通过 createResponseConverter() 创建一个 Converter
 4. createResponseConverter() 其实就是遍历 converterFactories 这个集合，找到第一个匹配 Converter 直接返回，不再遍历。匹配的依据就是根据 Converter.Factory中的 responseBodyConverter() 这个方法
 5. 遍历结束没找到合适的，就直接抛出异常。
 
 所以，<font color="#ff000" >如果我们想要定义一种新的数据转换的类，分两步。</font>
-1. 继承  Converter.Factory 这个抽象类，然后实现 responseBodyConverter(), 返回一个 Converter
+1. 继承  Converter.Factory 这个抽象类，然后实现 responseBodyConverter() , 返回一个 Converter
 2. 把这个类添加到 converterFactories 这个集合的首位。
 
 ## 自定义数据转换类
-主要包括三个，RawConverterFactory 和 RawResponseBodyConverter 以及 RawRequestBodyConverter
+主要包括三个， RawConverterFactory 和 RawResponseBodyConverter 以及 RawRequestBodyConverter
 ### RawConverterFactory
 ```java
 public final class RawConverterFactory extends Converter.Factory {
@@ -161,8 +161,8 @@ public final class RawConverterFactory extends Converter.Factory {
 }
 
 ```
-* responseBodyConverter() 中进行判断，如果 responseTyp 的类型是Strig,则认为是需要原始数据，则直接返回一个 RawResponseBodyConverter ，
-* 因为请求数据格式是json样式，所以 requestBodyConverter() 实现的和 GsonRequestBodyConverter 类似，如果请求格式改了，例如 xml的话，可以在这里进行处理
+* responseBodyConverter() 中进行判断，如果 responseTyp 的类型是 Strig ,则认为是需要原始数据，则直接返回一个 RawResponseBodyConverter ，
+* 因为请求数据格式是 json 样式，所以 requestBodyConverter() 实现的和 GsonRequestBodyConverter 类似，如果请求格式改了，例如 xml 的话，可以在这里进行处理
 
 ### RawResponseBodyConverter
 这个 RawResponseBodyConverter 是 Converter 的实现类，在 convert() 中直接返回原始数据。
@@ -179,14 +179,14 @@ final class RawResponseBodyConverter<T> implements Converter<ResponseBody, T> {
     }
 }
 ```
-因为 RawConverterFactory 是首先add的，并且返回的参数是String类型，所以就使用 RawConverterFactory 来进行数据的处理
+因为 RawConverterFactory 是首先 add 的，并且返回的参数是 String 类型，所以就使用 RawConverterFactory 来进行数据的处理
 
 ### RawRequestBodyConverter
-这里没有直接使用 GsonRequestBodyConverter 而是重新定义了一个 RawRequestBodyConverter，是因为 GsonRequestBodyConverter 不是public。
+这里没有直接使用 GsonRequestBodyConverter 而是重新定义了一个 RawRequestBodyConverter ，是因为 GsonRequestBodyConverter 不是 public 。
 ```java
 final class GsonRequestBodyConverter<T> implements Converter<T, RequestBody> {}
 ```
-不能直接使用。只好重新copy 一份。
+不能直接使用。只好重新 copy 一份。
 ```java
 final class RawRequestBodyConverter<T> implements Converter<T, RequestBody> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
@@ -227,7 +227,7 @@ Observable<ModifyPwdResult> updatepwd(@Body ReqModifyPwd ben);
 @POST("/sinoapi/uploadimg")
 Observable<String> updatePic(@PartMap Map<String, RequestBody> requestBodyMap, @Part MultipartBody.Part imgs);
 ```
-添加 RawConverterFactory 这个Factory，再添加  。
+添加 RawConverterFactory 这个 Factory ，再添加  。
 ```java
 
 retrofit = new Retrofit.Builder()

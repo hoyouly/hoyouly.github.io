@@ -55,4 +55,4 @@ Android 开发艺术探索
 
 [Binder学习指南](http://weishu.me/2016/01/12/binder-index-for-newer/)
 
-[Android面试一天一题（Day 35：神秘的Binder机制）](https://www.jianshu.com/p/c7bcb4c96b38)
+[Android面试一天一题（Day 35：神秘的 Binder 机制）](https://www.jianshu.com/p/c7bcb4c96b38)
