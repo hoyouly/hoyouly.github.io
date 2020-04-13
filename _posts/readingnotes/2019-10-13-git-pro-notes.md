@@ -8,29 +8,33 @@ tags: Git
 {:toc}
 
 ## 远程仓库
-git remote -v  显示对应的克隆地址，如果有多个远程仓库，将会全部列出来
-
-git remote add pb 添加一个远程仓库 , pb 是远程仓库的地址，例如 git@github.com:hoyouly/LearnGit.git
-
-git remote show 查看某个远程仓库的详细信息
-
-git remote rename pb paul 修改某个仓库的简短名称，比如把 pb 改为paul
-
-git remote rm paul 移除对应的远程仓库
-
-
+* git remote -v  
+显示对应的克隆地址，如果有多个远程仓库，将会全部列出来
+* git remote add pb
+添加一个远程仓库 , pb 是远程仓库的地址，例如 git@github.com:hoyouly/LearnGit.git
+* git remote show
+查看某个远程仓库的详细信息
+* git remote rename pb paul
+修改某个仓库的简短名称，比如把 pb 改为paul
+* git remote rm paul
+移除对应的远程仓库
 
 ## git diff
-* git diff 比较的是工作目录中当前文件和暂存区之间的差异
-* git diff --cached   查看已经暂存起来的文件和上次提交时候的差异，其实就是查看 git add 后文件和已经提交上去的差异
-* git diff --staged   在git 1.6.1版本以及更高版本使用，和git diff --cached 效果一样
+* git diff
+比较的是工作目录中当前文件和暂存区之间的差异
+* git diff --cached   
+查看已经暂存起来的文件和上次提交时候的差异，其实就是查看 git add 后文件和已经提交上去的差异
+* git diff --staged   
+在git 1.6.1版本以及更高版本使用，和git diff --cached 效果一样
 
 
 ## git commit
-git commit -v 修改差异的每一行都包含到注释中来
-git commit -a 自动吧所有已经跟着过的文件暂存起来一并提交，从而跳过 git add 步骤
-
-git commit --amend 重新编写提交说明，修正第一个提交的内容
+* git commit -v
+修改差异的每一行都包含到注释中来
+* git commit -a
+自动把所有已经跟着过的文件暂存起来一并提交，从而跳过 git add 步骤
+* git commit --amend
+重新编写提交说明，修正第一个提交的内容
 
 ## git log
 参数列表
@@ -71,64 +75,75 @@ git commit --amend 重新编写提交说明，修正第一个提交的内容
 * --committer  :  仅显示指定提交者相关的提交
 
 
-git log -g  格式化输出引用日志信息
+* git log -g  
+格式化输出引用日志信息
 
-git log master..experiement 所有可从 experient 分支中获得而不能从 master 分支获得的提交，其实就是只存在 experiement 中的提交
+* git log master..experiement
+所有可从 experient 分支中获得而不能从 master 分支获得的提交，其实就是只存在 experiement 中的提交
 
 ## git show
-git show HEAD 查查最近一次提交
-git show HEAD~ 查看最近一次之前的一次提交，
-git show HEAD~2 查看最近第三次提交，
+* git show HEAD
+查查最近一次提交
+* git show HEAD~
+查看最近一次之前的一次提交，
+* git show HEAD~2
+查看最近第三次提交，
 
 ## git reset
 取消暂存
-git reset HEAD <file>  撤销add   <file> 文件的操作
-git reset HEAD ^ 撤销所有 add 的操作
+* git reset HEAD <file>  
+撤销 add  <file> 文件的操作
+* git reset HEAD ^
+撤销所有 add 的操作
 
 
 git 使用 HEAD 来代替不存在的（省略的）一边
 ## git 别名
-git config --global alias.co  checkout   git co  相当于 git checkout    
-git config --global alias.br  branch     git br  相当于 git branch    
-git config --global alias.ci  commit     git ci  相当于 git commit     
-git config --global alias.st  status     git st  相当于 git status     
+* git config --global alias.co  checkout   
+git co  相当于 git checkout    
+* git config --global alias.br  branch     
+git br  相当于 git branch    
+* git config --global alias.ci  commit     
+git ci  相当于 git commit     
+* git config --global alias.st  status     
+git st  相当于 git status     
 
 <span style="border-bottom:1px solid red;">  git config --global alias.logf  'log --pretty=format:"%h - %an ,%ar : %s"' </span> , 那么输入 git logf 相当于 git log --pretty=format:"%h - %an ,%ar : %s"
 
 
 ## 删除 分支
-git branch -d 分支名  删除本地分支，如果该分支没有 merge 到当前分支，会删除失败
-
-git branch -D 分支名  强制删除本地分支
-
+* git branch -d 分支名  
+删除本地分支，如果该分支没有 merge 到当前分支，会删除失败
+* git branch -D 分支名  强制删除本地分支
 
 ### 远程分支
 像是一个书签，提醒这你上次连接远程长裤时上面各个分支的为位置
 
-git fetch 同步，获取尚未拥有的数据，更新你本地的数据库，但是不会合并，
-
-git push origin --delete 分支名    删除远程分支
+* git fetch
+同步，获取尚未拥有的数据，更新你本地的数据库，但是不会合并，
+* git push origin --delete 分支名    
+删除远程分支
 
 
 ## git rebase
 
+* git rebase --onto dev server client   
+检出 client ，找出 client 分支和 server 分支的共同祖先之后的变化，然后把他们在 dev 上重演一遍
 
-git rebase --onto dev server client   检出 client ，找出 client 分支和 server 分支的共同祖先之后的变化，然后把他们在 dev 上重演一遍
-
-git rebase [主分支] [特性分支] 检出特性分支，然后在主分支上重演
-git rebase dev server 检出 server 分支，然后在 dev 分支上重演
+* git rebase [主分支] [特性分支]
+检出特性分支，然后在主分支上重演
+* git rebase dev server 检出 server 分支，然后在 dev 分支上重演
 
 永远不要 rebase 那些已经推送到公共仓库的更新
 
 ## git reflog
 查看引用日志，可以理解为查看你最近几个月在当前项目中使用的 git 命令
 
-
 ## git blam
-
-git blam simplegit.rb  显示文件中对没一行进行修改的最近一次提交，
-
-git blam -L 12,22 simplegit.rb 查看文件simplegit.rb 的每一次提交，使用-L 选项限制输出范围在第 12 行到 22 行
+* git blam simplegit.rb  
+显示文件中对没一行进行修改的最近一次提交，
+* git blam -L 12,22 simplegit.rb
+查看文件simplegit.rb 的每一次提交，使用-L 选项限制输出范围在第 12 行到 22 行
 
 ## .gitignore文件不起作用处理
 1. 先清除 本地 git 缓存
