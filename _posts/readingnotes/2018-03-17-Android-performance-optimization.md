@@ -24,9 +24,8 @@ description: Android 性能优化
 详情： [ Android 性能优化 -- 布局优化 ](../../../../2018/07/17/Android-performance-optimization-layout/)
 
 ## 绘制优化
-避免在 onDraw 方法中执行大量操作，
-1. 不要在 onDraw 方法中创建新的局部对象，因为 onDraw 可能会被频繁调用，这样就会一瞬间产生大量临时对象，这样不仅占用过多的内存而且还导致系统频繁 GC ，降低程序的执行效率
-2. 不要在 onDraw 中执行耗时操作，也不能执行成千上万次的循环操作
+详情： [ Android 性能优化 -- 绘制优化 ](../../../../2018/08/05/Android-performance-optimization-draw/)
+
 
 ## 内存优化
 ### 名词解释
