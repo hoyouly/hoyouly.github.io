@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Android 性能优化 -- 绘制优化
-category: 读书笔记
+category: 性能优化
 tags: 性能优化
 description: Android 性能优化
 ---
@@ -27,13 +27,13 @@ description: Android 性能优化
 
 ![](../../../../images/overdraw.png)
 
-* 蓝色： 代表1层覆盖，像素绘制了两次，大片蓝色还是可以接受，若整个窗口都是蓝色，可以摆脱一层
+* 紫色： 代表1层覆盖，像素绘制了两次，大片蓝色还是可以接受，若整个窗口都是蓝色，可以摆脱一层
 * 绿色： 代表2层覆盖，像素绘制了三次，中等大小的绿色还是可以接受，但是应该尝试优化，减少他们
 * 粉色： 代表3层覆盖，像素绘制了四次，小范围可以接受
 * 红色： 代表4层覆盖，像素绘制了至少5次，这是错误的，要修复他们。
 
 * 过度绘制优化的原则
-1. 尽可能的控制过度绘制的次数小于等于2次，绿色以下，蓝色最好
+1. 尽可能的控制过度绘制的次数小于等于2次，绿色以下，紫色最好
 2. 尽可能避免过度绘制的粉色和红色情况
 3. 不允许3次以上的过度绘制(淡红色)面积超过屏幕大小的1/4
 
@@ -182,7 +182,7 @@ public class LayoutInflaterActivity extends Activity {
 ```
 效果如下。
 <img src="../../../../images/screen_4.png"  height="600" width="400">
-连蓝色都没有，大片背景是绿色，说明多绘制了两层。图片显示的地方还有粉色，红色，这需要好好优化啊。
+连紫色都没有，大片背景是绿色，说明多绘制了两层。图片显示的地方还有粉色，红色，这需要好好优化啊。
 ### 优化一 减少布局嵌套
 
 我们发现 在xml中设置了父布局 LinearLayout 里面只有一个CardView，并且这个 CardView 还是 match_parent 的，其实完全可以把外层的 LinearLayout 去掉。直接加载 这个CardView 即可。可以直接把这个xml文件删掉，直接在代码中加载，如下图
@@ -199,7 +199,7 @@ public class LayoutInflaterActivity extends Activity {
 处理后的效果如下
 <img src="../../../../images/screen_1.png"  height="600" width="400">
 
-大片背景是蓝色，说明多了一层绘制。
+大片背景是紫色，说明多了一层绘制。
 接下来 我们处理第一步
 ### 优化二 默认背景移除
 我们发现在 CardView 中设置了背景的 `setBackgroundColor(Color.WHITE)` 所以可以把默认背景移除。解决办法上面写道了。我们只使用其中一种，
@@ -218,8 +218,8 @@ public class LayoutInflaterActivity extends Activity {
 ```
 我们再看看效果
 <img src="../../../../images/screen_2.png"  height="600" width="400">
-大片的蓝色背景变成了白色，说明默认背景已经移除。
-但是还有一部分蓝色，绿色，粉色，可以进行再次处理。那就要用到 clipRect()了
+大片的紫色背景变成了白色，说明默认背景已经移除。
+但是还有一部分紫色，绿色，粉色，可以进行再次处理。那就要用到 clipRect()了
 ### 优化三 使用 clipRect()
 
 主要看 CardView 的 onDraw()方法。
@@ -249,7 +249,7 @@ public class CardView extends View {
 注释掉的就是之前的的逻辑，下面就是新修改的。
 然后再次看看效果
 <img src="../../../../images/screen_3.png"  height="600" width="400">
-只有白色和蓝色了，就说明已经优化的很成功了。
+只有白色和紫色了，就说明已经优化的很成功了。
 
 ### 总结
 我们使用了三个优化措施，就处理了一个很常见的过渡绘制的问题。后续遇到这样的问题，可以参照上面的例子处理。

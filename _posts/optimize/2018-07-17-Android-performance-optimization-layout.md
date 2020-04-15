@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Android 性能优化 -- 布局优化
-category: 读书笔记
+category: 性能优化
 tags: Android开发艺术探索 性能优化
 description: Android 性能优化
 ---

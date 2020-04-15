@@ -20,6 +20,7 @@ tags:
 [百度网址](http://www.baidu.com)  
 
 ![添加图片](../../../../images/tcp_three_hand.png)
+<img src="../../../../images/screen_4.png"  height="600" width="400">
 
 
 <style>

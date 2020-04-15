@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Android 优化方案
-category: 读书笔记
+category: 性能优化
 tags: Android  ListView  性能优化
 ---
 * content
@@ -127,7 +127,7 @@ IntentService 和 Service 都是一个服务，区别在于 IntentService 使用
 
 ---   
 搬运地址：    
- 
+
 
 [Android优化】最强 ListView 优化方案](http://blog.csdn.net/gs12software/article/details/51173392)
 
