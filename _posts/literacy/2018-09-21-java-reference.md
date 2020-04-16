@@ -36,6 +36,10 @@ SoftReference<String[]> softBean = new SoftReference<String[]>(new String[]{"a",
 WeakReference<String[]> weakBean = new WeakReference<String[]>(new String[]{"a", "b", "c"});
 ```
 
+### 软引用和弱引用的选择
+* 如果只是为了避免OOM的发送，可以使用软引用，因为这个只是在内存不够的时候才会被回收，如果对应应用的性能更在意，想尽快回收一些占内存较大的对象，则使用弱引用，因为在下次GC的时候，就会被回收
+* 可以根据对数是否经常使用来判断使用软引用还是弱引用。如果该对象可能会经常被使用，则尽量使用软引用，如果该对象不被使用的可能性更大一些，就可以使用弱引用。
+
 ## 虚引用（PhantomReference）
 顾名思义：形同虚设，<font color="#ff000" >虚引用并不会决定对象的什么周期，如果一个对象仅只有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。程序也并不能通过虚引用访问被引用的对象。</font>
 虚引用主要用来跟踪垃圾回收器回收的活动，虚引用与软引用和弱引用的一个区别在于：<span style="border-bottom:1px solid red;">虚引用必须和引用队列（ReferenceQueue）联合使用</span>，当垃圾准备回收一个对象时，如果发现它还有虚引用，就会在回收对象内存之前，把这个虚引用加入到与之关联的队列中
