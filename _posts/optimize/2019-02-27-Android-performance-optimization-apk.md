@@ -9,13 +9,13 @@ description: Android 性能优化
 * content
 {:toc}
 
-想了解APK 打包流程的，可以参考这篇文章。[扫盲系列 - APK 打包流程](http://hoyouly.fun/2020/04/15/apk-build/)
+想了解 APK 打包流程的，可以参考这篇文章。[扫盲系列 - APK 打包流程](http://hoyouly.fun/2020/04/15/apk-build/)
 
 # APK瘦身
 应用安装包大小对应用使用没有影响，但应用的安装包越大，用户下载的门槛越高
 减小安装包大小可以让更多用户愿意下载和体验产品。
 ## 代码混淆
-在gradle使用minifyEnabled进行Proguard混淆的配置，可大大减小APP大小,它包括压缩、优化、混淆等功能。
+在 gradle 使用 minifyEnabled 进行 Proguard 混淆的配置，可大大减小 APP 大小,它包括压缩、优化、混淆等功能。
 ```java
 android {
     buildTypes {
@@ -29,9 +29,9 @@ android {
 ###  参数
 * -include {filename}    从给定的文件中读取配置参数   
 * -basedirectory {directoryname}    指定基础目录为以后相对的档案名称   
-* -injars {class_path}    指定要处理的应用程序jar,war,ear和目录   
-* -outjars {class_path}    指定处理完后要输出的jar,war,ear和目录的名称   
-* -libraryjars {classpath}    指定要处理的应用程序jar,war,ear和目录所需要的程序库文件   
+* -injars {class_path}    指定要处理的应用程序 jar , war , ear 和目录   
+* -outjars {class_path}    指定处理完后要输出的 jar , war , ear 和目录的名称   
+* -libraryjars {classpath}    指定要处理的应用程序 jar , war , ear 和目录所需要的程序库文件   
 * -dontskipnonpubliclibraryclasses    指定不去忽略非公共的库类。   
 * -dontskipnonpubliclibraryclassmembers    指定不去忽略包可见的库类的成员。
 
@@ -64,15 +64,15 @@ android {
 * -flattenpackagehierarchy {package_name}    重新包装所有重命名的包并放在给定的单一包中   
 * -repackageclass {package_name}    重新包装所有重命名的类文件中放在给定的单一包中   
 * -dontusemixedcaseclassnames    混淆时不会产生形形色色的类名   
-* -keepattributes {attribute_name,...}    保护给定的可选属性，例如LineNumberTable, LocalVariableTable, SourceFile, Deprecated, Synthetic, Signature, and InnerClasses.  
+* -keepattributes {attribute_name,...}    保护给定的可选属性，例如 LineNumberTable , LocalVariableTable , SourceFile , Deprecated , Synthetic , Signature , and InnerClasses.  
 * -renamesourcefileattribute {string}    设置源文件中给定的字符串常量  
 
 ### 注意
-1. 一定别把自己的 model实体混淆，因为如果这样的话，Json解析就会失败。
+1. 一定别把自己的 model 实体混淆，因为如果这样的话， Json 解析就会失败。
 2. 混淆后一定要多测试，很多时候一些功能没混淆之前是正常的，但是混淆后就不正常了。
 
 ## 去除无用资源
-在gradle使用shrinkResources去除无用资源，效果非常好。
+在 gradle 使用 shrinkResources 去除无用资源，效果非常好。
 ```java
 android {
     buildTypes {
@@ -84,11 +84,11 @@ android {
 ```
 ## 清理无用资源
 shrinkResources true 只能去除没有任何父函数调用的情况
-而要清理调用的父类函数最终是废弃的代码，就要用到 AndroidStudio 自带的Remove Unused Resources 插件了,
+而要清理调用的父类函数最终是废弃的代码，就要用到 AndroidStudio 自带的 Remove Unused Resources 插件了,
 * 使用：AndroidStudio -> Refactor -> Remove Unused Resources  
 
 ## 删除无用的语言资源
-如果不需要语言几十种语言支持的话，强大的gradle支持语言的配置，比如只保留中文和英文
+如果不需要语言几十种语言支持的话，强大的 gradle 支持语言的配置，比如只保留中文和英文
 ```java
 android {
     defaultConfig {
@@ -96,51 +96,51 @@ android {
     }
 }
 ```
-## 使用tinypng有损压缩
-TinyPNG工具只支持上传PNG图片到官网上压缩，然后下载保存，在保持alpha通道的情况下对PNG的压缩可以达到1/3之内，而且用肉眼基本上分辨不出压缩的损失.
-Tinypng的官方网站：http://tinypng.com/
+## 使用 tinypng 有损压缩
+TinyPNG 工具只支持上传 PNG 图片到官网上压缩，然后下载保存，在保持 alpha 通道的情况下对 PNG 的压缩可以达到1/3之内，而且用肉眼基本上分辨不出压缩的损失.
+Tinypng 的官方网站：http://tinypng.com/
 
-## 使用webp格式
-webp支持透明度，压缩比比jpg更高但显示效果却不输于jpg，
-* 使用：在AndroidStudio选中要转换的图片，右键 最下面  就看到了Convert to Webp
+## 使用 webp 格式
+webp 支持透明度，压缩比比 jpg 更高但显示效果却不输于 jpg ，
+* 使用：在 AndroidStudio 选中要转换的图片，右键 最下面  就看到了Convert to Webp
 
 注意：webp格式对版本有要求，
 ![](../../../../images/webp_1.png)
 
-minSdkVersion 必须大于14，也就是 Android 4.0才行，不过现在的APP一般都大于这个吧，微信的新版本要求的最低版本还是Android 5.0呢。
-## 手动lint检查，手动删除无用资源
-在Android Studio中打开“Analyze” 然后选择"Inspect Code…"，范围选择整个项目，然后点击"OK"。
+minSdkVersion 必须大于 14 ，也就是 Android 4.0才行，不过现在的 APP 一般都大于这个吧，微信的新版本要求的最低版本还是Android 5.0呢。
+## 手动 lint 检查，手动删除无用资源
+在 Android Studio 中打开“Analyze” 然后选择"Inspect Code…"，范围选择整个项目，然后点击"OK"。
 
 ## 清理第三方库和冗余代码
 避免重复功能的库
 ## so库的优化
 ```java
 ndk{
-      //设置支持的so库架构
+      //设置支持的 so 库架构
       abiFilters "armeabi-v7a"
     }
 ```
 armeabi-v7主要不支持ARMv5(1998年诞生)和ARMv6(2001年诞生)
-许多基于 x86 的设备也可运行 armeabi-v7a 和 armeabi NDK 二进制文件。对于这些设备，主要 ABI 将是 x86，辅助 ABI 是 armeabi-v7a。
+许多基于 x86 的设备也可运行 armeabi-v7a 和 armeabi NDK 二进制文件。对于这些设备，主要 ABI 将是 x86 ，辅助 ABI 是 armeabi-v7a。
 如果适配版本高于4.1版本，可以直接像我上面这样写，
 
 
 # 实践
-先看来原始APK的大小吧。
-使用的工具就是AndroidStudio 自带的 Analyze app   
+先看来原始 APK 的大小吧。
+使用的工具就是 AndroidStudio 自带的 Analyze app   
 步骤：Android Studio下 ——> Build——> Analyze app
 ![添加图片](../../../../images/analyze_app_1.png)
-可以看到，apk 大小是6.9M
+可以看到， apk 大小是6.9M
 
 ## 1.清理无用资源
 步骤： AndroidStudio -> Refactor -> Remove Unused Resources  
 运行后，看看有啥改变。
 ![](../../../../images/remove_unused_res.png)
-删除了这么多图片和xml文件，然后再次打包吧，
+删除了这么多图片和 xml 文件，然后再次打包吧，
 ![添加图片](../../../../images/analyze_app_2.png)
-现在的apk 大小是 6.7M，竟然只优化了0.2M ,我还以为能优化很多的，也罢，苍蝇也是肉啊。能瘦一点是一点。
+现在的 apk 大小是 6.7M，竟然只优化了0.2M ,我还以为能优化很多的，也罢，苍蝇也是肉啊。能瘦一点是一点。
 
-我们可以看到，res目录 和class.dex都变小了。
+我们可以看到， res 目录 和class.dex都变小了。
 ## 2.代码混淆
 `minifyEnabled true`
 然后再次打包吧，
@@ -169,6 +169,6 @@ shrinkResources true
 
 ---   
 搬运地址：    
-[Android性能优化系列之apk瘦身](https://blog.csdn.net/u012124438/article/details/54958757)
+[Android性能优化系列之 apk 瘦身](https://blog.csdn.net/u012124438/article/details/54958757)
 
-[Android性能优化之APK瘦身详解(瘦身73%)](https://blog.csdn.net/qq_32175491/article/details/80071987)
+[Android性能优化之 APK 瘦身详解(瘦身73%)](https://blog.csdn.net/qq_32175491/article/details/80071987)

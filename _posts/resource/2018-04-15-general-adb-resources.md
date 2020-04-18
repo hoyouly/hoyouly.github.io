@@ -16,4 +16,4 @@ tags:   adb
 ## 截图，并且导出
 
 * adb shell screencap -p /sdcard/screen.png  ; adb pull /sdcard/screen.png  ~/  
--p  后面跟的是截屏保存的sdcard路径
+-p  后面跟的是截屏保存的 sdcard 路径

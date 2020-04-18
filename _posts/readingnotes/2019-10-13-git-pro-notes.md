@@ -100,13 +100,13 @@ tags: Git
 git 使用 HEAD 来代替不存在的（省略的）一边
 ## git 别名
 * git config --global alias.co  checkout   
-git co  相当于 git checkout    
+git co 相当于 git checkout    
 * git config --global alias.br  branch     
-git br  相当于 git branch    
+git br 相当于 git branch    
 * git config --global alias.ci  commit     
-git ci  相当于 git commit     
+git ci 相当于 git commit     
 * git config --global alias.st  status     
-git st  相当于 git status     
+git st 相当于 git status     
 
 <span style="border-bottom:1px solid red;">  git config --global alias.logf  'log --pretty=format:"%h - %an ,%ar : %s"' </span> , 那么输入 git logf 相当于 git log --pretty=format:"%h - %an ,%ar : %s"
 
@@ -160,3 +160,4 @@ git commit
 搬运地址：    
 
 Pro  Git 简体中文版
+版
