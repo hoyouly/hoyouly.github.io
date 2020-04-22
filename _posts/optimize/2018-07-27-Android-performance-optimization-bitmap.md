@@ -111,7 +111,7 @@ options.inSampleSize = BitmapUtil.computeSampleSize(options, -1, imageView.getWi
 Bitmap newBitmap = BitmapFactory.decodeResource(getResources(), resId , options);
 ```
 ## 复用和缓存
-就是所谓的 LRU 算法，详情可以查看 [ Bitmap 的加载和 Cache 处理 ](http://hoyouly.fun/article-detail/2018/03/17/Bitmap-loading-and-Cache/)
+就是所谓的 LRU 算法，详情可以查看 [ Bitmap 的加载和 Cache 处理 ](../../../../article-detail/2018/03/17/Bitmap-loading-and-Cache/)
 
 ---   
 搬运地址：    

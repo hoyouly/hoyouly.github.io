@@ -52,10 +52,10 @@ public abstract class BaseFragment extends Fragment {
 
 # 基本原理
 执行 Application 中的 registerActivityLifecycleCallbacks() ,从而对应用内 Activity 的生命周期进行监听，而 LeakCanery 就只监听了onDestroy()
-当一个 Activity 执行了 onDestory() 之后，那就意味着这个Activity已经不存在了， LeakCanery 会将这个Activity对象放入到一个 WeakReference  中，然后将这个 WeakReference 类型的对象与 ReferenceQueue 关联，这时候再从 ReferenceQueque 中查看是否是有没有该对象，如果没有，因为有可能还没执行过GC，所以手动执行 GC ，再次查看，还是没有的话，则发生了内存泄漏，然后用 HAHA 这个开源库去分析 dump 之后的 heap 内存。
+当一个 Activity 执行了 onDestory() 之后，那就意味着这个 Activity 已经不存在了， LeakCanery 会将这个 Activity 对象放入到一个 WeakReference 中，然后将这个 WeakReference 类型的对象与 ReferenceQueue 关联，这时候再从 ReferenceQueque 中查看是否是有没有该对象，如果没有，因为有可能还没执行过 GC ，所以手动执行 GC ，再次查看，还是没有的话，则发生了内存泄漏，然后用 HAHA 这个开源库去分析 dump 之后的 heap 内存。
 
 ## WeakReference 与 ReferenceQueue
-如果对象被回收后，会把弱引用对象，也就是WeakReference对象或者其子类的对象，放入队列ReferenceQueue中。
+如果对象被回收后，会把弱引用对象，也就是 WeakReference 对象或者其子类的对象，放入队列 ReferenceQueue 中。
 注意不是被弱引用的对象，被弱引用的对象已经被回收了。例如
 ```java
 WeakReference<Apple> appleWeakReference  = new WeakReference<>(apple);
@@ -108,10 +108,10 @@ public final class AndroidRefWatcherBuilder extends RefWatcherBuilder<AndroidRef
   ...
 }  
 ```
-注意，这里面的参数是 Application,它是 APP的 applicationContext ,一个全局的Context。
+注意，这里面的参数是 Application ,它是 APP 的 applicationContext ,一个全局的 Context 。
 
 通过上面代码可以看出
-refWatcher() 创建了一个 AndroidRefWatcherBuilder 对象,这个对象保存了传入的 applicationContext 。AndroidRefWatcherBuilder 继承 RefWatcherBuilder
+refWatcher() 创建了一个 AndroidRefWatcherBuilder 对象,这个对象保存了传入的 applicationContext 。 AndroidRefWatcherBuilder 继承 RefWatcherBuilder
 
 ###  AndroidRefWatcherBuilder
 * AndroidRefWatcherBuilder 是一个适合 Android 平台的引用观察者构造器对象。（难道还有其他平台 IOS ，WindowPhone?）
@@ -133,13 +133,13 @@ public class RefWatcherBuilder<T extends RefWatcherBuilder> {
   }
 }
 ```
-这里面的参数 是 DisplayLeakService.class，也就是DisplayLeakService的字节码对象。然后新建了一个 ServiceHeapDumpListener 对象, 里面保存了 DisplayLeakService 的 class 对象和 Application 对象，
+这里面的参数 是 DisplayLeakService.class，也就是 DisplayLeakService 的字节码对象。然后新建了一个 ServiceHeapDumpListener 对象, 里面保存了 DisplayLeakService 的 class 对象和 Application 对象，
 
 这里面出现了两个新的类，先大概介绍一下。
 * DisplayLeakService  这个用于展示泄漏分析日志的结果信息，然后发送通知用户
 * ServiceHeapDumpListener   里面保存了 DisplayLeakService 的 class 对象和 Application 对象，作用就是接收一个 heap dump 文件去分析。
 
-所以这一步的操作就是创建了一个用于分析 heap dump文件的 ServiceHeapDumpListener，并设置到 RefWatcherBuilder。
+所以这一步的操作就是创建了一个用于分析 heap dump 文件的 ServiceHeapDumpListener ，并设置到 RefWatcherBuilder 。
 
 继续看步骤3 excludedRefs(AndroidExcludedRefs.createAppDefaults().build())
 ## 3. RefWatcherBuilder # excludedRefs()
@@ -177,9 +177,9 @@ public static <E extends Enum<E>> EnumSet<E> noneOf(Class<E> elementType) {
 }  
 
 ```
-AndroidExcludedRefs 中目前有 46 种 case ，所以返回的是 RegularEnumSet，
+AndroidExcludedRefs 中目前有 46 种 case ，所以返回的是 RegularEnumSet ，
 
-也就是说 createBuilder()中的参数 是  RegularEnumSet 类型的。
+也就是说 createBuilder() 中的参数 是 RegularEnumSet 类型的。
 #### 3.1.2 AndroidExcludedRefs # createBuilder()
 ```java
 public static ExcludedRefs.Builder createBuilder(EnumSet<AndroidExcludedRefs> refs) {
@@ -195,7 +195,7 @@ public static ExcludedRefs.Builder createBuilder(EnumSet<AndroidExcludedRefs> re
 ```
 构建一个排除引用的构造器 excluded ，将各式各样的 case 分门别类保存，再返回出去。
 
-所以这一步的主要操作就是添加白名单，AndroidExcludedRefs 定义了忽略列表信息。如果发送这些内存泄漏，并不会显示出来的。
+所以这一步的主要操作就是添加白名单， AndroidExcludedRefs 定义了忽略列表信息。如果发送这些内存泄漏，并不会显示出来的。
 
 继续看步骤4 buildAndInstall()
 ## 4. AndroidRefWatcherBuilder # buildAndInstall()
@@ -292,7 +292,7 @@ public static Executor newSingleThreadExecutor(String threadName) {
   return Executors.newSingleThreadExecutor(new LeakCanarySingleThreadFactory(threadName));
 }
 ```
-创建了一个 newSingleThreadExecutor 线程池，因为是newSingleThreadExecutor 类型的 核心线程数目只有一个，所有任务在一个线程中执行的，所以可以用来进行阻塞式显示 DisplayLeakActivity 。setEnabledBlocking()肯定是在子线程中执行的
+创建了一个 newSingleThreadExecutor 线程池，因为是 newSingleThreadExecutor 类型的 核心线程数目只有一个，所有任务在一个线程中执行的，所以可以用来进行阻塞式显示 DisplayLeakActivity 。 setEnabledBlocking() 肯定是在子线程中执行的
 
 继续看 4.2.2 setEnabledBlocking()
 #### 4.2.2 LeakCanaryInternals # setEnabledBlocking()
@@ -331,10 +331,10 @@ public static void installOnIcsPlus(Application application, RefWatcher refWatch
     application.registerActivityLifecycleCallbacks(lifecycleCallbacks);
   }  
 ```
-这里面创建了一个 ActivityRefWatcher 实例，然后执行了 watchActivities(),其核心就是 application.registerActivityLifecycleCallbacks(), lifecycleCallbacks 实现了这个 ActivityLifecycleCallbacks ，并且重写了重 onActivityDestroyed() ,这样就能监听所有 Activity 执行完 onDestroyed() 方法
+这里面创建了一个 ActivityRefWatcher 实例，然后执行了 watchActivities() ,其核心就是 application.registerActivityLifecycleCallbacks(), lifecycleCallbacks 实现了这个 ActivityLifecycleCallbacks ，并且重写了重 onActivityDestroyed() ,这样就能监听所有 Activity 执行完 onDestroyed() 方法
 然后在里面 onActivityDestroyed() 中执行了  refWatcher.watch(activity) 进行内存泄漏的检测了。
 
-这也是为啥要监听Fragment的话，就必须手动的在Fragment的onDestory()中执行，因为系统框架没有提供监听Fragment的onDestory()生命周期的方法。所以只能手动处理
+这也是为啥要监听 Fragment 的话，就必须手动的在 Fragment 的 onDestory() 中执行，因为系统框架没有提供监听 Fragment 的 onDestory() 生命周期的方法。所以只能手动处理
 
 ```java
 private final Application.ActivityLifecycleCallbacks lifecycleCallbacks =
@@ -350,9 +350,9 @@ void onActivityDestroyed(Activity activity) {
  }      
 ```
 
-在前面4.1 的 build()中我们知道， refWatcher 其实是 RefWatcher 类型，所以就直接看 RefWatcher 的 watch()，
+在前面4.1 的 build() 中我们知道， refWatcher 其实是 RefWatcher 类型，所以就直接看 RefWatcher 的 watch() ，
 
-注意 watch()中传递的对象就是当前销毁的Activity，到这个时候，才开始监听这个Activity是否发生泄漏。
+注意 watch() 中传递的对象就是当前销毁的 Activity ，到这个时候，才开始监听这个 Activity 是否发生泄漏。
 
 ## 关键代码 RefWatcher # watch()
 
@@ -374,8 +374,8 @@ public void watch(Object watchedReference, String referenceName) {
   ensureGoneAsync(watchStartNanoTime, reference);
 }
 ```
-使用随机的UUID保证了key的唯一。然后把这个key 添加到retainedKeys，用来区分对象是否被回收
-最后，根据传递过来的 Activity对象，key, ReferenceQueue 类型的 queue，referenceName 等创建一个 KeyedWeakReference
+使用随机的 UUID 保证了 key 的唯一。然后把这个 key 添加到 retainedKeys ，用来区分对象是否被回收
+最后，根据传递过来的 Activity 对象， key , ReferenceQueue 类型的 queue ， referenceName 等创建一个 KeyedWeakReference
 ### KeyedWeakReference
 ```java
 final class KeyedWeakReference extends WeakReference<Object> {
@@ -389,9 +389,9 @@ final class KeyedWeakReference extends WeakReference<Object> {
   }
 }
 ```
-KeyedWeakReference 其实就是 WeakReference 的子类，保存了 key 和 name 用来标识了一个被检测的 WeakReference 对象，因为 name 是“”,所以生成的key 很关键，这也是为啥 通过随机的UUID生成一个key
+KeyedWeakReference 其实就是 WeakReference 的子类，保存了 key 和 name 用来标识了一个被检测的 WeakReference 对象，因为 name 是“”,所以生成的 key 很关键，这也是为啥 通过随机的 UUID 生成一个key
 
-在 super() 将弱引用和引用队列 ReferenceQueue 关联起来，这样如果 这个弱引用对象 reference 持有的对象被回收后，就会把这个弱引用对象 reference放入队列ReferenceQueue中。如果没有被回收，则不会放到队列中，所以可以通过判断 ReferenceQueue 这个队列中有没有 appleWeakReference 来确定有没有发生内存泄漏
+在 super() 将弱引用和引用队列 ReferenceQueue 关联起来，这样如果 这个弱引用对象 reference 持有的对象被回收后，就会把这个弱引用对象 reference 放入队列 ReferenceQueue 中。如果没有被回收，则不会放到队列中，所以可以通过判断 ReferenceQueue 这个队列中有没有 appleWeakReference 来确定有没有发生内存泄漏
 
 
 继续看 ensureGoneAsync()
@@ -477,8 +477,8 @@ private void postToBackgroundWithDelay(final Retryable retryable, final int fail
   }, delayMillis);
 }
 ```
-创建一个Retryable对象，其实就是一个 Runnable对象，然后判断是否在主线程，创建一个 IdelHandler ，执行这个Retryable对象，如果不是 主线程，则切换到主线程，然后创建 IdelHandler ，执行 run()方法，每隔5秒就会遍历一次。
-IdelHandler 就是只有在空闲的时候才会执行的Handler消息。并不会直接抢占资源。
+创建一个 Retryable 对象，其实就是一个 Runnable 对象，然后判断是否在主线程，创建一个 IdelHandler ，执行这个 Retryable 对象，如果不是 主线程，则切换到主线程，然后创建 IdelHandler ，执行 run() 方法，每隔 5 秒就会遍历一次。
+IdelHandler 就是只有在空闲的时候才会执行的 Handler 消息。并不会直接抢占资源。
 
 如果 result 一直等于 RETRY 的话，则会一直执行 postWaitForIdle() 方法
 
@@ -539,7 +539,7 @@ private boolean gone(KeyedWeakReference reference) {
  return !retainedKeys.contains(reference.key);
  }
 ```
-如果执行到了 gcTrigger.runGc();也就是说明可能发生了泄漏，需要执行一次GC试试
+如果执行到了 gcTrigger.runGc();也就是说明可能发生了泄漏，需要执行一次 GC 试试
 gcTrigger 也是在 4.1 build() 创建 RefWatcher 中创建的，如果没有指定则是 GcTrigger.DEFAULT
 
 ##### 2.2.3 GcTrigger # runGc()
@@ -549,9 +549,9 @@ GcTrigger DEFAULT = new GcTrigger() {
     @Override public void runGc() {
       //手动触发系统gc
       Runtime.getRuntime().gc();
-      //沉睡100ms，给系统GC时间
+      //沉睡 100ms ，给系统 GC 时间
       enqueueReferences();
-      //强制调用已失去引用对象的finalize方法
+      //强制调用已失去引用对象的 finalize 方法
       System.runFinalization();
     }
 
@@ -566,12 +566,12 @@ GcTrigger DEFAULT = new GcTrigger() {
 ```
 没有使用System.gc()方法进行回收，因为system.gc()并不会每次都执行。而是从 AOSP 中拷贝一段 GC 回收的代码，从而相比System.gc()更能够保证进行垃圾回收的工作。
 
-执行完GC，再次执行 gone()进行判断，如果还存在，说明发送了内存泄漏。那就要生成相应的dump文件。
+执行完 GC ，再次执行 gone() 进行判断，如果还存在，说明发送了内存泄漏。那就要生成相应的 dump 文件。
 
 ##### 2.2.4 AndroidHeapDumper # dumpHeap()
 ```java
 public File dumpHeap() {
-    //创建一个新的dump文件
+    //创建一个新的 dump 文件
     File heapDumpFile = leakDirectoryProvider.newHeapDumpFile();
 
     if (heapDumpFile == RETRY_LATER) {
@@ -580,7 +580,7 @@ public File dumpHeap() {
     }
 
     FutureResult<Toast> waitingForToast = new FutureResult<>();
-    //弹出自定义toast,
+    //弹出自定义 toast ,
     showToast(waitingForToast);
 
     if (!waitingForToast.wait(5, SECONDS)) {
@@ -601,15 +601,15 @@ public File dumpHeap() {
     }
   }
 ```
-showToast()中弹出了自定义toast,自定义布局 就是 R.layout.leak_canary_heap_dump_toast
+showToast() 中弹出了自定义 toast ,自定义布局 就是 R.layout.leak_canary_heap_dump_toast
 ![](../../../../images/leak_canary_heap_dump_toast.png)
 这个就是发生内存泄漏的时候，我们常看到的布局
 
 最后 调用了 Android SDK 的API Debug.dumpHprofData() 来生成 hprof 文件
 
-hprof文件生成了，那就看看怎么分析这个文件吧。
+hprof 文件生成了，那就看看怎么分析这个文件吧。
 
-heapdumpListener 是 HeapDump.Listener ，实际类型是 ServiceHeapDumpListener，这个也在4.1 build()中设置了。
+heapdumpListener 是 HeapDump.Listener ，实际类型是 ServiceHeapDumpListener ，这个也在4.1 build()中设置了。
 ##### 2.2.5 ServiceHeapDumpListener # analyze()
 
 ```java
@@ -617,7 +617,7 @@ public void analyze(HeapDump heapDump) {
   HeapAnalyzerService.runAnalysis(context, heapDump , listenerServiceClass);
 }
 ```
-HeapAnalyzerService  是一个 IntentService，就是为了避免减慢 app 进程或占用内存，
+HeapAnalyzerService 是一个 IntentService ，就是为了避免减慢 app 进程或占用内存，
 ###### 2.2.5.1 HeapAnalyzerService
 ```java
 public final class HeapAnalyzerService extends IntentService {
@@ -652,7 +652,7 @@ public final class HeapAnalyzerService extends IntentService {
   }
 }
 ```
-runAnalysis 开启了 HeapAnalyzerService ，就会执行到了 onHandleIntent()中，这个是在子线程中执行的
+runAnalysis 开启了 HeapAnalyzerService ，就会执行到了 onHandleIntent() 中，这个是在子线程中执行的
 然后就执行到了 checkForLeak()
 ###### 2.2.5.2 HeapAnalyzer # checkForLeak()
 
@@ -693,7 +693,7 @@ public AnalysisResult checkForLeak(File heapDumpFile, String referenceKey) {
 
 ###### 2.2.5.3 AbstractAnalysisResultService.sendResultToListener()
 
-又开启了一个 IntentService，这里面的 listenerServiceClass 其实就是在创建 ServiceHeapDumpListener 的时候传递过来的 DisplayLeakService，
+又开启了一个 IntentService ，这里面的 listenerServiceClass 其实就是在创建 ServiceHeapDumpListener 的时候传递过来的 DisplayLeakService ，
 
 ```java
 public abstract class AbstractAnalysisResultService extends IntentService {
@@ -763,11 +763,11 @@ public class DisplayLeakService extends AbstractAnalysisResultService {
 
 }
 ```
-这样就展示到了UI上了
+这样就展示到了 UI 上了
 - - - -
 搬运地址：    
 
-[关于Java中的WeakReference](https://www.jianshu.com/p/964fbc30151a)
+[关于 Java 中的WeakReference](https://www.jianshu.com/p/964fbc30151a)
 
 [Java内存问题 及 LeakCanary 原理分析](https://juejin.im/post/5ab8d3d46fb9a028ca52f813)
 

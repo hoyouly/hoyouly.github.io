@@ -17,7 +17,7 @@ description: Window 创建过程
 * Activity， Dialog ， Toast 等视图都对应一个 Window
 
 # Activity 的 Window 创建过程
-1. 分析 Activity 的 Window 的创建，必须了解 Activity 的启动过程，详细请看 [ Android 四大组件之 Activity ](http://hoyouly.fun/2019/03/15/Android-Activity-Core/)。   
+1. 分析 Activity 的 Window 的创建，必须了解 Activity 的启动过程，详细请看 [ Android 四大组件之 Activity ](../../../../2019/03/15/Android-Activity-Core/)。   
 可以先记住结论：<font color="#ff000" > Activity 启动过程最终由 ActivityThread 中的 performLaunchActivity() 来完成启动, performLaunchActivity() 内部会通过类加载器创建 Activity 的对象实例，并调用 attach() 为其关联运行过程中所依赖的一系列上下文环境变量</font>   
 ```Java
 // ActivityThread # performLaunchActivity()
@@ -98,7 +98,7 @@ mWindow.setWindowManager((WindowManager) context.getSystemService(Context.WINDOW
 到这里 Window 已经创建完成,在 Activity 启动的时候，通过 attach() 方法，使用 PolicyManager.makeNewWindow(this) 创建一个 PhoneWindow 。
 ## Activity 显示到 Window
 
-详情请看 [ setContentView() 探究 ](http://hoyouly.fun/2019/01/27/setcontentview/)
+详情请看 [ setContentView() 探究 ](../../../../2019/01/27/setcontentview/)
 
 # Dialog 的 Window 创建过程
 和 Activity 的类似。不同的在于将 DecorView 添加到 Window 中， Dialog 是在 show 方法中，

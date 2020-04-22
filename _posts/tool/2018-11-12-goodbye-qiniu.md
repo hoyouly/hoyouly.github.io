@@ -34,7 +34,7 @@ index.html 后退四次，即  ‘../../../../’ 就和 images 文件夹 在同
 
 这样在本地预览的时候，查看图片地址 `http://localhost:4000/images/github_image.png`，加载的是本地图片。
 
-真正提交到 github 上，查看图片地址就变成了  `http://hoyouly.fun/images/github_image.png`，加载网络路径。
+真正提交到 github 上，查看图片地址就变成了  `../../../../images/github_image.png`，加载网络路径。
 
 这样以后写 blog 的时候，想贴图片，就简单了，先弄张图片，扔到 images 文件里面。
 那么路径就是`../../../../images/图片名`， 路径有了，那就插入图片吧。 最后一块提交，齐活。  

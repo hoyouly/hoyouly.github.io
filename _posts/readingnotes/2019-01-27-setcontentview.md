@@ -179,7 +179,7 @@ public void handleResumeActivity(IBinder token, boolean finalStateRequest , bool
   }
 }              
 ```
-在 performResumeActivity() 中会执行 Activity 的 onResume() ，详情查看 [ Android 四大组件之 Activity ](http://hoyouly.fun/2019/03/15/Android-Activity-Core/#activitythread--handleresumeactivity)    
+在 performResumeActivity() 中会执行 Activity 的 onResume() ，详情查看 [ Android 四大组件之 Activity ](../../../../2019/03/15/Android-Activity-Core/#activitythread--handleresumeactivity)    
 接下来就看 makeVisible()
 
 ```java

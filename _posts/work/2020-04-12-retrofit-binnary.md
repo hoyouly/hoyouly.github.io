@@ -60,7 +60,7 @@ try {
 
 之前也用过 Retrofit 做过上传图片。首先想到的就是 @Part / @PartMap 啊，因为这两个携带的数据类型更加丰富，包括数据流，所以适用于有文件上传的场景
 因为上传的接口中不需要什么参数，直接使用 @Part 注解，然后使用 MultipartBody.Part 类型作为文件的参数，还得使用到 Multipart 这个注解。
-具体详情可以参考 [扫盲系列 - Retrofit 基本用法 ](http://hoyouly.fun/2018/03/20/Retrofit/#multipart)。
+具体详情可以参考 [扫盲系列 - Retrofit 基本用法 ](../../../../2018/03/20/Retrofit/#multipart)。
 所以就把接口定义成如下了。
 ```java
 @Multipart

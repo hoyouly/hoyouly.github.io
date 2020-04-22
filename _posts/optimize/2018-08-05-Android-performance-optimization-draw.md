@@ -106,7 +106,7 @@ getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 减少不必要的嵌套， UI 层级就少，过度绘制的可能性就降低    
 优化方式，就是使用 merge 标签 并且选择合适的布局类型    
 
-详情可以看 [ Android 性能优化 -- 布局优化 ](http://hoyouly.fun/2018/07/17/Android-performance-optimization-layout/)
+详情可以看 [ Android 性能优化 -- 布局优化 ](../../../../2018/07/17/Android-performance-optimization-layout/)
 ### 自定义控件 View 优化，
 可以使用 clipRect() ,quickReject()
 

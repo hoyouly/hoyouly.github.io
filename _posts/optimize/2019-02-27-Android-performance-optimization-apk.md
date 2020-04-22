@@ -9,7 +9,7 @@ description: Android 性能优化
 * content
 {:toc}
 
-想了解 APK 打包流程的，可以参考这篇文章。[扫盲系列 - APK 打包流程](http://hoyouly.fun/2020/04/15/apk-build/)
+想了解 APK 打包流程的，可以参考这篇文章。[扫盲系列 - APK 打包流程](../../../../2020/04/15/apk-build/)
 
 # APK瘦身
 应用安装包大小对应用使用没有影响，但应用的安装包越大，用户下载的门槛越高
