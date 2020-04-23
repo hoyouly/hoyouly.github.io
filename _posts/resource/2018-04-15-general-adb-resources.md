@@ -5,8 +5,8 @@ category: 资源
 tags:   adb
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 常用指令
 ### 得到设备的尺寸和密度

@@ -5,8 +5,8 @@ category: 读书笔记
 tags: Android开发艺术探索 Activity Service ContentProvider Broadcast IntentService
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 四大组件的运行状态
 ### 共性
@@ -86,7 +86,7 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
 * 用于向其他组件乃至其他应用共享数据。
 * 用户无法直接感知。需要实现 CRUD 四种操作
 * 在它内部维持着一份数据集合，这个数据集合即可以通过数据库来实现，也可以采用其他类型来实现，比如 List 和 Map ，
-* ContentProvider 内部的 CURD 需要处理好线程同步，因为这几个方法在 Binder 线程迟被调用，不需要手动停止
+<!-- * content -->Provider 内部的 CURD 需要处理好线程同步，因为这几个方法在 Binder 线程迟被调用，不需要手动停止
 
 
 ---

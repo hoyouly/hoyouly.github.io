@@ -4,8 +4,8 @@ title: Android 消息分发机制
 category: 读书笔记
 tags: Handler Message Looper ThreadLocal
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 消息机制
 就是 Handler 的运行机制以及 Handler 所带的 MessageQueue 和 Looper 的工作过程。这三个是一个整体，只不过我们经常用到 Handler ，所以也称为 Handler 消息机制。 Handler 主要工作就是将一个任务切换到某个指定的线程中去执行。

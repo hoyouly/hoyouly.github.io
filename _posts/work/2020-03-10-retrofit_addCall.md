@@ -4,8 +4,8 @@ title: 工作填坑 - Retrofit 中对 addCallAdapterFactory() 的理解
 category: 工作填坑
 tags: Retrofit   
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 使用 Retrofit 的时候， addConverterFactory() 和 addCallAdapterFactory() 好像是必备的，
 

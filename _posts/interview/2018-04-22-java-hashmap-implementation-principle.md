@@ -4,8 +4,8 @@ title: 街题系列 - HashMap 实现原理。
 category: 街题系列
 tags: Java HashMap
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 # HashMap
 特点：
 1. 基于 Map 接口实现

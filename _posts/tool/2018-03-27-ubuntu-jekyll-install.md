@@ -5,8 +5,8 @@ category: 工具
 tags: Ubuntu jekyll install
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 先执行下面命令，
 ```shell

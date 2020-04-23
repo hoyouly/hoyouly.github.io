@@ -4,8 +4,8 @@ title: 恍然大悟 - Android Studio 中 asserts 位置
 category: 恍然大悟
 tags: AndroidStudio asserts
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 不知道大家有没有遇到过这样的问题，一个 bug 查了好几天，突然发现，卧槽，竟然是这里出的问题。卧槽，竟然是这样玩儿的，卧槽，竟然。。。是不是有一种   
 踏破铁鞋无觅处，得来全不费工夫，  

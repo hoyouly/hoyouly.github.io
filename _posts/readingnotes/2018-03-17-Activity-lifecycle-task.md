@@ -7,8 +7,8 @@ description: Activity 的生命周期和启动模式
 keywords: 关键字
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 ## 生命周期
 
 * onStart()， Activity 正在启动，这时 Activity 已经可见，但是还没有出现在前台，还无法进行交互。

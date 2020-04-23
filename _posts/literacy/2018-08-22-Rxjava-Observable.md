@@ -4,8 +4,8 @@ title: 扫盲系列 - RxJava 2.0 -- 观察者模式
 category: 扫盲系列
 tags:  RxJava
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 
 RxJava 其中 Rx 是 ReactiveX 的缩写， ReactiveX 又是 Reactive Extensions 的缩写   

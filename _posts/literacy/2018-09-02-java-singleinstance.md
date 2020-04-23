@@ -5,8 +5,8 @@ category: 扫盲系列
 tags:  Java
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ##  恶汉式
 ```java

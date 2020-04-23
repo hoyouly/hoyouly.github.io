@@ -4,8 +4,8 @@ title: Android 优化方案
 category: 性能优化
 tags: Android  ListView  性能优化
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## ListView优化方案
 1. 复用 contentView ,减少重新分配缓存造成的内存频繁分配回收

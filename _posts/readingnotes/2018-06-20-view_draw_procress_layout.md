@@ -4,8 +4,8 @@ title: View 的绘制 - Layout 流程
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 Layout 作用就是 ViewGroup 用来确定子元素的位置。当 ViewGroup 的位置确定后，他会在 onLayout() 中遍历所有子元素并调用其 layout() 方法，在 layout() 方法中执行我们熟悉的 onLayout() 方法
 子 View 具体的 layout 的位置都是相对于父容器而言的， view 的 layout 过程同 Measure 同理，也是从顶级 View 开始，递归的完成整个控件树的布局操作

@@ -6,8 +6,8 @@ tags:  Android开发艺术探索 Window
 description: Window 创建过程
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 # Window 的一些结论
 * View 是 Android 的视图呈现方式，

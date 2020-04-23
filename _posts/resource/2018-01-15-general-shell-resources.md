@@ -7,8 +7,8 @@ keywords: Shell
 description:
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 转载   [yansu的bolg](http://yansu.org/)
 

@@ -4,8 +4,8 @@ title: 工作填坑 - Retrofit 上传图片
 category: 工作填坑
 tags: Retrofit  
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 # 前言
 最近遇到一个很奇怪的接口，说奇怪吧，是因为我使用 Postman 能调试通，使用 xutils 框架也能测试通，单独使用 OkHttp 测试通过。可是唯独使用 Retrofit + Rxjava + OkHttp 这个组合框架一直测试不通过。
 先看看接口长啥样子吧。这是上传图片，接口真让我眼前一亮

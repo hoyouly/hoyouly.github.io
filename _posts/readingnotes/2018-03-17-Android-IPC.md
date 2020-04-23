@@ -6,8 +6,8 @@ tags: Android开发艺术探索 IPC
 description: Android IPC 简介
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## IPC
 IPC ：Inter_Process Communication的缩写，含义进程间通信或者跨进程通信，是指两个进程之间进行数据交换的过程。

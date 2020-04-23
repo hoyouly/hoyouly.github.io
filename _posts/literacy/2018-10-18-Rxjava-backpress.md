@@ -4,8 +4,8 @@ title: 扫盲系列 - RxJava 2.0 -- 背压
 category: 扫盲系列
 tags:  RxJava
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 ## backpressure 背压
 背压，这个玩意是 Rxjava 绕不过去的坎。面试被问到了几次，都没说明白，因为糊里糊涂的。只知道 Rxjava 2.0 支持背压，Rxjava 1.0 不支持背压。但是为啥，怎么支持，就不清楚了。所以就想着查查资料搞懂这个玩意
 

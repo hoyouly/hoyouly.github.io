@@ -6,8 +6,8 @@ tags: Android开发艺术探索 性能优化
 description: Android 性能优化
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 做到以下四点
 * 稳   稳定性  

@@ -5,8 +5,8 @@ category: 工具
 tags: Atom  快捷键
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 之前使用的轻量级编辑器一直是 Sublime ，但是因为种种原因吧，决定放弃 Sublime ，转而使用 Atom 上，所以就单独新建了一个博客，用来记录使用 Atom 上的技巧和快捷键之类的。
 

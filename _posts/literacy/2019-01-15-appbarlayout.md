@@ -4,8 +4,8 @@ title: 扫盲系列 - AppBarLayout
 category: 扫盲系列
 tags: AppBarLayout  CoordinatorLayout  ConstraintLayout
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## CoordinatorLayout 和 ConstraintLayout 区别
 

@@ -4,8 +4,8 @@ title: View 属性动画
 category: 读书笔记
 tags: ValueAnimator
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 上篇介绍了 [ View动画 ](../../../../2019/07/25/view-animation/)，这篇就主要说 属性动画
 

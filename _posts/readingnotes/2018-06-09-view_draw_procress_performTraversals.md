@@ -4,8 +4,8 @@ title: View 的绘制 - 概览
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 ## ViewRootImpl
 View 的绘制，离不开ViewRootImpl.他是链接 WindowManager 和 Decorview 的纽带， View 的三大流程都是通过 ViewRootImpl 完成，在 ActivityThread 中，当 Activity 对象被创建成功后，会将 DecorView 添加到 Window 中，同时创建 ViewRootImpl 对象，并通过 ViewRootImp 的 setView() 将 ViewRootImpl 和 DecorView 关联起来。
 先说几个结论，这个以后会详细讲的。

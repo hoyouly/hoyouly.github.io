@@ -5,8 +5,8 @@ category: 读书笔记
 tags: Android开发艺术探索 Activity
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 ## 类名解释
 ### AMS
 ActivityManagerService（简称AMS）继承自`ActivityManagerNative（简称AMN）`，而 AMN 继承自 Binder 并实现了 IActivityManager 这个 Binder 接口，因此 AMS 也是一个 Binder ，它是 IActivityManager 的具体实现，由于**ActivityManagerNative.getDefault()其实是一个 IActivityManager 类型的 Binder 对象，因此它的具体实现是 AMS 。**

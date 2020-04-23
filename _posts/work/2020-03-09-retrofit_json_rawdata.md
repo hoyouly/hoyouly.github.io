@@ -4,8 +4,8 @@ title: 工作填坑 - Retrofit 同时支持对 Json 格式和原始数据
 category: 工作填坑
 tags: Retrofit  
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 最近在封装 HTTP 请求的时候，发现了一个挺悲催的事情，服务端返回的数据，有时候是 json 格式，有时候又不是 json 格式，身为乙方的我，又没办法要求甲方去修改成统一的 json 格式，可是如果统一返回原始数据，又感觉要做太多的无用代码，毕竟使用的是 retrofit + rxjava+ OKhttp ,得充分发挥他们三个的作用才行。
 

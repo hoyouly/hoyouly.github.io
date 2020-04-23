@@ -4,8 +4,8 @@ title: 我的代码块也能显示行数，滑动，高亮和一键复制
 category: 工具
 tags: jekyll  prismjs
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 代码块滑动
 使用现在这个模板后，一直对一个地方不满意，那就是代码显示这一块，他不能滚动，

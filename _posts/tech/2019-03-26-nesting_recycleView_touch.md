@@ -4,8 +4,8 @@ title: 水平方向的 RecycleView 嵌套竖直方向的 RecycleView 滑动冲�
 category: 技术
 tags: RecycleView
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 项目中用到了 RecycleView 嵌套，水平方向嵌套竖直方向的，结果发现一个问题，就是水平方向滑动后，直接竖直滑动，往往第一下竖直方向没响应，要等到第二下甚至第三下竖直方向的 RecycleView 才能响应滑动事件，可是我们交互要求如果正在水平滑动，突然竖直滑动，竖直方向的 RecycleView 是要立即响应的,这就有点意思了，为啥会出现这种情况呢，查看源码才知道，在 RecycleView 的 onInterceptTouchEvent() 中做了处理
 

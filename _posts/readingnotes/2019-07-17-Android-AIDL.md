@@ -6,8 +6,8 @@ tags: Android开发艺术探索 AIDL
 description: Android AIDL
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 
 ## 名词解释

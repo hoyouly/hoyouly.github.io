@@ -6,8 +6,8 @@ tags: Android 内存泄漏
 description: Android 性能优化
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 # 内存泄露优化
 分为两个方面

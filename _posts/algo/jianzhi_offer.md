@@ -4,8 +4,8 @@ title: 剑指 offer 笔记
 category: 算法
 tags:
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 * 在项目中碰到的最大问题是什么，你是怎么解决的
 * 从这个项目中你学道了什么

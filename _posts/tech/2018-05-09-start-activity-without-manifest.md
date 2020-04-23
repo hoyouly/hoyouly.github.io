@@ -4,8 +4,8 @@ title: 启动一个不在 AndroidManifest 中注册的 Activity
 category: 技术
 tags: AndroidManifest
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 这个也是一个面试题，但是没有归结到街题系列是因为我觉得这个问题应该不是被常问道的一个，所以归结到技术中。
 本文是参考[插件化入门篇-如何启动一个未注册过的Activity](https://www.jianshu.com/p/4fc77fbac938)，只是加上自己的了解，原理还有代码都是[插件化入门篇-如何启动一个未注册过的Activity](https://www.jianshu.com/p/4fc77fbac938)他里面的，

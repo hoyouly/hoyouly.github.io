@@ -4,8 +4,8 @@ title: 工作填坑 - OkHttp 支持 TCP 请求
 category: 工作填坑
 tags: OkHttp   TCP
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 我们都知道， OkHttp 是我们常用的网络请求框架，可是都是用在了 HTTP 请求上去了，但是我们的项目中既有 HTTP ，又有 TCP 请求，我已经使用了Retrofit+OkHttp+Rxjava的架构，难道再写一套网络请求框架吗，能再这上面改造一下，也同时支持 TCP 请求吗？然后就有了这篇研究。
 在这之前，对 OkHttp 了解少的，可以先查阅 [ 源码分析 - OkHttp ](../../../../2020/03/16/Okhttp-Source-Code-Analysis/) 对 OkHttp 源码有一个基本认识。
@@ -124,8 +124,8 @@ public abstract @Nullable MediaType contentType();
 public abstract long contentLength();
 public abstract BufferedSource source();
 ```
-* contentType 还行，直接通过 request 就能拿到，
-* contentLength 是内容长度，前面得到请求结果，也能设置长度
+<!-- * content -->Type 还行，直接通过 request 就能拿到，
+<!-- * content -->Length 是内容长度，前面得到请求结果，也能设置长度
 可是 BufferedSource 是啥啊，没见过啊，肯定还是 Okio 咯，那么怎么把 String 转换 BufferedSource 呢
 
 前面我们能把 BufferedSink 转成一个 String ，那么也应该可以的，上面说了 Buffer 是一个神一般的存在，能读取数据，也能写入数据，那么这次就让他写吧。

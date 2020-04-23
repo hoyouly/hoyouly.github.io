@@ -4,8 +4,8 @@ title: Flutter 学习 - Dart 中的 Future
 category: Flutter 学习
 tags: Flutter  Dart  Future
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 Dart 是单线程的。
 

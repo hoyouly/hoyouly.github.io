@@ -4,8 +4,8 @@ title: 工作填坑 - resultCode =0  或许并不是你想的那样
 category: 工作填坑
 tags: resultCode
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 最近又遇到一个挺好玩的问题，得记录下来。
 就是我调用相机，得到一张照片，可是不知道为啥， onActivityResult 中 resultCode 一直返回 0 ，也查了很多资料，什么和启动模式有关啊，什么不能执行 finish() 啊，什么没添加权限啊，

@@ -4,8 +4,8 @@ title: 扫盲系列 - Java 泛型
 category: 扫盲系列
 tags: 泛型 Java
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 # 泛型
 作用： 编译时期做类型检查以及自动转型。
 ## 泛型类

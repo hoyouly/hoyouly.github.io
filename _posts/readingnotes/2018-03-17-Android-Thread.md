@@ -5,8 +5,8 @@ category: 读书笔记
 tags: Android开发艺术探索  HandlerThread AsyncTaks IntentService
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 线程是操作系统调度的最小单元，又是一种受限制的系统资源，即线程不可能无限次地生产，并且线程的创建和消耗都有相应的开销，当系统中存在大量的线程是，系统会通过时间片轮转的方式调度每个线程，分为两种
 1. 主线程： 处理和界面相关的事情

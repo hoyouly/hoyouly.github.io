@@ -4,8 +4,8 @@ title: 扫盲系列 - Socket, HTTP ,HTTPS
 category: 扫盲系列
 tags: Socket HTTP HTTPS
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 在上一篇文章中[ 扫盲系列 - TCP/IP ](../../../../2018/04/11/tcp-ip/)，我们知道以下几点
 # HTTP
@@ -123,12 +123,12 @@ table th:nth-of-type(3) {
 ## HTTP请求和响应头
 常见的有一下几种
 
-* Content-Range  响应头  前面的俩数字表示开始字节和结束字节的 posiiton ，后面的数字表示文件的总大小。例如 Content-Range: 100-199/200，此时客户端读到的数据就是第 101 个字节到第 200 个字节，一共 200 字节
+<!-- * content -->-Range  响应头  前面的俩数字表示开始字节和结束字节的 posiiton ，后面的数字表示文件的总大小。例如 Content-Range: 100-199/200，此时客户端读到的数据就是第 101 个字节到第 200 个字节，一共 200 字节
 * Range 请求头，指定要下载的一段数据。例如 Range: bytes=100-149 ，客户端指定下载第 101 个字节到第 150 个字节
 * Accept 请求头，表示客户端对服务端内容的期望类型，比如application/json，当服务端生成的内容不是 JSON 时，那么可能收到 406 响应码。
-* Content-Type 在请求头和响应头中都比较常用，一般表示本次 body 的内容类型或者格式，服务端或者客户端应该按照该格式来解析数据。
+<!-- * content -->-Type 在请求头和响应头中都比较常用，一般表示本次 body 的内容类型或者格式，服务端或者客户端应该按照该格式来解析数据。
 * Connection 表示该请求处理完后是否要关闭连接，在 HTTP1.0 中默认是 close ，表示要关闭连接，在 HTTP1.1 中默认是keep-alive，表示保持连接
-* Content-Length  表示内容的长度，这个值对读取内容非常有用，客户端或者服务端可以根据以最优的方法读取流，可以极大的提高读取 IO 的效率。
+<!-- * content -->-Length  表示内容的长度，这个值对读取内容非常有用，客户端或者服务端可以根据以最优的方法读取流，可以极大的提高读取 IO 的效率。
 * Referer 当前页面的来源地址，例如从https://www.google.com页面访问了https://github.com，那么 Referer 的值则是https://www.googlt.com。
 * Host 每一个请求中都必须带上该头，表示客户端要请求的服务端的域名和端口，一般 Host 中没有指定端口时， HTTP 应用程序默认使用 80 端口连接服务端。
 * Cookie 服务端用来标记客户端，比如用户访问过某页面，那么给他一个标记Set-Cookie: news=true; expires=...; path=...; domain=...，当用户下次请求该页面时，请求头会带上Cookie: news=true，服务端会做一些逻辑处理。

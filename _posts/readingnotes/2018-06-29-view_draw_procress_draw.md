@@ -4,8 +4,8 @@ title: View 的绘制 - Draw 流程， invalidate 的流程 以及 requestLayout
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 # View的 Draw 流程
 View 的 draw 过程遵循如下几步
 * 绘制背景    drawBackground();

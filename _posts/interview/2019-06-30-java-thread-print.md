@@ -4,8 +4,8 @@ title: 街题系列 - Java 两个线程交替打印
 category: 街题系列
 tags: Java Synchronized Thread
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 两个线程交替打印，不管是一个线程打印奇数，一个线程打印偶数，或者一个线程打印数字，一个线程打印字母，这种题目应该面试的时候没少遇到吧。看网上有好几种实现方式。今天我就列举一下。以一个线程打印数字，一个线程打印字母为例吧
 
 ## 第一种 Synchronized + await()+ notify()

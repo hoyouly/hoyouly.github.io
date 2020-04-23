@@ -6,8 +6,8 @@ tags: 性能优化
 description: Android 性能优化
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 想了解 APK 打包流程的，可以参考这篇文章。[扫盲系列 - APK 打包流程](../../../../2020/04/15/apk-build/)
 

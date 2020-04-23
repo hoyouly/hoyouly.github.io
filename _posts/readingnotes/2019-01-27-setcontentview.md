@@ -5,8 +5,8 @@ category: 读书笔记
 tags:   setContentView
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 Activity 怎么显示到 Window 上呢?
 ## setContentView()

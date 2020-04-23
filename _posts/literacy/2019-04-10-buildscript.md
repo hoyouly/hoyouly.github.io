@@ -4,8 +4,8 @@ title: 扫盲系列 - buildscript 和 allprojects 的区别
 category: 扫盲系列
 tags:  gradle
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 通过 AndroidStudio 创建一个项目，就会生成两个 gradle 文件，一个位于项目根目录下面，一个位于 app 下面，
 app 下面的 gradle 文件我们还经常修改，添加依赖库什么的，可是根目录下面的就不怎么修改了，

@@ -4,8 +4,8 @@ title: Flutter 学习 - Dart 中的 Function
 category: Flutter 学习
 tags: Flutter  Dart
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 最近开始学习 Flutter ，然后学道了 Dart 的函数，发现挺有意思的。
 1. Dart里面所有的东西都是对象，包括 int ,函数 这些对象的父类是Object.

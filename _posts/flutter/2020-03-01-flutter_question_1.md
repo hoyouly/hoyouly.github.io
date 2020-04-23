@@ -4,8 +4,8 @@ title: Flutter 疑问 - FlutterPluginRegistry 无法转换为 FlutterEngine
 category: Flutter 学习
 tags: FlutterPluginRegistry FlutterEngine
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 学习 Android 项目中混合 Flutter 项目，参考的是[Flutter学习小计：Android原生项目引入Flutter](https://www.jianshu.com/p/7b6522e3e8f1),  
 不知道为啥，一直就报 FlutterPluginRegistry 无法转换为 FlutterEngine 这个错误，如下图所示

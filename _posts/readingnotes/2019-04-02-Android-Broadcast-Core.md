@@ -4,8 +4,8 @@ title: Android 四大组件之 Broadcast
 category: 读书笔记
 tags: Android开发艺术探索   Broadcast
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 ## 类名解释
 ### AMS
 详情参照 [Android 四大组件之 Activity](../../../../2019/03/15/Android-Activity-Core/)

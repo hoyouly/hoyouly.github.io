@@ -4,8 +4,8 @@ title: 免输密码登录服务器的 Shell 脚本
 category: 工具
 tags: Shell
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 免输密码脚本
 一个 免输密码登录服务器的脚本如下，记得改成用户名和密码以及服务器端口：

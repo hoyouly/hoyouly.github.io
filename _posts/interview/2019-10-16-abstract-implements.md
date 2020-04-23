@@ -4,8 +4,8 @@ title: 街题系列 - 接口和抽象类的区别
 category: 街题系列
 tags: abstract  implements
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 面试的时候，竟然几次都被问到这个问题，虽然我也大概知道他们两个的区别，可是还是得全面总结一下。
 

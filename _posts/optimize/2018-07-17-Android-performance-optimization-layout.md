@@ -6,8 +6,8 @@ tags: Android开发艺术探索 性能优化
 description: Android 性能优化
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 布局对 Android 性能的影响就是影响页面的测量和绘制时间。
 

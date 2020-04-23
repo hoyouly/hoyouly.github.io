@@ -4,8 +4,8 @@ title: 扫盲系列 - MVP, MVC , MVVC 介绍
 category: 扫盲系列
 tags: MVP MVC MVVC
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 # MVC
 是一个框架模式，而非设计模式， GOF 把 MVC 看作是三个设计模式：观察者模式，策略模式和组合模式的合体，其中核心在观察者模式。也就是基于发布/订阅者模型的框架。

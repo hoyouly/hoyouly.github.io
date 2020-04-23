@@ -4,8 +4,8 @@ title: Android 内存管理机制
 category: 读书笔记
 tags: Android 内存管理
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 内存分为以下几种
 

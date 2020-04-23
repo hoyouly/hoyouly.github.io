@@ -4,8 +4,8 @@ title: 工作填坑 - Android 高版本中 AlarmManager ， PendingIntent 的坑
 category: 工作填坑
 tags: AlarmManager PendingIntent
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 前提
 这两天要做一个需求，简单来讲，就是定时的往服务器上传数据，原本以为是一个很简单的需求，选择合适的定时器，然后传递数据，执行网络操作，结果发现遇到了各种坑

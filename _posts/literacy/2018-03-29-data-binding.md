@@ -4,8 +4,8 @@ title: 扫盲系列 - Data Binding
 category: 扫盲系列
 tags: DataBinding
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 # 开启DataBinding
 在 Moudle 下面的build.gradle  中声明

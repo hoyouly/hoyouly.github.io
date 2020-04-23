@@ -6,8 +6,8 @@ tags: Bitmap  Android开发艺术探索 LruCache LinkedHashMap
 description: Bitmap 的加载和 Cache 处理
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 # Bitmap 高效加载
 核心思想：采用BitmapFactory.Options 来加载所需要的尺寸的图片，一般都是缩放图片，即用到了 inSmapleSize 参数

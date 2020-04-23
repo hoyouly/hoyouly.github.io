@@ -6,8 +6,8 @@ tags: 性能优化
 description: Android 性能优化
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- <!-- {:toc} --> -->
 
 # 降低View.onDraw()的复杂度
 
@@ -119,7 +119,7 @@ getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
 ## 优化的例子
 
-自定义了一个 View ，显示三张图片，如下图
+自定义了一个 View ，显示三张图片，代码如下
 
 ```java
 public class CardView extends View {

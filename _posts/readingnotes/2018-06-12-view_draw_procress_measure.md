@@ -4,8 +4,8 @@ title: View 的绘制 - Measure 流程
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 在说 Measure 过程之前，需要解释几个概念。 MeasureSpec 和 SpecMode
 

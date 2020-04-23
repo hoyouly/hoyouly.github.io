@@ -4,8 +4,8 @@ title: View 的事件分发机制
 category: 读书笔记
 tags: View 事件分发 Android 开发艺术探索
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 ## 触摸事件
 点击事件，也称为触摸事件，是捕获触摸屏幕产生后的事件，所谓点击事件的分发，其实就是对 MotionEvent 事件的分发过程，即当一个 MotionEvent 产生后，系统需要把这个时间传递给具体的 view ,而这个传递的过程其实就是分发过程

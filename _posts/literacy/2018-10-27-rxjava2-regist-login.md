@@ -4,8 +4,8 @@ title: 扫盲系列 - RxJava 2.0 -- 注册登录顺序
 category: 扫盲系列
 tags:  RxJava
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 
 在看 [给初学者的RxJava 2.0教程(三)](https://www.jianshu.com/p/128e662906af) 的时候，发现最后关于注册后登陆的例子，作者写的有些不详细。

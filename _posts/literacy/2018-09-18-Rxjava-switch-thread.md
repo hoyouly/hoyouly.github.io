@@ -4,8 +4,8 @@ title: 扫盲系列 - RxJava 2.0 -- subscribeOn 和 observeOn
 category: 扫盲系列
 tags:  RxJava
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 我们都知道   
 * subscribeOn()  是指定上游发送事件的线程   

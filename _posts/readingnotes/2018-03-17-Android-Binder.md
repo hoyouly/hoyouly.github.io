@@ -5,8 +5,8 @@ category: 读书笔记
 tags:  Android Binder
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 # 基本概念
 我们知道， Android 系统是基于 Linux 内核的。

@@ -4,8 +4,8 @@ title: 扫盲系列 - 面向对象六大原则
 category: 扫盲系列
 tags: 
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 
 # 优化代码的第一步--单一职责原则

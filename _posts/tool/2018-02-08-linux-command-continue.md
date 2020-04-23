@@ -7,8 +7,8 @@ keywords: Linux,连续,命令
 description:
 ---
 
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 
 转载   [yansu的bolg](http://yansu.org/)
 

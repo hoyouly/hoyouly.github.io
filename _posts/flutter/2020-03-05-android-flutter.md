@@ -4,8 +4,8 @@ title: Flutter 填坑 - Android 原生项目嵌入 Flutter
 category: Flutter 学习
 tags: Flutter  Android
 ---
-* content
-{:toc}
+<!-- * content -->
+<!-- {:toc} -->
 在学习 Android 原生项目嵌套 Flutter ，发现一篇好文章，[Flutter学习小计：Android原生项目引入Flutter  ](https://www.jianshu.com/p/7b6522e3e8f1) ，就按照这个跑了一遍，竟然遇到了好几个坑。记录一下。
 
 * 声明 各个版本号
