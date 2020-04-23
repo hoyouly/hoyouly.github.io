@@ -171,9 +171,10 @@ private EngineResource<?> loadFromActiveResources(Key key, boolean isMemoryCache
     if (!isMemoryCacheable) {
       return null;
     }
-    //判断它是否被另一个 view 展示，所以此时还是有此资源的缓存。所以查找，存在，引用值加1
+    //根据缓存key查找是否存在activeResources，
     EngineResource<?> active = activeResources.get(key);
     if (active != null) {
+      //存在，引用值加1
       active.acquire();
     }
     return active;
@@ -193,7 +194,6 @@ final class ActiveResources {
       if (activeRef == null) {
         return null;
       }
-
       EngineResource<?> active = activeRef.get();
       if (active == null) {
         cleanupActiveReference(activeRef);
@@ -215,10 +215,13 @@ static final class ResourceWeakReference extends WeakReference<EngineResource<?>
 void cleanupActiveReference(@NonNull ResourceWeakReference ref) {
     synchronized (listener) {
       synchronized (this) {
+        // activeResources 是一个Map,移除键值对。
         activeEngineResources.remove(ref.key);
+        //没有设置缓存或者缓存为空，则直接返回
         if (!ref.isCacheable || ref.resource == null) {
           return;
         }
+        //虽然 activeRef.get() 为空，但是因为 activeRef中保存了 resource，所以 ref.resource不为空
         EngineResource<?> newResource = new EngineResource<>(ref.resource, /*isCacheable=*/ true, /*isRecyclable=*/ false);
         newResource.setResourceListener(ref.key, listener);
         //listener 就是 Engine
@@ -226,6 +229,7 @@ void cleanupActiveReference(@NonNull ResourceWeakReference ref) {
       }
     }
   }
+//Engine.java
 public synchronized void onResourceReleased(Key cacheKey, EngineResource<?> resource) {
   activeResources.deactivate(cacheKey);
   if (resource.isCacheable()) {
@@ -291,7 +295,7 @@ cache 在GlidBuild中已经定义了，就是LruResourceCache这个。它  exten
 
 ###  两者的区别与联系
 1. ActiveResources 缓存是基于弱引用缓存，会在内存不足的时候清理掉。而 MemoryCache 是基于LruCache的强引用缓存，因此不会因为内存不足被清理掉。MemoryCache 只有当缓存达到数据后，才会将最近最少使用的缓存清理掉
-2. 两个缓存都是基于Hash 表，只是 LruCache 除了了具有Hash 表的数据结构之外，还维护了一个链表。而弱引用类型的缓存的key与LruCache一致，但是值确实弱引用类型的
+2. 两个缓存都是基于Hash 表，只是 LruCache 除了了具有Hash 表的数据结构之外，还维护了一个链表。而弱引用类型的缓存的key与LruCache一致，但是值却是弱引用类型的
 3. 除了内存不够的时候ActiveResources 会被释放，还在在Engine 的资源被释放的时候清理掉
 4. 基于弱引用的缓存一致都存在，用户无法禁用，但是用户可以关闭LruCache缓存
 5. 本质上基于弱引用的缓存与基于LruCache缓存针对不同的应用场景，弱引用的缓存算是缓存的一种类型，只是这种缓存受内存的影响比LruCache更大
@@ -342,7 +346,6 @@ boolean willDecodeFromCache() {
 private Stage getNextStage(Stage current) {
   switch (current) {
     case INITIALIZE:
-    //是否解码缓存的转换图片，就是只做过变换之后的缓存数据
     //如果我们指定磁盘缓存策略为 ALL 或 RESOURCE 或由 AUTOMATIC 对远程图片使用磁盘缓存时，此时返回 true ,返回Stage.RESOURCE_CACHE。
     //如果为 false ，递归调用，判断是否为diskCacheStrategy.decodeCachedData()，也就是指定磁盘缓存策略为 ALL 或DATA
       return diskCacheStrategy.decodeCachedResource()? Stage.RESOURCE_CACHE : getNextStage(Stage.RESOURCE_CACHE);
@@ -350,7 +353,7 @@ private Stage getNextStage(Stage current) {
     //是否解码缓存的原始数据，就是指缓存的未做过变换的数据
       return diskCacheStrategy.decodeCachedData() ? Stage.DATA_CACHE : getNextStage(Stage.DATA_CACHE);
     case DATA_CACHE:
-      //判断 onlyRetrieveFromCache ，这个值是初始化 DecodeJob 中传进来的，它代表是否仅从缓存加载图片，通过onlyRetrieveFromCache(true)制定,默认为 false ，如果为true
+      //判断 onlyRetrieveFromCache ，这个值是初始化 DecodeJob 中传进来的，它代表是否仅从缓存加载图片，通过onlyRetrieveFromCache(true)制定,默认为 false
       //如果为 true ，它意味着要从内存或磁盘读取，如果内存或磁盘不存在该资源，则加载直接失败。一般情况下我们不会制定，为 false ，也就是会返回 Stage.SOURCE。代表不使用磁盘缓存，也就是之前文章分析的，直接从服务器下载
       return onlyRetrieveFromCache ? Stage.FINISHED : Stage.SOURCE;
     case SOURCE:
@@ -360,34 +363,6 @@ private Stage getNextStage(Stage current) {
       throw new IllegalArgumentException("Unrecognized stage: " + current);
   }
 }
-```
-```java
-public static final DiskCacheStrategy ALL = new DiskCacheStrategy() {
-     public boolean decodeCachedResource() {
-         return true;
-     }
-     public boolean decodeCachedData() {
-         return true;
-     }
- };
-public static final DiskCacheStrategy RESOURCE = new DiskCacheStrategy() {
-     public boolean decodeCachedResource() {
-         return true;
-     }
- };
-public static final DiskCacheStrategy AUTOMATIC = new DiskCacheStrategy() {
-   public boolean decodeCachedResource() {
-       return true;
-   }
-   public boolean decodeCachedData() {
-       return true;
-   }
-};
-public static final DiskCacheStrategy DATA = new DiskCacheStrategy() {
-     public boolean decodeCachedData() {
-         return true;
-     }
- };
 ```
 当我们设置的缓存测量是 ALL 或 RESOURCE 或 AUTOMATIC 或者 DATA 的时候，返回 Stage.RESOURCE_CACHE 或者 Stage.DATA_CACHE 这种的时候，willDecodeFromCache() 就是true，就由 diskCacheExecutor 来执行，diskCacheExecutor 在GlideBuilde的是时候也初始化了，最终经过层层调用，还是执行到了 DecodeJob 的 run() 方法，又到了 runWrapped() 中
 
@@ -504,7 +479,8 @@ public boolean startNext() {
 ```
 helper.getDiskCache() 获取的是DiskCache对象，一路追踪这个对象，就会找到了DiskLruCacheWrapper，他内部保证了LruCache.最终从磁盘加载数据，是使用 DiskLruCache 来实现的。对于最终使用 DiskLruCache 获取数据的逻辑我们不进行说明了，它的逻辑并不复杂，都是单纯的文件读写，只是设计了一套缓存的规则。
 ![添加图片](../../../../images/glide_fetcher.png)
-fetcher 有很多实现类，根据你传递过来的 modle ，进行匹配，因为 modelLoader 泛型参数是File类型，所以就执行到了FileFetcher ,这里就把文件 转换成了Resource
+fetcher 有很多实现类，根据你传递过来的 modle ，进行匹配。
+因为 modelLoader 泛型参数是File类型，所以就执行到了FileFetcher ,这里就把文件 转换成了Resource
 ```java
 //FileFetcher.java
 public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super Data> callback) {
@@ -553,13 +529,13 @@ private void decodeFromRetrievedData() {
     //回调 UI 线程显示出来。
     notifyEncodeAndRelease(resource, currentDataSource);
   } else {
+    //如果 ResourceCache中没有，则进行递归调用，生成下一个Generator ,继续查找
     runGenerators();
   }
 }
 ```
-通过 decodeFromData 方法将数据解码成 Resource 对象后返回即可。然后通过 notifyEncodeAndRelease() 回调 UI 线程显示出来。
-
-如果为 diskCacheStrategy.decodeCachedResource() 就返回false ，递归调用。
+通过 decodeFromData 方法将数据解码成 Resource 对象后返回即可。如果Resource对象不为null，则通过 notifyEncodeAndRelease() 回调 UI 线程显示出来。
+否则 进行递归调用，执行runGenerators() ,生成下一个Generator ,继续查找,这个时候就到了DataCacheGenerator中了，这个就和 diskCacheStrategy.decodeCachedResource() 就返回false 类似了
 
 ### 从 DataCache 中读取缓存
 ```java
@@ -625,14 +601,12 @@ public boolean startNext() {
   }
   return started;
 }
-
 ```
 里面的内容和 ResourceCacheGenerator 中的差不多，也是根据key,读取缓存文件。然后返回
 
+如果返回的数据为null，或者  diskCacheStrategy.decodeCachedData()返回false，就继续递归调用，getNextStage(Stage.DATA_CACHE)
 
-如果 diskCacheStrategy.decodeCachedData()返回false，说明设置的缓存策略就是 None了，就继续递归调用，getNextStage(Stage.DATA_CACHE)
-
-### 不使用磁盘缓存
+### 禁用磁盘缓存
 
 ```java
 private Stage getNextStage(Stage current) {
@@ -642,15 +616,14 @@ private Stage getNextStage(Stage current) {
     case SOURCE:
     case FINISHED:
       return Stage.FINISHED;
-    default:
-      throw new IllegalArgumentException("Unrecognized stage: " + current);
+    ...
   }
 }
 ```
 onlyRetrieveFromCache ，这个值是初始化 DecodeJob 中传进来的，它代表是否仅从缓存加载图片，通过onlyRetrieveFromCache(true)制定,默认为 false ，
 如果为 true ，它意味着要从内存或磁盘读取，如果内存或磁盘不存在该资源，则加载直接失败。一般情况下我们不会制定.
 如果为 false ，也就是会返回 Stage.SOURCE。代表不使用磁盘缓存，那么得到的Generator 就是 SourceGenerator，
-那么我们就SourceGenerator.startNext()
+那么我们就 SourceGenerator.startNext()
 
 ```java
 public boolean startNext() {
@@ -678,7 +651,6 @@ public boolean startNext() {
  }
 ```
 刚开始 dataToCache 为空，所以不走这一步，然后就是通过loadData.fetcher.loadData()加载完毕会返调用 SourceGenerator.onDataReady(result)将结果返回
-
 
 已经得到数据了，可是什么时候写入磁盘缓存呢？
 ## 磁盘缓存写入
@@ -755,6 +727,7 @@ void notifyCallbacksOfResult() {
     //listener 就是 Engine
     listener.onEngineJobComplete(this, localKey , localResource);
     for (final ResourceCallbackAndExecutor entry : copy) {
+      // 在这里，会去加载数据，显示到UI上
       entry.executor.execute(new CallResourceReady(entry.cb));
     }
     decrementPendingCallbacks();
@@ -839,57 +812,52 @@ public synchronized void onResourceReleased(Key cacheKey, EngineResource<?> reso
 cache.put(cacheKey, resource) 这个就把该 Resource 存放到了 MemoryCache 中了。
 
 ## 取得数据显示到View
-也就是 cb.onResourceReady(),这个 cb 也就是 SingleRequest ,
-
+不管是从哪里取得数据，都会执行到 cb.onResourceReady(),例如Engine.load()中从内存中获得数据，
 ```java
+//Engine.java
+public synchronized <R> LoadStatus load(...) {
+    long startTime = VERBOSE_IS_LOGGABLE ? LogTime.getLogTime() : 0;
+    //创建了一个 EngineKey 对象，这个对象就是我们说的缓存 key ，加载资源的唯一标识,
+    EngineKey key = keyFactory.buildKey(model, signature , width , height ,
+                                transformations , resourceClass , transcodeClass , options);
+    //调用 loadFromActiveResources 方法，通过 key 获取缓存资源，此时的缓存也是内存缓存。
+    EngineResource<?> active = loadFromActiveResources(key, isMemoryCacheable);
+    if (active != null) {//获取到的话也直接进行回调。
+      cb.onResourceReady(active, DataSource.MEMORY_CACHE);
+      return null;
+    }
+    //如果 ActiveResources 中没有找到缓存，通过 key 查找MemoryCache缓存，
+    //此时的缓存依旧为内存缓存，如果获取的到就直接调用cb.onResourceReady()方法进行回调。
+    EngineResource<?> cached = loadFromCache(key, isMemoryCacheable);
+    if (cached != null) {
+      cb.onResourceReady(cached, DataSource.MEMORY_CACHE);
+      return null;
+    }
+    ...
+```
+这个 cb 也就是 SingleRequest ,
+```java
+//SingleRequest.java
 public synchronized void onResourceReady(Resource<?> resource, DataSource dataSource) {
-    stateVerifier.throwIfRecycled();
-    loadStatus = null;
-    if (resource == null) {
-      ...
-      onLoadFailed(exception);
-      return;
+  stateVerifier.throwIfRecycled();
+  loadStatus = null;
+  // resource 为null，执行onLoadFailed(),显示加载失败的，然后返回
+
+  //resource 不为null，说执行到了 onResourceReady()中
+  onResourceReady((Resource<R>) resource, (R) received, dataSource);
+}
+
+private synchronized void onResourceReady(Resource<R> resource, R result , DataSource dataSource) {
+  ...
+    if (!anyListenerHandledUpdatingTarget) {
+      Transition<? super R> animation = animationFactory.build(dataSource, isFirstResource);
+      target.onResourceReady(result, animation);
     }
-    Object received = resource.get();
-    if (received == null || !transcodeClass.isAssignableFrom(received.getClass())) {
-      releaseResource(resource);
-      ...
-      onLoadFailed(exception);
-      return;
-    }
-    if (!canSetResource()) {
-      releaseResource(resource);
-      status = Status.COMPLETE;
-      return;
-    }
-    onResourceReady((Resource<R>) resource, (R) received, dataSource);
+  } finally {
+    isCallingCallbacks = false;
   }
-
-  private synchronized void onResourceReady(Resource<R> resource, R result , DataSource dataSource) {
-    boolean isFirstResource = isFirstReadyResource();
-    status = Status.COMPLETE;
-    this.resource = resource;
-
-    isCallingCallbacks = true;
-    try {
-      boolean anyListenerHandledUpdatingTarget = false;
-      if (requestListeners != null) {
-        for (RequestListener<R> listener : requestListeners) {
-          anyListenerHandledUpdatingTarget |= listener.onResourceReady(result, model , target , dataSource , isFirstResource);
-        }
-      }
-      anyListenerHandledUpdatingTarget |=
- targetListener != null && targetListener.onResourceReady(result, model , target , dataSource , isFirstResource);
-
-      if (!anyListenerHandledUpdatingTarget) {
-        Transition<? super R> animation = animationFactory.build(dataSource, isFirstResource);
-        target.onResourceReady(result, animation);
-      }
-    } finally {
-      isCallingCallbacks = false;
-    }
-    notifyLoadSuccess();
-  }
+  notifyLoadSuccess();
+}
 ```
 关键的也就是 target.onResourceReady(),这个 target 有很多实现类，如下图
 
@@ -920,7 +888,7 @@ protected void setResource(Bitmap resource) {
    view.setImageBitmap(resource);
  }
 ```
-
+这样就把图片显示到UI上了
 
 
 
