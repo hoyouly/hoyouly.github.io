@@ -57,8 +57,14 @@ public static GlideRequests with(@NonNull Activity activity) {
 在 [ 源码分析 - Glide4 之 概况 ](../../../../2019/07/10/glide4/)中我们知道， Glide 加载流程是
 
 ```
-model(数据源)-->data(转换数据)-->decode(解码)-->transformed(缩放)-->transcoded(转码)-->encoded(编码保存到本地)
+model(数据源)
+-->data(转换数据)
+-->decode(解码)
+-->transformed(缩放)
+-->transcoded(转码)
+-->encoded(编码保存到本地)
 ```
+
 那么我们就对照着 Glide.with(context).load("http:xxxx").into(target) 这行代码，看到是怎么加载的吧。
 
 
@@ -155,7 +161,6 @@ Glide build(@NonNull Context context) {
 
 Glide 是单例模式，只有一个，那么 RequestManagerRetriever 是在 builde 中创建的，所以 RequestManagerRetriever 对象也是只有一个，同理 Engine 对象也只有一个。
 
-
 然后看 Glide 的构造函数干了啥事情
 ```java
 Glide(...) {
@@ -219,7 +224,7 @@ public RequestManager get(@NonNull Context context) {
 ```
 将参数分为两种
 1. 当传入的是 Application 对象的时候，就会调用getApplicationManager(context)得到 RequestManager 对象
-2. 当传入的不是 Application 对象的时候，就会执行相应的方法，但是这三个方法都最终执行到了`fragmentGet(activity, fm , null , isActivityVisible(activity));或者 supportFragmentGet(activity, fm , null , isActivityVisible(activity))`
+2. 当传入的不是 Application 对象的时候，就会执行相应的方法，但是这三个方法都最终执行到了`fragmentGet()或者 supportFragmentGet()`
 3. 如果是在子线程中，默认就当 Application 处理
 
 ![](../../../../images/glide_requestmanagerretriever_get.png)
@@ -233,8 +238,7 @@ private RequestManager fragmentGet(@NonNull Context context,@NonNull android.app
  RequestManager requestManager = current.getRequestManager();
  if (requestManager == null) {
    Glide glide = Glide.get(context);
-   requestManager =factory.build(glide, current.getGlideLifecycle()
-          , current.getRequestManagerTreeNode(), context);
+   requestManager =factory.build(glide, current.getGlideLifecycle() , current.getRequestManagerTreeNode(), context);
    current.setRequestManager(requestManager);
  }
  return requestManager;
@@ -246,19 +250,15 @@ private RequestManager supportFragmentGet( @NonNull Context context,@NonNull Fra
  RequestManager requestManager = current.getRequestManager();
  if (requestManager == null) {
    Glide glide = Glide.get(context);
-   requestManager =factory.build(glide, current.getGlideLifecycle()
-            , current.getRequestManagerTreeNode(), context);
+   requestManager =factory.build(glide, current.getGlideLifecycle() , current.getRequestManagerTreeNode(), context);
    current.setRequestManager(requestManager);
  }
  return requestManager;
 }
 ```
-1. 创建一个 SupportRequestManagerFragment 或者 RequestManagerFragment ,这就是为啥我们在得到 Fragment 的数量的时候，会多出来一个 Fragment 的原因
+1. 创建一个 SupportRequestManagerFragment 或者 RequestManagerFragment ,这就是为啥我们在得到 Fragment 的数量的时候，会多出来一个 Fragment 的原因。添加这个隐藏的 Fragment ，主要是为了监听当前 Activity 的生命周期，如果 Activity 已经销毁，那么对应的 Fragment 也就没有了，可以在这个隐藏的 Fragment 的销毁的时候，停止加载图片。
 
-添加这个隐藏的 Fragment ，主要是为了监听当前 Activity 的生命周期，如果 Activity 已经销毁，那么对应的 Fragment 也就没有了，可以在这个隐藏的 Fragment 的销毁的时候，停止加载图片。
-
-2. 如果创建的 Fragment 得到的 RequestManger ，那么通过 factory build() 一个， build 的时候，会关联 Fragment 的 LifeCircle 和 RequestManagerTree ,然后设置到 Fragment 中,这样， RequestManger 就和 Fragment 的生命周期绑定了
-
+2. 通过这个创建的 Fragment 得到的 RequestManger ，如果 RequestManger 对象为 null ，那么通过 factory build() 一个， build 的时候，会关联 Fragment 的 LifeCircle 和 RequestManagerTree ,然后设置到 Fragment 中,这样， RequestManger 就和 Fragment 的生命周期绑定了
 
 总结一下， with() 方法就是根据 Context 类型绑定一个生命周期的 RequestManager
 # RequestManger # load()

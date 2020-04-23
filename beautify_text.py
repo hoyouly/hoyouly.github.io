@@ -63,7 +63,7 @@ def beautifyText(text, pattern, isloop):
 def beautifyFile(file):
     f1 = open(file, 'r+')
     infos = f1.readlines()
-    print("len: " + str(len(infos)))
+    # print("len: " + str(len(infos)))
     f1.seek(0, 0)
     for line in infos:
         new_str = beautifyText(line, r"([\u4e00-\u9fff])", True)
@@ -98,4 +98,4 @@ if __name__ == '__main__':
     rootdir = '/Users/hoyouly/llll/hoyouly.github.io/_posts'
     DirAll(rootdir)
     # beatifyFile("./article-template.md")
-    test("景   高Disruptr,Linux环形缓存，");
+    # test("景   高Disruptr,Linux环形缓存，");
