@@ -7,9 +7,10 @@ tags: Android开发艺术探索 Activity
 
 <!-- * content -->
 <!-- {:toc} -->
-## 类名解释
-### AMS
-ActivityManagerService（简称AMS）继承自`ActivityManagerNative（简称AMN）`，而 AMN 继承自 Binder 并实现了 IActivityManager 这个 Binder 接口，因此 AMS 也是一个 Binder ，它是 IActivityManager 的具体实现，由于**ActivityManagerNative.getDefault()其实是一个 IActivityManager 类型的 Binder 对象，因此它的具体实现是 AMS 。**
+# 类名解释
+## AMS
+ActivityManagerService（简称AMS）继承自`ActivityManagerNative（简称AMN）`，而 AMN 继承自 Binder 并实现了 IActivityManager 这个 Binder 接口，因此 AMS 也是一个 Binder ，它是 IActivityManager 的具体实现。    
+由于**ActivityManagerNative.getDefault()其实是一个 IActivityManager 类型的 Binder 对象，因此它的具体实现是 AMS 。**
 
 ```java
 public final class ActivityManagerService extends ActivityManagerNative {...}
@@ -18,7 +19,7 @@ public abstract class ActivityManagerNative extends Binder implements IActivityM
 
 public interface IActivityManager extends IInterface {...}
 ```
-在 AMN 中， AMS 这个 Binder 对象采用的是单例模式对外提供的， Singleton 是一个单例的封装类，第一次调用它的 get() 方法会通过 creat() 方法初始化 AMS 这个 Binder 对象，在后续的调用中则直接返回之前创建的对象
+在 AMN 中， AMS 这个 Binder 对象采用的是单例模式对外提供， Singleton 是一个单例的封装类，第一次调用它的 get() 方法会通过 create() 方法初始化 AMS 这个 Binder 对象，在后续的调用中则直接返回之前创建的对象
 
 ```java
 // AMN
@@ -61,7 +62,7 @@ public abstract class Singleton<T> {
   }
 }
 ```
-#### AMS的启动过程
+### AMS的启动过程
 在 SystemServer 中，通过 main() 方法，创建 SystemServer 对象并且调用了 run() 方法
 ```java
 // SystemServer
@@ -69,7 +70,7 @@ public static void main(String[] args) {
   new SystemServer().run();
 }
 ```
-在run（）方法中会执行 startBootstrapServices() 方法，启动引导服务
+在run（）方法中会执行 startBootstrapServices() 方法启动引导服务。
 在引导服务中，会创建 AMS 对象并且启动
 ```java
 private void startBootstrapServices() {
@@ -80,7 +81,7 @@ private void startBootstrapServices() {
                         ActivityManagerService.Lifecycle.class).getService();
   mActivityManagerService.setSystemServiceManager(mSystemServiceManager);
   mActivityManagerService.setInstaller(installer);
-  ```
+  ...
 }
 ```
 SystemServiceManager 的 startService() 方法中会通过类加载器的方式，创建一个 SystemService ,并且调用开启该服务
@@ -107,7 +108,7 @@ public <T extends SystemService> T startService(Class<T> serviceClass) {
     Constructor<T> constructor = serviceClass.getConstructor(Context.class);
     service = constructor.newInstance(mContext);
   } catch (InstantiationException ex) {
-    。。。
+    ...
   }
 
   // Register it.
@@ -127,7 +128,7 @@ public <T extends SystemService> T startService(Class<T> serviceClass) {
 `private final ArrayList<SystemService> mServices = new ArrayList<SystemService>();`
 3. 执行 onStart() 方法
 
-#### AMS.Lifecycle
+### AMS.Lifecycle
 然后我们再查看ActivityManagerService.Lifecycle 是个啥玩意
 ```java
 public static final class Lifecycle extends SystemService {
@@ -149,23 +150,24 @@ public static final class Lifecycle extends SystemService {
 1. 在构造函数中创建了一个 AMS 对象，所以上面在通过类加载器创建ActivityManagerService.Lifecycle对象的时候， AMS 对象也就相应的创建了，在 AMS 中会创建 ActivityStackSupervisor 对象
 ```java
  public ActivityManagerService(Context systemContext) {
-    。。。
+    ...
     mStackSupervisor = new ActivityStackSupervisor(this);
-    。。。
+    ...
  }
 ```
-因为个系统只启动一个 AMS ，那么也就只会创建一个 ActivityStackSupervisor 对象
+因为一个系统只启动一个 AMS ，那么也就只会创建一个 ActivityStackSupervisor 对象
 
 2. 然后在 onStart() 中调用了 AMS 的 start() 方法，所以在上面执行 onStart() 的时候， AMS 的 start() 方法也就相应执行了
-3. mSystemServiceManager.startService(ActivityManagerService.Lifecycle.class) 得到的是一个ActivityManagerService.Lifecycle，而这个对象的 getService() 返回的是一个 AMS 对象，所以最后得到的就是一个 AMS 对象即 mActivityManagerService ，
+
+总结： mSystemServiceManager.startService(ActivityManagerService.Lifecycle.class) 得到的是一个ActivityManagerService.Lifecycle，而这个对象的 getService() 返回的是一个 AMS 对象，所以最后得到的就是一个 AMS 对象即 mActivityManagerService ，
 
 
-### ActivityThread
+## ActivityThread
 是主线程，也是 UI 线程，它是在 APP 启动时创建的，它代表了 App 应用程序
 <font  color="#ff000"  >Context是 Activity 的上下文。 Application 是 ActivityThread 的上下文 </font>
 
-#### ApplicationThread
-是 ActivityThread 的一个内部类，是一个 Binder 对象，说明它的作用就是用于进程间通讯的 Binder 对象。
+### ApplicationThread
+ActivityThread 的一个内部类，是一个 Binder 对象，说明它的作用就是用于进程间通讯的 Binder 对象。
 
 ```java
 public final class ActivityThread {//没有继承或者实现其他类。
@@ -179,7 +181,7 @@ public final class ActivityThread {//没有继承或者实现其他类。
 
     //ActivityThread的内部类ApplicationThread
     private class ApplicationThread extends ApplicationThreadNative {
-    ......
+    ...
     }
 }
 ```
@@ -212,7 +214,7 @@ class ApplicationThreadProxy implements IApplicationThread {
 }
 ```
 
-#### H
+### H
 H 类是 ActivityThread 的内部类，相当于 ActivityThread 和 ApplicationThread 的中介人， ActivityThread 通过 ApplicationThread 与 AMS 通讯，
 ApplicationThread 通过 H 与 ActivityThread 通讯，处理 Activity 事务
 
@@ -222,25 +224,25 @@ H 类存在的意义：
 
 这个 ActivityThread 并不是一个线程 Thread ，它是 final 类并且无继承或者实现其它类，它的作用就是在 main 方法内消息循环，处理主线程事务。（还需了解 Looper 及消息机制）
 
-### ContextImpl
+## ContextImpl
 ContextImpl 是一个很重要的数据结构，它是 Context 的具体实现， Context 中的大部分逻辑都是由 ContextImpl 来完成的。
 
 ContextImpl 是通过 Activity 的 attach() 方法来和 Activity 建立关联的.
 
 除此之外，在 attach() 方法中 Activity 还会完成 Window 的创建并建立自己和 Window 的关联，这样当 Window 接收到外部输入事件后就可以将事件传递给 Activity 。
 
-### Instrumentation
+## Instrumentation
 管理 Activity 的一个工具类
 
 包括创建和启动 Activity ， Activity 的生命周期方法都是由 Instrumentation 这个仪器来控制
 
 一个进程中只用一个 Instrumentation 实例
 
-### ActivityRecord  
+## ActivityRecord  
 用来记录一个 Activity 的所有信息，归 system_server 进程使用，在 ActivityStackSupervisor 中创建。
 
 在 AMS 中，将用 ActivityRecord 来作为 Activity 的记录者,每次启动一个 Actvity 会有一个对应的 ActivityRecord 对象，表示 Activity 的一个记录
-### ActivityClientRecord
+## ActivityClientRecord
 用来记录一个 Activity 的所有信息，归 App 进程使用。在 ApplicationThread 中创建，并添加到了 ActivityThread 的 mActivities 中
 ```java
 final ArrayMap<IBinder, ActivityClientRecord> mActivities = new ArrayMap<IBinder, ActivityClientRecord>();
@@ -259,15 +261,15 @@ ActivityRecord(ActivityManagerService _service ...) {
 总结一下：
 我们 startActivity 的时候，会调用到 AMS 的 startActivityLocked() ，然后创建一个 ActivityRecord 供 ActivityStackSupervisor 使用，这里面会有一个 appToken ,然后在 ApplicationThread 的 scheduleLaunchActivity() 时候，把 ActivityRecord 转换成 ActivityClientRecord ，然后放到集合 mActivities 中。 key 就是appToken.
 
-### TaskRecord
+## TaskRecord
 Activity 栈，内部维护一个`ArrayList<ActivityRecord>`。
 
 App 启动一个 Activity ，会不会新建一个 TaskRecord 取决于 launchMode ， launchMode 详情查看 [Activity 的生命周期和启动模式](../../../../2018/03/17/Activity-lifecycle-task)。  默认的 standard 模式不会创建新的TaskRecord
-### ActivityStack
+## ActivityStack
 并不是一个 Activity 栈，真正意义上的 Activity 栈是 TaskRecord 。
 
 这个类是负责管理各个 Activity 栈，内部维护一个`ArrayList<TaskRecord>`
-### ActivityStackSupervisor  
+## ActivityStackSupervisor  
 管理整个手机任务栈。
 
 内部持有一个 ActivityStack ，而 ActivityStack 内部也持有 ActivityStackSupervisor ，相当于 ActivityStack 的辅助管理类。
@@ -284,27 +286,26 @@ App 启动一个 Activity ，会不会新建一个 TaskRecord 取决于 launchMo
 
 ![Alt text](../../../../images/activityrecord.png)
 
-## Activity 工作流程
-#### Activity # startActivity()
-这一次不贴代码了，只看图。
-先来一张流程图：
+# Activity 工作流程
+### Activity # startActivity()
+先不贴代码，来张流程图再说：
 ![Alt text](../../../../images/startActivity.png)
 
 我们需要记住以下几点即可
 1. startActivity()有好几种重载，最终调用到了 startActivityForResult() 。然后执行到了 Instrumentation.execStartActivity()。
 2. 启动 Activity 的真正实现是由ActivityManagerNative.getDefault()的 startActivity() 方法来完成的。这个ActivityManagerNative.getDefault() 就是 AMS 。<font color="#ff000" > 第一次跨进程。</font>
-3. AMS.startActivity() 执行到 最终会执行到 ActivityStackSupervisor 的 realStartActivityLocked()
+3. AMS.startActivity() 最终会执行到 ActivityStackSupervisor 的 realStartActivityLocked()
 4. realStartActivityLocked()会通过 ProcessRecord.thread.scheduleLaunchActivity()。ProcessRecord.thread 就是 ApplicationThread 。<font color="#ff000" > 第二次跨进程调用。</font>
 5. Activity的生命周期几个方法，可以使用这个套路啊,虽然不全是但是也差不离的，后面会具体说到，是不是这样。自己往里套。
 ```java
-ApplicationThread.schedule***Activity()
-->ActivityThread.handle***Activity()->ActivityThread.perform***Activity()
-->Instrument.callActivityOn***()
-->Activity.perform***()->Activity.on***()
+ApplicationThread.scheduleXXXActivity()
+->ActivityThread.handleXXXActivity()->ActivityThread.performXXXActivity()
+->Instrument.callActivityOnXXX()
+->Activity.performXXX()->Activity.onXXX()
 ```
-6. Activity A 中启动 Activity B ,流程是 : A  onPause()-> B  onCreat()-> B onStart() -> B onResume() -> A onStop()
+6. Activity A 中启动 Activity B ,流程是 : A  onPause()-> B  onCreate()-> B onStart() -> B onResume() -> A onStop()
 
-#### ApplicationThread # schedulePauseActivity()
+### ApplicationThread # schedulePauseActivity()
 流程图走起
 ![Alt text](../../../../images/schedulePauseActivity.png)
 
@@ -317,7 +318,7 @@ ApplicationThread # schedulePauseActivity()
       2.->Instrumentation.callActivityOnPause()->Activity#preformPause()->Activity#onPause()
 ```
 注意是先执行 onOnSaveInstanceState() ,在执行 onPause()
-#### ApplicationThread # scheduleLaunchActivity()
+### ApplicationThread # scheduleLaunchActivity()
 流程图如下
 ![Alt text](../../../../images/scheduleLaunchActivity.png)
 用箭头表示就是如下：
@@ -333,7 +334,7 @@ ApplicationThread # scheduleLaunchActivity()
 performLaunchActivity() 和 performResumeActivity() 后面会详细说
 
 接下来我们先看 performLaunchActivity() 的流程
-#### ActivityThread # performLaunchActivity()
+### ActivityThread # performLaunchActivity()
 ![Alt text](../../../../images/performLunchActivity.png)
 可以猜出来，这里面会执行通过 Instrument 执行 Activity 的 onCreat() , onStart() 方法
 
@@ -357,7 +358,7 @@ ActivityThread.performLaunchActivity()
     6.->Instrumentation.callActivityOnRestoreInstanceState() -> Activity.performRestoreInstanceState()-> Activity.onRestoreInstanceState()
 ```
 
-#### ActivityThread # handleResumeActivity()
+### ActivityThread # handleResumeActivity()
 我们大概可以猜出来里面的流程，举一反三呗
 ```java
 perforResumeActivity()
@@ -371,7 +372,7 @@ perforResumeActivity()
 1. 竟然是<span style="border-bottom:1px solid red;"> Activity.preformOnResume()-> Instrument.callActivityOnResume()-> Activity.onResume()</span>,又不按照套路出牌啊。为毛线啊？没想明白
 2. 执行 ApplicationThread 的 scheduleStopActivity() ,这里面我们就不详说了，肯定发送消息通知 ActivityThread ，然后执行 Activity 的 perforStopActivity() ,最后通过 Instrument 执行上一个 Activity 的 onStop() 方法，不过这也符合整个生命周期跳转流程
 
-### AMS # startProcessLocked()
+## AMS # startProcessLocked()
 这里面还有一个没说到，就是如果是首次启动某个应用，那么这个进程都不存在，又进行了什么操作呢？
 将会通过AMS.startProcessLocked()创建一个进程，里面的操作就是就是通过 socket 发送消息给 zygote , zygote 将派生出一个子进程，
 子进程将通过反射调用 ActivityThread 的 main() 。具体的流程图如下
@@ -384,24 +385,24 @@ perforResumeActivity()
 * 开启 Looper 循环消息。
 我们熟悉的 Looper 就不说了，只说 ActivityThread 创建成功后。调用 attch() 得到 AMS 之后，执行的 AMS 的attachApplicationLocked()
 
-### AMS # attachApplicationLocked()
+## AMS # attachApplicationLocked()
 流程图如下
 ![Alt text](../../../../images/attachApplicationLocked.png)
 注意两点即可
 1. 通过 ApplicationThread 的 bindApplication() 方法 绑定 Application ，还是通过发送 handler 消息，执行到 ActivityThread 中的 handleApplication() ,这个才是重点
 2. 创建 Application 之后，这样 Application 就启动了，就可以启动 Activity ，执行了 ActivityStackSupervisor 的attachApplicationLocked(app)，它会调用 realStartActivityLocked() ,这就到了上面那个流程图里面了
 
-### ActivityThread # handleApplication()
+## ActivityThread # handleApplication()
 ![Alt text](../../../../images/handleBindApplication.png)
 重点：
 1. 使用类加载器创建 Instrument 对象， handleApplication() 只在进程创建的时候调用一次，一个应用中也只有一个 Instrument 对象。
 2. ContentProvider 的 onCreate() 比 Application 的 onCreat() 执行的更早
 
-### 启发
+## 启发
 通过上面分析，我忽然灵光乍现了一下。以前一直为起方法名称头疼，这不有现成的例子吗，照猫画虎呗。以后遇到这种发消息的情况，就这么办啊。
 * 发送消息的方法就叫 scheduleXXX
 * handleMessage()中接收消息的方法名就叫 handleXXX
-* 真正处理消息的方法名称就叫： performXXX  (perform 执行)
+* 真正处理消息的方法名称就叫： performXXX  (perform 执行)。     
 Google 大神就是这样干的，绝对没错啊。
 而且好像 Android 源码中有好多这样开头的方法名，例如 View 绘制的时候的 scheduleTraversals()->doTraversals()->performTraversals。
 
