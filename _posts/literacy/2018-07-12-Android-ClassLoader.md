@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列 - Android 类加载器 ClassLoader
+title: 扫盲系列 - JVM 类加载器 ClassLoader
 category: 扫盲系列
 tags:  Android ClassLoader
 ---
@@ -8,9 +8,31 @@ tags:  Android ClassLoader
 <!-- * content -->
 <!-- {:toc} -->
 
+## Java 中的类何时被加载器加载
+在 Java 程序启动的时候，并不会一次性加载程序中所有的 .class 文件，而是在程序的运行过程中，动态地加载相应的类到内存中。通常情况下,Java 程序中的 .class 文件会在以下 2 种情况下被 ClassLoader 主动加载到内存中：
+1. 调用类构造器
+2. 调用类中的静态（static）变量或者静态方法
+
 
 ## java 中的classloader
 ![Alt text](../../../../images/java_classloader.png)
+
+
+主要包括
+1. 启动类加载器 BootstrapClassLoader
+2. 扩展类加载器 ExtClassLoader （JDK 1.9 之后，改名为 PlatformClassLoader）
+3. 系统加载器 APPClassLoader
+
+### APPClassLoader
+主要加载系统属性“java.class.path”配置下类文件，也就是环境变量 CLASS_PATH 配置的路径。因此 AppClassLoader 是面向用户的类加载器，我们自己编写的代码以及使用的第三方 jar 包通常都是由它来加载的。
+
+### ExtClassLoader
+加载系统属性“java.ext.dirs”配置下类文件
+
+### BootstrapClassLoader
+不是使用 Java 代码实现的，而是由 C/C++ 语言编写的，它本身属于虚拟机的一部分。因此我们无法在 Java 代码中直接获取它的引用。如果尝试在 Java 层获取 BootstrapClassLoader 的引用，系统会返回 null。
+
+加载系统属性“sun.boot.class.path”配置下类文件。
 
 类加载流程
 ![Alt text](../../../../images/class_Loader_loding.png)
@@ -35,7 +57,7 @@ tags:  Android ClassLoader
 app 中至少需要 BootClassLoader 和 PathClassLoader 才能运行
 
 
-###  BootCLassLoader  
+###  BootClassLoader  
 * 和 JVM 不同的是， BootClassLoader 是 ClassLoader 的内部类，由 Java 代码实现而不是C++
 * 是 Android 平台所有 ClassLoader 的最终 Parent 。
 * 这个类是包内可见，所以我们无法使用。
@@ -169,8 +191,8 @@ public final class DelegateLastClassLoader extends PathClassLoader {
 具体加载过程如下：
 1. 源 ClassLoader 判断是否加载过该 Class ，如果加载过，则直接返回该 Class ，如果没有则委托父类加载。
 2. 父类加载器判断是否加载过该 Class ，如果加载过，则直接返回该 Class ，如果没有则委托父类的父类，也就是爷爷类加载器
-3. 以此类推，直到始祖类加载器（引用类加载器）
-4. 始祖类加载器判断是否加载过该 Class ，如果加载过，则直接返回该 Class ，如果没有，则尝试从其对应的类的路径下寻找 class 字节码并载入，如果载入成功，则直接返回 Class ，如果载入失败，则委托给始祖类的子类加下载器
+3. 以此类推，直到始祖类加载器（即BootstrapClassLoader）
+4. BootstrapClassLoader 判断是否加载过该 Class ，如果加载过，则直接返回该 Class ，如果没有，则尝试从其对应的类的路径下寻找 class 字节码并载入，如果载入成功，则直接返回 Class ，如果载入失败，则委托给始祖类的子类加下载器
 5. 始祖类的子类加载器尝试从其对应的类的路径下寻找 class 字节码并载入，如果载入成功，则直接返回该 Class ，如果载入失败，则委托给始祖类子类的子类，即孙子类加载器
 6. 以此类推，直到源ClassLoader
 7. 源 ClassLoader 尝试从其对应的类的路径下寻找 class 字节码并载入，如果载入成功，则直接返回该 class ，如果载入失败，源 ClassLoader 不会在委托其他子类加载器，而是抛出异常。
@@ -183,6 +205,14 @@ public final class DelegateLastClassLoader extends PathClassLoader {
 试想一个场景：黑客自定义一个java.lang.String类，该 String 类具有系统的 String 类一样的功能，只是在某个函数稍作修改。比如 equals 函数，这个函数经常使用，如果在这这个函数中，黑客加入一些“病毒代码”。并且通过自定义类加载器加入到 JVM 中。此时，如果没有双亲委派模型，那么 JVM 就可能误以为黑客自定义的java.lang.String类是系统的 String 类，导致“病毒代码”被执行。
 
 而有了双亲委派模型，黑客自定义的java.lang.String类永远都不会被加载进内存。因为首先是最顶端的类加载器加载系统的java.lang.String类，最终自定义的类加载器无法加载java.lang.String类。
+
+```
+注意：
+“双亲委托”机制只是 Java 推荐的机制，并不是强制的机制。
+我们可以继承 java.lang.ClassLoader 类，实现自己的类加载器。
+如果想保持双亲委派模型，就应该重写 findClass(name) 方法；
+如果想破坏双亲委派模型，可以重写 loadClass(name) 方法。
+```
 
 ## 双亲委托模型在热修复领域的应用
 在用 BaseDexClassLoader 或者 DexClassLoader 去加载某个 dex 或者某个 apk 中的 class 时候，无法调用 findClass() 方法，因为该方法是包访问权限的，需要调用 loadClass() ,该方法其实是 BaseDexClassLoader 的父类 ClassLoader 实现的， findclass() 方法就是双亲委托模型的实际体现。源码如下
