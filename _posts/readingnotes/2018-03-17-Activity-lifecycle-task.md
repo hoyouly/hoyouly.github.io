@@ -11,36 +11,35 @@ keywords: 关键字
 <!-- {:toc} -->
 ## 生命周期
 
-* onStart()， Activity 正在启动，这时 Activity 已经可见，但是还没有出现在前台，还无法进行交互。
-* onResume(), Activity 可见，并且在前台，并且开始活动，可以和用户进行交互。
+* onStart(): Activity 正在启动，这时 Activity 已经可见，但是还没有出现在前台，还无法进行交互。
+* onResume(): Activity 可见，并且在前台，并且开始活动，可以和用户进行交互。
 * 当前 Activity 的 onStop() 方法是否执行，关键在于启动的 Activity 的主题，如果启动的 Activity 主题是透明的，那么当前 Activity 的 onStop() 就不会执行，如果不是透明的，当前 Activity 的 onStop() 就会执行。
 * onStart()  和 onStop() 是从 Activity 是否可见这个角度来回调的，随着用户操作或者设备屏幕的熄灭和点亮，这两个方法可能被调用多次。
-onStop() 执行的时机
-1. home键返回，锁屏，关闭界面肯定会调用 onStop 的
-2. 但是开启另一个 Activity 并不一定会调用 onStop 方法，因为 当设置 Activity 的主题 windowIsTranslucent 属性为 true 是，窗口为半透明，虽然最后看着效果和直接开启一个 Activity 没有什么区别，但是当前 Activity 并不会调用 onStop 方法，只会调用 onPause 方法，当前 Activity 进入背景
-
+* onStop() 执行的时机
+  1. home键返回，锁屏，关闭界面肯定会调用 onStop() 的
+  2. 开启另一个 Activity 并不一定会调用当前Activity的 onStop()，因为如果当设置 Activity 的主题 windowIsTranslucent 属性为 true 时，窗口为半透明，虽然最后看着效果和直接开启一个 Activity 没有什么区别，但是当前 Activity 并不会调用 onStop()，只会调用 onPause()。
 * onResume()和 onPause() 是从 Activity 是否位于前台这个角度来回调的，随着用户操作或者设备屏幕的熄灭和点亮，这两个方法被调用多次。
 * 不能在 onPause() 中做重量级操作，因为只有执行完 onPause() , onResume() 才会执行, onStop() 中可以做一些稍微重量级的操作，但是不能太耗时，
 * onSaveInstanceState()方法是在 onStop() 之后，可能在 onPause() 之前，也可能在 onPause() 之后,只有 Activity 异常终止的时候，才会执行该方法
 
 
 ## 启动模式
-* **Standard  标准模式**，也是系统默认模式，每次启动都会创建一个新的 实例，不管该实例是否存在。被创建的实例的生命周期符合典型情况下的生命周期，谁启动这个 Activity ，那么该 Activity 就和这个在同一个任务里面。如果启动者是出 Activity 之外的 Context ,这时如果没有任务栈，会报错。此时需要指定ACTIVITY_FLAG_NEW_TASK
+* **Standard  标准模式** 也是系统默认模式，每次启动都会创建一个新的 实例，不管该实例是否存在。被创建的实例的生命周期符合典型情况下的生命周期，谁启动这个 Activity ，那么该 Activity 就和这个在同一个任务里面。如果启动者是除 Activity 之外的 Context ,这时如果没有任务栈，会报错。此时需要指定ACTIVITY_FLAG_NEW_TASK
 ![添加图片](../../../../images/standerd.png)
 
-* **SingleTop  栈顶复用模式**，如果该 Activity 在栈顶，则再次启动的该 Activity 的时候，不创建， onCreate() 和 onStart() 也不会执行，但是 onNewIntent() 方法会执行，通过此方法我们可以获得当前请求的信息。如果不在栈顶但是存在这个栈里面，那么就仍然创建新的实例，
+* **SingleTop  栈顶复用模式** 如果该 Activity 在栈顶，则再次启动的该 Activity 的时候，不创建， onCreate() 和 onStart() 也不会执行，但是 onNewIntent() 方法会执行，通过此方法我们可以获得当前请求的信息。如果不在栈顶但是存在这个栈里面，那么就仍然创建新的实例，
 ![添加图片](../../../../images/singleTop.png)
 
   <span style="border-bottom:1px solid red;">适合接受通知启动的内容显示界面。   
   例如：当收到多条新闻推送的通知，用于展示新闻的 Activity 界面，可以设置 SingleTop 模式，根据传递过来的信息显示不同的新闻信息，不会启动多个 Activity 。</span>
 
 * **SingleTask  栈内复用模式**  一种单实例模式，只要该 Activity 存在一个栈中，那么多次启动该 Activity 都不会重新创建该实例，也不会执行 onCreat() 和 onStart() 方法，但是执行 onNewIntent() ，如果 Activity A 是singleTask
-```java
+```
 if(A 所在的栈不存在){
   创建 A 所需的任务栈 taskA
 }
 if(taskA 中不存在 A 的实例){
-  创建 A 的实例，执行 onCreat() , onStart() ,onResume()
+  创建 A 的实例，执行 onCreate() , onStart() ,onResume()
   放到任务栈 taskA 中
 }else{
   if(A 不在栈顶){
@@ -72,6 +71,9 @@ if(taskA 中不存在 A 的实例){
 * 任务栈分为前台任务栈和后台任务栈，可以通过切换将后台任务栈再次调到前台   
 * 可以通过android:taksAffinity=""来设置改 Activity 的任务栈，注意属性必须是字符串，并且必须包含分隔符“.”
 
+### allowTaskReparenting
+赋予 Activity 在各个 Task 中间转移的特性。一个在后台任务栈中的 Activity A，当有其他任务进入前台，并且 taskAffinity 与 A 相同，则会自动将 A 添加到当前启动的任务栈中。
+
 ### 设置 Activity 的启动模式
 1.  在 AndroidManifest 为 Activity 指定启动模式：android：launchMode=""
 2.  通过 Intent 中设置标志来为 Activity 指定启动模式
@@ -82,11 +84,13 @@ intent.addFlags(Intent.FlAG_ACTIVITY_NEW_TASK);
 2. 范围不同，第一种方式无法设定 FlAG_ACTIVITY_CLAER_TOP ,第二种方式无法指定 Activity 为 singleInstance 模式
 
 ### Activity 的Flags
-* FLAG_ACTIVITY_NEW_TAKS     和在 xml 中设置 singleTask 模式相同
-* FLAG_ACTIVITY_SINGLE_TOP  和在 xml 中设置 singleTop 模式相同
-* FLAG_ACTIVITY_CLEAR_TOP   启动该 Activity 的时候，在同一个任务栈中位于他上面的 Activity 都要出栈，一般和 FLAG_ACTIVITY_NEW_TAKS 配合使用，在这种情况，如果已经存在该实例，系统会调用 onNewIntent ，如果被启动的 Activity 采用 standard 模式启动，那么连他同它之上的 Activity 都要出栈，系统会创建新的 Activity 实例并放入栈顶，
-singleTask 启动模式默认就有次标记的效果
-* FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+* FLAG_ACTIVITY_NEW_TAKS     
+和在 xml 中设置 singleTask 模式相同
+* FLAG_ACTIVITY_SINGLE_TOP     
+和在 xml 中设置 singleTop 模式相同
+* FLAG_ACTIVITY_CLEAR_TOP     
+启动该 Activity 的时候，在同一个任务栈中位于他上面的 Activity 都要出栈，一般和 FLAG_ACTIVITY_NEW_TAKS 配合使用，在这种情况，如果已经存在该实例，系统会调用 onNewIntent() ，如果被启动的 Activity 采用 standard 模式启动，那么连他同它之上的 Activity 都要出栈，系统会创建新的 Activity 实例并放入栈顶。 singleTask 启动模式默认就有此标记的效果
+* FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS   
 具有这个标记的 Activity 不会出现在历史 Activity 列表中，等同于android:excludeFromRecents="true"
 
 ## IntentFilter 的匹配规则
@@ -94,7 +98,7 @@ singleTask 启动模式默认就有次标记的效果
 1. 显式调用 需要明确指定被启动对象的组件信息，包括包名和类名，
 2. 隐式调用 不需要明确组件信息，   
 
-原则上一个 Intent 不应该即使显示调用，又是隐式调用，如果二者共存以显式调用为主
+原则上一个 Intent 不应该即是显示调用，又是隐式调用，如果二者共存以显式调用为主
 
 ### 隐式调用
 需要 Intent 能够匹配目标组件的 IntentFilter 所设置的过滤信息，包括 action ， category ， data ,   
@@ -116,7 +120,7 @@ singleTask 启动模式默认就有次标记的效果
 
 不设置 category ，系统在调用 startActivity() 的时候，会默认加上android.intent.category.DEFAULT这个 category ，
 
-**特别说明**
+#### android.intent.action.MAIN 与android.intent.category.LAUNCHER
 ```java
 <intent-filter>
     <action android:name="android.intent.action.MAIN" />
@@ -125,20 +129,22 @@ singleTask 启动模式默认就有次标记的效果
 </intent-filter>
 ```
 这二者共同出现，标明该 Activity 是一个入口 Activity ，并且会出现在系统应用列表中，二者缺一不可。
-#### android.intent.action.MAIN 与android.intent.category.LAUNCHER的区别
-1. 区别一：
-android.intent.action.MAIN决定一个应用程序最先启动那个组件
-android.intent.category.LAUNCHER决定应用程序是否显示在程序列表里(说白了就是是否在桌面上显示一个图标)
-  * 第一种情况：有 MAIN ,无 LAUNCHER ，程序列表中无图标
+* android.intent.action.MAIN 与android.intent.category.LAUNCHER的区别
+区别一：
+
+android.intent.action.MAIN  决定一个应用程序最先启动那个组件     
+android.intent.category.LAUNCHER 决定应用程序是否显示在程序列表里(说白了就是是否在桌面上显示一个图标)
+* 第一种情况：有 MAIN ,无 LAUNCHER ，程序列表中无图标。   
 原因：android.intent.category.LAUNCHER决定应用程序是否显示在程序列表里
-  * 第二种情况：无 MAIN ,有 LAUNCHER ，程序列表中无图标
-原因：android.intent.action.MAIN决定应用程序最先启动的 Activity ，如果没有 MAIN ，则不知启动哪个 Activity ，故也不会有图标出现
+* 第二种情况：无 MAIN ,有 LAUNCHER ，程序列表中无图标   
+原因：android.intent.action.MAIN决定应用程序最先启动的 Activity ，如果没有 MAIN ，则不知启动哪个 Activity ，故也不会有图标出现   
 
-  所以这两个属性一般成对出现。
+所以这两个属性一般成对出现。   
+<span style="border-bottom:1px solid red;"> 如果一个应用中有两个组件intent-filter都添加了android.intent.action.MAIN和
+android.intent.category.LAUNCHER这两个属性， 则这个应用将会显示两个图标， 写在前面的组件先运行。</span>
 
-  <span style="border-bottom:1px solid red;"> 如果一个应用中有两个组件intent-filter都添加了android.intent.action.MAIN和
-  android.intent.category.LAUNCHER这两个属性， 则这个应用将会显示两个图标， 写在前面的组件先运行。</span>
-2. 区别二：
+区别二：
+
 android.intent.category.LAUNCHER：决定应用程序是否显示在程序列表里，就是 android 开机后的主程序列表。
 android.intent.category.HOME：按住“HOME”键，该程序显示在 HOME 列表里。
 
@@ -147,7 +153,7 @@ android.intent.category.HOME：按住“HOME”键，该程序显示在 HOME 列
 #### data的结构
 ![Alt text](../../../../images/intent_data.png)  
 data 由两部分组成，
-1. mimeType  指媒体类型，比如image/jpeg,audio/mpeg4-generic和video/*,可以表示图片，文本，视频等不同格式的媒体
+1. mimeType  指媒体类型，比如`image/jpeg,audio/mpeg4-generic和video/*`,可以表示图片，文本，视频等不同格式的媒体
 2. URI
 URI 的结构  
 ![Alt text](../../../../images/activity_uri)  
@@ -171,15 +177,14 @@ intent.setDataAndType(Uri.fromFile("http://abc","video/mpeg"))
 2. 规则二   
 ![Alt text](../../../../images/intent_filer_2.png)
 
-3. 匹配以 http 开头的.pdf结尾的路径，是别的应用程序想要打开网络 pdf 的时候，用户能选择这个   
+3. 匹配以 http 开头的.pdf结尾的路径，是别的应用程序想要打开网络 pdf 的时候，用户能选择这个
 
 ```xml
-<intent-filter>  
+  <intent-filter>  
     <action android:name="android.intent.action.VIEW"></action>  
     <category android:name="android.intent.category.DEFAULT"></category>  
     <data android:scheme="http" android:pathPattern=".*//.pdf"></data>  
-</intent-filter>
-
+  </intent-filter>
 ```
 4. 让别人通过 Intent 调用的时候显示在选择框中，只需要注册 android.intent.action.SEND 与 mimeType 为 `text/plain` 或 `/` 就可以了
 
@@ -204,12 +209,18 @@ intent.setDataAndType(Uri.fromFile("http://abc","video/mpeg"))
 1. 采用 PackageManager 的 resolveActivity() ，
 2. Intent的 resolveActivity() ,如果找不到就会返回 null ，   
 
-queryIntentActivities() 返回所有成功匹配的 Activity 信息   
-resolveActivity() 返回最佳匹配的 Activity 信息
+* queryIntentActivities() 返回所有成功匹配的 Activity 信息   
+* resolveActivity() 返回最佳匹配的 Activity 信息
+
+##  Binder 传递数据的限制
+Android 系统对使用 Binder 传数据进行了限制。通常情况为 1M，但是根据不同版本、不同厂商，这个值会有区别。
+解决办法
+1. 减少通过Intent传递的数据，将非必须字段使用transient 关键字修饰
+2. 将对象转化成JSON字符串，减少数据体积。
 
 
 ---
 搬运地址：    
- 
+
 
 [你必须弄懂的 Intent Filter 匹配规则](http://blog.csdn.net/mynameishuangshuai/article/details/51673273)

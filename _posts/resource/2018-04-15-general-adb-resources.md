@@ -17,3 +17,7 @@ tags:   adb
 
 * adb shell screencap -p /sdcard/screen.png  ; adb pull /sdcard/screen.png  ~/  
 -p  后面跟的是截屏保存的 sdcard 路径
+
+
+* adb shell dumpsys activity activities  
+将系统中所有存活中的 Activity 信息打印到控制台
