@@ -6,6 +6,19 @@ tags: View  Android开发艺术探索
 ---
 <!-- * content -->
 <!-- {:toc} -->
+## 前言
+Android 的屏幕刷新中涉及到最重要的三个概念
+* CPU ： 执行应用层的measure，layout,draw等操作。绘制完成后将数据提交给GPU
+* GPU ： 进一步处理数据，并将数据缓存起来
+* 屏幕： 由一个个像素点组成，以固定的频率（16.6ms,即1秒60帧）从缓存区中取出来数据来填充像素点
+
+总结一句话就是：CPU 绘制后提交数据，GPU进一步处理和缓存数据，最后屏幕从缓冲区中读取数据并显示。
+
+![添加图片](../../../../images/tcp_three_hand.png)
+
+
+
+
 ## ViewRootImpl
 View 的绘制，离不开ViewRootImpl.他是链接 WindowManager 和 Decorview 的纽带， View 的三大流程都是通过 ViewRootImpl 完成，在 ActivityThread 中，当 Activity 对象被创建成功后，会将 DecorView 添加到 Window 中，同时创建 ViewRootImpl 对象，并通过 ViewRootImp 的 setView() 将 ViewRootImpl 和 DecorView 关联起来。
 先说几个结论，这个以后会详细讲的。
@@ -170,3 +183,5 @@ perforMeasure() 是经由 measureHierarchy() 调用的.这个会在下一篇讲
 搬运地址：    
 
 Android 开发艺术探索
+
+[深入浅出Android屏幕刷新原理](https://www.jianshu.com/p/0a54aa33ba7d)
