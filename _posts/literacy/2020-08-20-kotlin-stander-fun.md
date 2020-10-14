@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列 - Kotlin 中的标准库函数 it、run、with、let、also和apply
+title: 扫盲系列 - Kotlin 中的标准库函数 it、run、with、let、also和apply、use
 category: 扫盲系列
 tags:  Kotlin
 ---
@@ -252,6 +252,18 @@ inline内联函数，其实相当于对代码块的一个标记，这个代码�
 2. let函数和run函数之所以能够返回其他类型的值，其原理在于lambda表达式内部返回最后一行表达式的值，所以只要最后一行表达式返回不同的对象，那么它们就返回不同类型，表现上就是返回其他类型
 3. T.also和T.apply函数之所以能能返回自己本身，是因为在各自Lambda表达式内部最后一行都调用return this,返回它们自己本身，这个this能被指代调用者，是因为它们都是扩展函数特性
 
+## use
+* 实现了Closeable接口的对象可调用use函数
+* use函数会自动关闭调用者（无论中间是否出现异常）
+* Kotlin的File对象和IO流操作变得行云流水
+
+```kotlin
+File("/home/test.txt").readLines()
+        .forEach { println(it) }
+
+```
+readLines()内部间接使用了use函数，这样就省去了捕获异常和关闭流的烦恼
+
 - - - -
 搬运地址：    
 
@@ -261,6 +273,6 @@ inline内联函数，其实相当于对代码块的一个标记，这个代码�
 
 [Kotlin 教程](https://www.runoob.com/kotlin/kotlin-tutorial.html)
 
-
+[Kotlin use函数的魔法](https://www.jianshu.com/p/2328262cd49d)
 
 [[译]掌握Kotlin中的标准库函数: run、with、let、also和apply](https://blog.csdn.net/u013064109/article/details/80387322)

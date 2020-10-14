@@ -161,7 +161,7 @@ public final class RawConverterFactory extends Converter.Factory {
 }
 
 ```
-* responseBodyConverter() 中进行判断，如果 responseTyp 的类型是 Strig ,则认为是需要原始数据，则直接返回一个 RawResponseBodyConverter ，
+* responseBodyConverter() 中进行判断，如果 responseTyp 的类型是 String ,则认为是需要原始数据，则直接返回一个 RawResponseBodyConverter ，
 * 因为请求数据格式是 json 样式，所以 requestBodyConverter() 实现的和 GsonRequestBodyConverter 类似，如果请求格式改了，例如 xml 的话，可以在这里进行处理
 
 ### RawResponseBodyConverter
