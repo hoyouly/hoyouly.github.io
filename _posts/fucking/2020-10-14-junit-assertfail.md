@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  填坑 - junit.framework.AssertionFailedError No tests found in ，或许并不是你想的那样
-category: 填坑系列
+title: 卧槽系列 - junit.framework.AssertionFailedError No tests found in ** 或许并不是你想的那样
+category: 卧槽系列
 tags: junit
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 恍然大悟 - Android Studio 中 asserts 位置
-category: 恍然大悟
+title: 卧槽系列 - Android Studio 中 asserts 位置
+category: 卧槽系列
 tags: AndroidStudio asserts
 ---
 <!-- * content -->
@@ -10,7 +10,7 @@ tags: AndroidStudio asserts
 不知道大家有没有遇到过这样的问题，一个 bug 查了好几天，突然发现，卧槽，竟然是这里出的问题。卧槽，竟然是这样玩儿的，卧槽，竟然。。。是不是有一种   
 踏破铁鞋无觅处，得来全不费工夫，  
 山重水复疑无路，柳暗花明又一村。  
-所有就有了这个恍然大悟系列
+所有就有了这个卧槽系列系列
 
 今天遇到的这个问题就是这样。首先说结论吧
 ** Android Studio 中， assets 文件夹是放在src/main 下面的，和 res 属于平行关系**

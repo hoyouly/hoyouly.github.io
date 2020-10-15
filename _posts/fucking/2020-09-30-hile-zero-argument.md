@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  填坑 - Hilt遇到的 InstantiationException *** has no zero argument constructor
-category: 填坑系列
+title:  卧槽系列 - Hilt遇到的 InstantiationException *** has no zero argument constructor
+category: 卧槽系列
 tags: Hilt  
 ---
 <!-- * content -->
