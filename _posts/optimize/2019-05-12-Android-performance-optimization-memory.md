@@ -8,7 +8,6 @@ tags:  性能优化
 <!-- {:toc} -->
 
 # 涉及到的知识点
-
 ## java 对象的生命周期
 ![添加图片](../../../../images/java_object_lifecycle)
 * 创建阶段   
