@@ -32,7 +32,12 @@ RecycleView 分为四级缓存
 
 这是两个名为Scrap的ArrayList<ViewHolder>，
 * mAttachedScrap：
-主要用在插入或是删除itemView时，先把屏幕内的ViewHolder保存至AttachedScrap中，作用在LayoutManager中，它仅仅把需要从ViewGroup中移除的子view设置父view为null，从而实现了从RecyclerView中移除操作detachView()。需要新插入的view从cacheView/Pool中找，没找到则createViewHolder。而从ViewGroup中移除的子view会放到Pool缓存池中,如下图中的itemView b。
+主要用在插入或是删除itemView时.
+1. 先把屏幕内的ViewHolder保存至AttachedScrap中，作用在LayoutManager中，它仅仅把需要从ViewGroup中移除的子view设置父view为null，从而实现了从RecyclerView中移除操作detachView()。
+2. 需要新插入的view从cacheView/Pool中找，没找到则createViewHolder()。
+3. 而从ViewGroup中移除的子view会放到Pool缓存池中,如下图中的itemView b。
+
+![添加图片](../../../../images/attached_scrap.png)
 
 * mChangedScrap：
 主要用到刷新屏幕上的itemView数据，它不需要重新layout，notifyItemChanged()或者notifyItemRangeChanged()
