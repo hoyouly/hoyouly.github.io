@@ -8,7 +8,6 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
 <!-- * content -->
 <!-- {:toc} -->
 
-## 四大组件的运行状态
 ### 共性
 1. 注册方式上： 除了 BroadcastReceiver ，其他三种组件必须在Android-Manifest中注册， BroadcastReceiver ，即可以在Android-Manifest中注册，也可以通过代码注册
 2. 调用方式上： Activity， Service 和 BroadCastReceiver 需要借助 Intent ，而 ContentProvider 无需借助Intent
@@ -18,7 +17,7 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
 主要作用是展示一个界面并和用户交互，扮演一种前台界面的角色。
 用于向用户直接展示一个界面，并且可以接受用户的输入信息从而进行交互。
 
-启动由 Intent 出发，分为两种
+启动由 Intent 发出，分为两种
 * 显示 Intent 明确指向一个 Activity 组件
 * 隐式 Intent 指向一个或者多个目标 Activity 组件
 
@@ -31,12 +30,14 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
 用于后台执行一系列计算任务，<font color="#ff000" > 尽管在后台执行，但是本身是运行在主线程中 的，因此耗时的后台计算任然需要在单独的线程中完成</font>。用户无法直接感知到它的存在.
 
 有两种状态。`都可以进行后台计算，并且可以共存`
+
 #### startService() 启动状态
 * 不能和外界有直接交互
 * 停止使用 stopService() ，如果没有调用 stopService ， Service 会一直在后台运行
 * 多次调用 startService() ，该 Service 只能创建一次， onCreat 只会被调用一次
 * 每次调用 startService() ， onStartCommand() 方法都会被调用
 * 生命周期：**startService() -> onCreat()->  onStartCommand()->服务启动->stopService() ->onDestory()**
+
 #### bindService() 绑定状态
  * 外界可以很方便的和 Service 组件进行通信，
  * 停止使用 unBindService() ，或者调用中 Context 不存在了（例如 Activity 的 finish 了）,**绑定即两者共存亡**， Service 就会调用onUnbind()->onDestory()，
@@ -44,7 +45,7 @@ tags: Android开发艺术探索 Activity Service ContentProvider Broadcast Inten
  * 多次执行 bindService() 时， onCreate() 和 onBind() 方法并不会被多次调用
  * 生命周期： **bindService() -> onCreat()-> onBind()-> 服务启动 -> onUnbind() -> onDestory()**
 
-#### 即使用 bindService() 又使用startService()
+#### 即bindService() 又 startService()
 如果即使用了 bindService() 又使用 startService() ，该 Service 会一直在后台运行
 1. onCreat()始终只会调用一次
 2. 停止服务需要 unbindService() 和 stopService() 同时调用才行，不论先后
