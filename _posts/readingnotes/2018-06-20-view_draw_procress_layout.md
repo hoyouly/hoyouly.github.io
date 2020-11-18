@@ -7,7 +7,7 @@ tags: View  Android开发艺术探索
 <!-- * content -->
 <!-- {:toc} -->
 
-Layout 作用就是 ViewGroup 用来确定子元素的位置。当 ViewGroup 的位置确定后，他会在 onLayout() 中遍历所有子元素并调用其 layout() 方法，在 layout() 方法中执行我们熟悉的 onLayout() 方法
+Layout 作用就是 ViewGroup 用来确定子元素的位置。当 ViewGroup 的位置确定后，他会在 onLayout() 中遍历所有子元素并调用其 layout() 方法，在 layout() 方法中执行我们熟悉的 onLayout() 方法。    
 子 View 具体的 layout 的位置都是相对于父容器而言的， view 的 layout 过程同 Measure 同理，也是从顶级 View 开始，递归的完成整个控件树的布局操作
 
 经过前面的测量，控件树中的控件对于自己的尺寸显然已经了然于胸。而且父控件对于子控件的位置也有了眉目，**所以经过测量过程后，布局阶段会把测量结果转化为控件的实际位置与尺寸。控件的实际位置与尺寸由 View 的 mLeft ， mTop ， mRight ， mBottom 等 4 个成员变量存储的坐标值来表示。**
@@ -56,7 +56,7 @@ public void layout(int l, int t , int r , int b) {
           onLayout(changed, l , t , r , b);
           //清除 PFLAG_LAYOUT_REQUIRED 标记
           mPrivateFlags &= ~PFLAG_LAYOUT_REQUIRED;
-          ``````
+          ...
           //布局监听通知
       }
       //清除 PFLAG_FORCE_LAYOUT 标记
@@ -67,7 +67,7 @@ public void layout(int l, int t , int r , int b) {
 2. 调用 onLayout 方法，具体实现类接收到布局变更通知，如果此类是 ViewGoup ，还会遍历子 View 的 layout 方法，使其更新布局.
 
 ## onLayout()
-对于普通 View ， onlayout 方法是一个空实现，主要是具体实现类重写该方法后能接受到布局坐标更新信息
+对于普通 View ， onLayout 方法是一个空实现，主要是具体实现类重写该方法后能接受到布局坐标更新信息
 ```java
 protected void onLayout(boolean changed, int l , int t , int r , int b) {}
 ```
@@ -151,6 +151,7 @@ getWidth()：  得到的是最终宽度。形成与 layout() 过程中
 * 完成 performLayout() 后，空间树的所有控件都已经确定了其最终位置，就剩下 Draw 绘制了。
 
 
+**相关文章：**
 
 [View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
 [View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   

@@ -19,31 +19,31 @@ description: Window 创建过程
 # Activity 的 Window 创建过程
 1. 分析 Activity 的 Window 的创建，必须了解 Activity 的启动过程，详细请看 [ Android 四大组件之 Activity ](../../../../2019/03/15/Android-Activity-Core/)。   
 可以先记住结论：<font color="#ff000" > Activity 启动过程最终由 ActivityThread 中的 performLaunchActivity() 来完成启动, performLaunchActivity() 内部会通过类加载器创建 Activity 的对象实例，并调用 attach() 为其关联运行过程中所依赖的一系列上下文环境变量</font>   
-```Java
+```java
 // ActivityThread # performLaunchActivity()
 private Activity performLaunchActivity(ActivityClientRecord r, Intent customIntent) {
-    。。。
+    ...
     //通过类加载器创建 Activity 实例
     java.lang.ClassLoader cl = r.packageInfo.getClassLoader();
     activity = mInstrumentation.newActivity(cl, component.getClassName(), r.intent);
-    。。。
+    ...
     //创建关联的上下文环境变量
     Application app = r.packageInfo.makeApplication(false, mInstrumentation);
     Context appContext = createBaseContextForActivity(r, activity);
     CharSequence title = r.activityInfo.loadLabel(appContext.getPackageManager());
-    。。。
+    ...
     //调用 attach 方法，为关联运行过程所依赖的一系列上下文变量
     activity.attach(appContext, this , getInstrumentation() , r.token,
                   r.ident, app , r.intent, r.activityInfo, title , r.parent,
                   r.embeddedID, r.lastNonConfigurationInstances, config ,
                   r.referrer, r.voiceInteractor, window);
-                  。。。
+                  ...
     return activity;
 }
 ```
 
 2.  在 attach() 里面，创建 Activity 所属的 Window 对象    
-```Java
+```java
 //创建 Activity 所属的 Window 对象
 mWindow = PolicyManager.makeNewWindow(this);        
 mWindow.setWindowControllerCallback(this);
@@ -98,7 +98,7 @@ mWindow.setWindowManager((WindowManager) context.getSystemService(Context.WINDOW
 到这里 Window 已经创建完成,在 Activity 启动的时候，通过 attach() 方法，使用 PolicyManager.makeNewWindow(this) 创建一个 PhoneWindow 。
 ## Activity 显示到 Window
 
-详情请看 [ setContentView() 探究 ](../../../../2019/01/27/setcontentview/)
+详情请看 [ Activity 之 setContentView() 探究 ](../../../../2019/01/27/setcontentview/)
 
 # Dialog 的 Window 创建过程
 和 Activity 的类似。不同的在于将 DecorView 添加到 Window 中， Dialog 是在 show 方法中，
@@ -176,7 +176,7 @@ public void cancel() {
 3. TN 是一个 Binder 类，在 Toast 和 NMS 进行 IPC 的过程中，当 NMS 处理 Toast 的显示或者隐藏请求的时候会跨进程回调 TN 中的方法，这个时候由于 TN 运行在 Binder 线程池中，所以需要通过 Handler 将其切换到当前线程，即发送 Toast 请求所在的线程。<span style="border-bottom:1px solid red;">由于使用的 Handler 。所以 Toast 无法在没有 Looper 的线程中弹出。</span>
 4. Toast 在显示过程中，调用了 NMS 的 enqueueToast() 方法， enqueueToast() 第一个参数是当前应用的包名，第二个参数 tn 表示远程回调，第三个参数表示 Toast 时长。
 
-```Java
+```java
 //NotificationManagerService.java    # INotificationManager.Stub()
 public void enqueueToast(String pkg, ITransientNotification callback , int duration){
   ...
@@ -228,7 +228,7 @@ void showNextToastLocked() {
             scheduleTimeoutLocked(record);
             return;
         } catch (RemoteException e) {
-            。。。
+            ...
         }
     }
 }
@@ -304,7 +304,7 @@ private void scheduleTimeoutLocked(ToastRecord r){
 ```
 原来是通过 Handler 发送了一个延迟消息，时间一到，执行到了cancelToastLocked()
 
-```Java
+```java
 void cancelToastLocked(int index) {
     ToastRecord record = mToastQueue.get(index);
     try {

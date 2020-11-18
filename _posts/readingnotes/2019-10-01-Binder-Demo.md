@@ -26,7 +26,7 @@ tags:  Binder
 三. 公安局的电话是可以在电话本里面查找到。             
   * Service在AndroidMinfest.xml文件注册  
 
-```Java
+```java
 <service android:name="com.hoyouly.android_art.BookManagerService"
          android:enabled="true"
          android:exported="true"
@@ -47,7 +47,7 @@ tags:  Binder
 ## 整个流程
 一. 小明同学通过电话本找到公安局的电话。例如 110 ，
   * 其实很多时候，服务端会告诉你怎么连接服务，比如通过某个 Action 即可连接上去。
-```Java
+```java
 Intent commonIntent = new Intent();
 commonIntent.setAction("com.hoyouly.android_art.service");
 commonIntent.setPackage(getContext().getPackageName());
@@ -66,7 +66,7 @@ getContext().bindService(commonIntent, mConnection , Context.BIND_AUTO_CREATE);
 2. 电话未接通  
   * 执行到 onServiceDisconnected（）
 
-```Java
+```java
 private ServiceConnection mConnection = new ServiceConnection() {
   @Override
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {

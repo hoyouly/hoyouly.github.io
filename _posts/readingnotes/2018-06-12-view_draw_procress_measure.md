@@ -23,25 +23,23 @@ tags: View  Android开发艺术探索
 ### SpecSize
 某种模式的规格大小。是一个值。
 
-## MeasureSpce 与 LayoutParams 关系
+### MeasureSpce 与 LayoutParams 关系
 MeasureSpce 不是唯一由 LayoutParams 决定的， LayoutParams 需要和父容器一起才能决定 View 的 MeasureSpce ,从而进一步决定 View 的宽高。对应顶级View(DecorView)和普通的 View ， MeasureSpce 的转换略有不同，
 * DecorView：  其 MeasureSpce 由窗口的尺寸和自身的 LayoutParams 共同决定
 * 普通View：   其 MeasureSpce 由父容器的 MeasureSpce 和自身的 LayoutParams 共同决定。概况起来就是：   
   <font color="ff000">
 子 View 的MeasureSpec = LayoutParams + margin + padding + 父容器的MeasureSpec</font>
 
-### DecorView 的 MeasureSpce 创建工程
-上一篇我们知道。在 performTraversals() 会执行 measureHierarchy() 。在 measureHierarchy() 会创建到 DecorView 的 MeasureSpce
+### DecorView 的 MeasureSpce 创建过程
+上一篇我们知道。在 performTraversals() 会执行 measureHierarchy() 。在 measureHierarchy() 会创建到 DecorView 的 MeasureSpce，关键代码如下。
 
-#### ViewRootImpl # measureHierarchy()
 ```java
+//ViewRootImpl # measureHierarchy()
 childWidthMeasureSpec = getRootMeasureSpec(desiredWindowWidth, lp.width);
 childHeightMeasureSpec = getRootMeasureSpec(desiredWindowHeight, lp.height);
 performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
 ```
 接下来看 getRootMeasureSpec() 的代码
-
-#### ViewRootImpl # getRootMeasureSpec()
 
 ```java
 private static int getRootMeasureSpec(int windowSize, int rootDimension) {
@@ -65,11 +63,10 @@ private static int getRootMeasureSpec(int windowSize, int rootDimension) {
 * LayoutParams.WARP_CONTENT  : AT_MOST (最大模式)  大小不确定，但是不能 超过窗口的大小
 * 固定大小（写死的值），EXACTLY（精确模式），大小就是当前写死的数值
 
-### 普通 View 的 MeasureSpace 过程
-DecorView 是顶级的 View ，也是一个 ViewGroup ，普通的 View 在 measure() 的时候。会根据父容器 MeasureSpec 同时结合 View 本身的 LayoutParams 来确定该 View 的 MeasureSpec ,该 View 的 MeasureSpec 的创建与父容器的 MeasureSpec 和本身的 LayoutParams 有关，此外还和 View 的 margin 和 padding 有关。这个主要是在ViewGroup # getChildMeasureSpec()中执行的。
+### 普通 View 的 MeasureSpace 创建过程
+DecorView 是顶级的 View ，同时也是一个 ViewGroup ，普通的 View 在 measure() 的时候。会根据父容器 MeasureSpec 同时结合 View 本身的 LayoutParams 来确定该 View 的 MeasureSpec ,该 View 的 MeasureSpec 的创建与父容器的 MeasureSpec 和本身的 LayoutParams 有关，此外还和 View 的 margin 和 padding 有关。
 
-代码如下。
-#### ViewGroup # getChildMeasureSpec()
+这个主要是在ViewGroup # getChildMeasureSpec()中执行的。代码如下。
 ```java
 //spec为父容器的 MeasureSpec  padding 子 View 的 padding ， childDimension 子 View 想要的宽度/高度
 public static int getChildMeasureSpec(int spec, int padding , int childDimension) {
@@ -130,9 +127,10 @@ public static int getChildMeasureSpec(int spec, int padding , int childDimension
 **MeasureSpce一旦确定， onMeasure() 中就可以得到 View 的测量宽和高**
 
 我们就从此继续分析。 Hierarchy 层级，阶层，等级制度。 measureHierarchy() 用于测量整个控件树，
-## ViewRootImpl # measureHierarchy()
+## measureHierarchy()
 
 ```java
+//ViewRootImpl.java
 private boolean measureHierarchy(final View host, final WindowManager.LayoutParams lp, final Resources res ,
  final int desiredWindowWidth , final int desiredWindowHeight) {
     int childWidthMeasureSpec;
@@ -164,8 +162,10 @@ private boolean measureHierarchy(final View host, final WindowManager.LayoutPara
         }
       }
     }
-    //goodMeasure 这个变量为 true 的时候，`(host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0` 而刚开始的时候，
-    //也就是计算 DecorView 的时候，是不等于 0 的，所以第一次执行 measureHierarchy 方法的时候， goodMeasure 为 false ，也就是执行到了下面的 if 语句
+    // 如果 goodMeasure 这个变量为 true 的时候，
+    //(host.getMeasuredWidthAndState() & View.MEASURED_STATE_TOO_SMALL) == 0 是成立的
+    // 刚开始计算 DecorView 的时候，是不等于 0 的，所以第一次执行 measureHierarchy 方法的时候，
+    // goodMeasure 为 false ，也就是执行到了下面的 if 语句
     if (!goodMeasure) {//DecorView,宽度基本都为match_parent
       //创建measureSpec
       childWidthMeasureSpec = getRootMeasureSpec(desiredWindowWidth, lp.width);
@@ -181,9 +181,10 @@ private boolean measureHierarchy(final View host, final WindowManager.LayoutPara
 **MeasureHierarchy()有自己的测量方法，会先以较小的尺寸进行布局。让窗口更加优雅（主要是针对 wrap_content 的Dialog），所以设置了 wrap_content 的 Dialog ，有可能执行多次测量**
 通过 getRootMeasureSpec() 计算出来 MeasureSpce 之后，就执行 performMeasure() 方法，
 
-## ViewRootImpl # performMeasure()
+## performMeasure()
 
 ```java
+//ViewRootImpl.java
 private void performMeasure(int childWidthMeasureSpec, int childHeightMeasureSpec) {
   mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 }
@@ -202,7 +203,7 @@ measure 过程分为两种：
 
 ```java
 public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
-  。。。
+  ...
   final boolean forceLayout = (mPrivateFlags & PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;
   final boolean isExactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
                   && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY
@@ -213,7 +214,7 @@ public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
     //仅当给与的 MeasureSpec 发生变化时，或要求强制重新布局时，才会进行测量。
   if (forceLayout|| !matchingSize && (widthMeasureSpec !=mOldWidthMeasureSpec
                     || heightMeasureSpec != mOldHeightMeasureSpec)) {
-    。。。
+    ...
     if (cacheIndex < 0 || sIgnoreMeasureCache) {
       long logTime = System.currentTimeMillis();
       onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -224,7 +225,8 @@ public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
       setMeasuredDimensionRaw((int) (value >> 32), (int) value);
       mPrivateFlags3 |= PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
     }
-    。。。
+    ...
+  }
 }
 ```
 由代码可知：  
@@ -324,7 +326,7 @@ protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 ```
 代码很简单，根据不同的方向，选择不同的 measure 流程。比如选择竖直方向的 LinearLayout 的测量过程。即 measureVertical() ，源码比较长，分看来看。
 
-#### LinearLayout  # measureVertical()
+### LinearLayout  # measureVertical()
 ```java
 // See how tall everyone is. Also remember max width.
 for (int i = 0; i < count; ++i) {
@@ -413,6 +415,7 @@ public static int resolveSizeAndState(int size, int measureSpec , int childMeasu
 
 看到了我们熟悉的 setMeasuredDimension() 了吗。因为 ViewGroup 中没有处理 setMeasuredDimension() ,所以还是只想到了 View 中的 setMeasuredDimension() 中
 这就是 LinearLayout 的 Measure 流程，再看看 DecorView 的 Measure 过程。
+
 ### DecorView #onMeasure()
 因为 DecorView 是一个 Framelayout ，所以我们从 FrameLayout 开始我们的分析
 
@@ -422,7 +425,7 @@ public static int resolveSizeAndState(int size, int measureSpec , int childMeasu
     final boolean measureMatchParentChildren = MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
           || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
     mMatchParentChildren.clear();
-    。。。
+    ...
     //遍历子 View ，只要 View 不是 GONE ，便处理
     for (int i = 0; i < count; i++) {
       final View child = getChildAt(i);
@@ -448,7 +451,7 @@ FrameLayout 中的 onMeaure() 主要做两件事
 1. 遍历子 View ，只要 View 不是 GONE ，便会处理。
 2. 调用了 measureChildWithMargins() 。在 measureChildWithMargins() 里面会结合父 View 的 MeasureSpec 和自己的 LayoutParams 计算出自己的 MeasureSpce ，然后执行measure()
 
-### 在 Activity 中得到 View 的宽高的四种方式
+## Activity 中得到 View 的宽高的方式
 measure() 的流程就说完了，但是如果有这样一个任务，在 Activity 一启动，就想要得到 View 的宽高，这个怎么处理啊，因为 View 的 measure() 过程是和 Activity 的生命周期不是同步执行的。这样就无法保证在 Activity 执行到onStart()/onResume()的时候，能准确拿到 View 的宽高，我们可以通过下面的四种方式得到。
 1. onWindowFocusChanged()  View 已经初始化完毕，会被调用多次，当 Activity 的窗口得到焦点和失去焦点的时候，都会执行一次，如果频繁的进行 onResume() 和 onPause() 那么 onWindowFocusChanged() 也会被循环调用
 2. View.post(Runnable) 通过 post 把一个 Runnable 对象加到添加队列中，然后等待 Looper 调用次 Runnable 的时候， View 已经初始化好了，
@@ -457,8 +460,11 @@ measure() 的流程就说完了，但是如果有这样一个任务，在 Activi
 
 
 整体的流程图如下
-![Alt text](https://note.youdao.com/yws/public/resource/b0933b37ddd8ac810ca1d341288bbaa7/xmlnote/WEBRESOURCE751f50bcba2207aab617f8ca29d9083e/2444)
+![添加图片](../../../../images/measure.png)
 
+
+
+**相关文章：**
 
 [View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
 [View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   

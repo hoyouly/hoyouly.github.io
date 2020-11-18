@@ -240,7 +240,7 @@ retrofit = new Retrofit.Builder()
     .build();
 ```
 
-齐活。。。
+齐活。
 
 ---
 搬运地址：    

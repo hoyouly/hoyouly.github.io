@@ -44,7 +44,7 @@ public @interface GlideModule {
 * applyOptions()，可以在 Glide 被创建之前，对 GlideBuilder 进行设置，比如设置 app 缓存的路径，缓存的大小等。
 
 GlideApp.with()其实还是调用了Glide.with()
-```Java
+```java
 /**
  * @see Glide#with(Activity)
  */
@@ -82,7 +82,7 @@ with(android.view)
 
 
 getRetriever(activity) 的源码如下，
-```Java
+```java
 private static RequestManagerRetriever getRetriever(@Nullable Context context) {
    return Glide.get(context).getRequestManagerRetriever();
  }
@@ -144,7 +144,7 @@ private static void initializeGlide(@NonNull Context context, @NonNull GlideBuil
 接下来主要看 得到 Glide 对象的操作，即 builder.build(）
 
 ### GlideBuilder # build()
-```Java
+```java
 Glide build(@NonNull Context context) {
     ...
     if (engine == null) {
@@ -193,7 +193,7 @@ Glide(...) {
 glide 创建后， RequestManagerRetriever 对象也有了，那就看看 RequestManagerRetriever 中 get(...) 中干嘛了啊
 
 ### RequestManagerRetriever # get()
-```Java
+```java
 @NonNull
 public RequestManager get(@NonNull FragmentActivity activity) {
  if (Util.isOnBackgroundThread()) {

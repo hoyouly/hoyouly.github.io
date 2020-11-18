@@ -47,7 +47,8 @@ public Handler(Callback callback, boolean async) {
 这两种的区别后面会说道   
 
 
-注意： 我们在创建 Handler 的时候，经常被 Android Studio 提示`The following Handler class should be static or leaks might occur: `。
+注意： 我们在创建 Handler 的时候，经常被 Android Studio 提示    
+`The following Handler class should be static or leaks might occur: `。
 
 如下图所示   
 ![添加图片](../../../../images/handler_leank.png)
@@ -172,17 +173,15 @@ boolean enqueueMessage(Message msg, long when) {
 ```
 转换成流程图如下
 ![添加图片](../../../../images/enqueuemessage.png)
-主要做了两件事
-1. 插入到消息队列中
-怎么插入队列中的，就是图中红框中的实现。主要包括两种
-  1. 插入到队列头部 依据 p == null || when == 0 || when < p.when
-    * 如果当前队列为 null 这个好理解，队列为空，那么来的第一个肯定是队头
-    * 该消息的处理时间为 0 这个有点迷糊，什么时候 when 为 0 呢， handler 提供了一个 sendMessageAtFrontOfQueue() ,看名字也猜出来了， VIP 消息，过来直接插入到队头。怎么能保证直接在队头呢，when =0即可，因为当前时间肯定大于 0 的，如果一个消息when=0,那么肯定排在最前面了
-    * 该消息的处理时间小于头消息的处理时间 这个也可以理解，虽然 when 不为 0 ，但是目前消息队列中第一个消息时间大于当前时间，那么就排在队头了。
-  2. 插入到队列中间/后面
-  遍历整个队列，然后找到第一个比该消息处理时间大的，然后排在他的前面即可。
+主要做了两件事： 插入到消息队列中  和 如果是即时消息并且线程是阻塞状态，唤醒 Looper 中等待的线程
 
-2. 如果是即时消息并且线程是阻塞状态，唤醒 Looper 中等待的线程
+怎么插入队列中的，就是图中红框中的实现。主要包括两种
+1. 插入到队列头部 依据 p == null || when == 0 || when < p.when   
+  * 如果当前队列为 null 这个好理解，队列为空，那么来的第一个肯定是队头   
+  * 该消息的处理时间为 0 这个有点迷糊，什么时候 when 为 0 呢， handler 提供了一个 sendMessageAtFrontOfQueue() ,看名字也猜出来了， VIP 消息，过来接入到队头。怎么能保证直接在队头呢，when =0即可，因为当前时间肯定大于 0 的，如果一个消息when=0,那么肯定排在最前面了      
+  * 该消息的处理时间小于头消息的处理时间 这个也可以理解，虽然 when 不为 0 ，但是目前消息队列中第一个消息时间大于当前时间，那么就排在队头了。    
+2. 插入到队列中间/后面。遍历整个队列，然后找到第一个比该消息处理时间大的，然后排在他的前面即可。
+
 
 ## 创建Looper
 
@@ -207,7 +206,7 @@ public static void main(String[] args) {
 记得之前一个搞C++的同学问我， Android 程序的最先执行的函数是哪个啊，怎么没找到 main() 函数啊，之前我一直不知道，现在可以告诉他了，在 ActivityThread 中。
 
 然后我们就看看 Looper.prepareMainLooper()中干了啥吧，其实就是创建了一个 Looper 对象，
-```Java
+```java
 public static void prepareMainLooper() {
     //设置不允许退出的Looper
     prepare(false);
@@ -289,9 +288,10 @@ Message next() {
     if (ptr == 0) {
       return null;
     }
-
-    int pendingIdleHandlerCount = -1; // -1 only during first iteration  // 循环迭代的首次为-1
-    int nextPollTimeoutMillis = 0;//代表下一个消息到来前，还需要等待的时长；当nextPollTimeoutMillis = -1时，表示消息队列中无消息，会一直等待下去。
+    // -1 only during first iteration  // 循环迭代的首次为-1
+    int pendingIdleHandlerCount = -1;
+    //代表下一个消息到来前，还需要等待的时长；当nextPollTimeoutMillis = -1时，表示消息队列中无消息，会一直等待下去。
+    int nextPollTimeoutMillis = 0;
     //无限循环，如果队列中没有消息，那么 next() 方法就会一直阻塞在这里，当新消息到来的时候， next 方法就会返回这条消息并且将其从链表中移除
     for (; ; ) {
       if (nextPollTimeoutMillis != 0) {
@@ -416,7 +416,7 @@ Message next() {
 既然 msg.target 是一个 Handler ，那么我们就看看 Handler 的 dispathcMessage() 是怎么实现的吧
 ## Handler # dispatchMessage()
 
-```Java
+```java
 public void dispatchMessage(Message msg) {
     if (msg.callback != null) {//post()的时候执行到这里
       handleCallback(msg);

@@ -1,23 +1,22 @@
 ---
 layout: post
-title: setContentView() 探究
+title: Activity 之 setContentView() 探究
 category: 读书笔记
-tags:   setContentView
+tags:   Activity setContentView
 ---
 
 <!-- * content -->
 <!-- {:toc} -->
 
-Activity 怎么显示到 Window 上呢?
+Activity 怎么显示到 Window 上呢？那就要说到我们经常用到的 setContentView() 了。
 ## setContentView()
-那就要说到我们经常用到的 setContentView() 了，
 ```java
 public void setContentView(View view) {
   getWindow().setContentView(view);
   initWindowDecorActionBar();
 }
 ```
-Activity 具体实现交给了 Window 处理，而 Window 的实现是 PhoneWindow ，
+Activity 具体实现交给了 Window 处理，而 Window 的实现是 PhoneWindow 。
 ```java
 //PhoneWindow.java
 @Override
@@ -77,7 +76,7 @@ private void installDecor() {
       }
   }
   if (mContentParent == null) {
-      //根据主题 theme 设置对应的 xml 布局文件以及Feature(包括 style , layout ,转场动画,属性等)到 DecorView 中。
+      //根据主题 theme 设置对应的 xml 布局文件以及Feature(包括style,layout,转场动画,属性等)到 DecorView 中。
       mContentParent = generateLayout(mDecor);
       ...
   }          

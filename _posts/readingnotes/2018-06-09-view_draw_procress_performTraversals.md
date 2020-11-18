@@ -10,17 +10,13 @@ tags: View  Android开发艺术探索
 Android 的屏幕刷新中涉及到最重要的三个概念
 * CPU ： 执行应用层的measure，layout,draw等操作。绘制完成后将数据提交给GPU
 * GPU ： 进一步处理数据，并将数据缓存起来
-* 屏幕： 由一个个像素点组成，以固定的频率（16.6ms,即1秒60帧）从缓存区中取出来数据来填充像素点
+* 屏幕 ： 由一个个像素点组成，以固定的频率（16.6ms,即1秒60帧）从缓存区中取出来数据来填充像素点
 
 总结一句话就是：CPU 绘制后提交数据，GPU进一步处理和缓存数据，最后屏幕从缓冲区中读取数据并显示。
 
-![添加图片](../../../../images/tcp_three_hand.png)
-
-
-
 
 ## ViewRootImpl
-View 的绘制，离不开ViewRootImpl.他是链接 WindowManager 和 Decorview 的纽带， View 的三大流程都是通过 ViewRootImpl 完成，在 ActivityThread 中，当 Activity 对象被创建成功后，会将 DecorView 添加到 Window 中，同时创建 ViewRootImpl 对象，并通过 ViewRootImp 的 setView() 将 ViewRootImpl 和 DecorView 关联起来。
+View 的绘制，离不开ViewRootImpl.他是链接 WindowManager 和 Decorview 的纽带， View 的三大流程都是通过 ViewRootImpl 完成，在 ActivityThread 中，当 Activity 对象被创建成功后，会将 DecorView 添加到 Window 中，同时创建 ViewRootImpl 对象，并通过 ViewRootImp 的 setView() 将 ViewRootImpl 和 DecorView 关联起来。   
 先说几个结论，这个以后会详细讲的。
 * 每一个 Activity 对应一个 Window ，
 * 每一个 Window 会有一个 DecorView ，
@@ -43,8 +39,8 @@ public void setView(View view, WindowManager.LayoutParams attrs, View  panelPare
     requestLayout();
 }
 ```
-在 setView() 中，我们看到了这样一段注释
-`Schedule the first layout -before- adding to the window manager, to make sure we do the relayout before receiving any other events from the system.` 大概意思是在添加到 WindowManager 之前，执行第一个布局，确保在接受 到来自系统的任何其他事件之前进行重新布局，所以我们就相信， requestLayout() 方法是重新布局。
+在 setView() 中，我们看到了这样一段注释:
+*Schedule the first layout -before- adding to the window manager, to make sure we do the relayout before receiving any other events from the system.* 大概意思是在添加到 WindowManager 之前，执行第一个布局，确保在接收到来自系统的任何其他事件之前进行重新布局。所以我们就相信， requestLayout() 方法是重新布局。
 
 ## ViewRootImpl # requestLayout()
 ```java
@@ -77,7 +73,7 @@ void scheduleTraversals() {
   }
 }
 ```
-虽然通过这个流程下来， scheduleTraversals() 一直在主线程中执行的，但是调用 scheduleTraversals() 的地方有很多，不能保证都是在主线程中执行，所以就进行了切换到主线程的操作。即mChoreographer.postCallback(Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable , null);其实内部逻辑就是 post 一个 Runnable 处理。所以关键在 TraversalRunnable 的 run() 方法中。
+虽然通过requestLayout()这个流程下来， scheduleTraversals() 一直在主线程中执行的，但是调用 scheduleTraversals() 的地方有很多，不能保证都是在主线程中执行，所以就进行了切换到主线程的操作。即mChoreographer.postCallback(Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable , null);其实内部逻辑就是 post 一个 Runnable 处理。所以关键在 TraversalRunnable 的 run() 方法中。
 ## ViewRootImpl#TraversalRunnable # run()
 ```java
 final TraversalRunnable mTraversalRunnable = new TraversalRunnable();
@@ -175,10 +171,15 @@ private void performTraversals() {
 后面会详细讲这三大流程。
 perforMeasure() 是经由 measureHierarchy() 调用的.这个会在下一篇讲
 
+
+
+**相关文章：**
+
 [View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
 [View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
 [View 的绘制 - Layout 流程](../../../../2018/06/20/view_draw_procress_layout/)   
 [View 的绘制 - Draw 流程， invalidate 的流程 以及 requestLayout 流程](../../../../2018/06/29/view_draw_procress_draw/)
+
 ---
 搬运地址：    
 

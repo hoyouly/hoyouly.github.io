@@ -135,7 +135,7 @@ getContext().bindService(commonIntent, mConnection , Context.BIND_AUTO_CREATE);
 
 ### asBinder()
 是 IInterface 定义的方法，返回当前 Binder 对象
-```Java
+```java
 //Stub.java
 @Override
 public android.os.IBinder asBinder() {
@@ -340,7 +340,7 @@ public IInterface queryLocalInterface(String descriptor) {
 }
 ```
 之前在 attachInterface() 方法中已经传递过来 descriptor 了，而这个 descriptor 是 Binder 的唯一标识，一般用当前 Binder 的类名表示。即
-```Java
+```java
 private static final java.lang.String DESCRIPTOR = "com.hoyouly.android_art.IBookManager";
 ```
 queryLocalInterface() 得到的就是我们本地服务中创建的 Binder 对象，这样就可以直接调用本地服务中实现 Binder 对象的方法

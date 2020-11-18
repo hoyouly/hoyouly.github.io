@@ -57,25 +57,23 @@ private static class ContentTypeOverridingRequestBody extends RequestBody {
    }
  }
 ```
-我之前是想着通过添加 addFactory() ,自定义一个 RequestBody ，然后来处理的，可是发现就算我自定义一个类，也白搭，最后得到的还是这个代理类，根本没办法，
+我之前是想着通过添加 addFactory() ,自定义一个 RequestBody ，然后来处理的，可是发现就算我自定义一个类，也白搭，最后得到的还是这个代理类，根本不行。
 
-然后我就看到了里面有一个 writeTo(BufferedSink sink)方法，这是干嘛的啊，之前没见过 BufferedSink 这个类。
-后来查资料才知道，这是 Okio 中的一个类，详情参照上面，是不是可以在这上面做文章呢，然后研究了一下 BufferedSink 这个类的用法
-然后就知道了 Buffer 这个类，实现了 BufferedSink ，这个类可以说是神一般的存在，技能读数据，又能写数据。
+忽然我看到了里面有一个 writeTo(BufferedSink sink)方法，这是干嘛的啊，之前没见过 BufferedSink 这个类。   
+查资料才知道，这是 Okio 中的一个类，是不是可以在这上面做文章呢？   
+在了解一下 BufferedSink 这个类的用法的时候，知道了 Buffer 这个类，它实现了 BufferedSink ，Buffer 这个类可以说是神一般的存在，既能读数据，又能写数据。
 
 ```java
 Buffer buffer = new Buffer();
 body.writeTo(buffer);
 buffer.close();//数据的真正写入是在 close() 中，之前的只是在缓存中。
-ByteString byteString = buffer.readByteString();
-String utf8 = byteString.utf8();
 ```
 创建一个 Buffer 对象，然后 writeTo() ,最后 close() ,
 
 刚开始我使用的是 flush() ,想着和以前的 IO 操作一样，可是发现 flush() 之后并没有作用，数据还是没过来，然后我又研究 CallServerInterceptor ，看他们的数据是怎么过来的，最后发现竟然是调用 close() 之后，才会写入操作，有点意思。数据真正写入是在 close() 中，详情参考 [ OKio - 重新定义了“短小精悍”的 IO 框架  ](https://juejin.im/post/5856680c8e450a006c6474bd),这里面有详细介绍 close() 写入数据的流程。
+
 #### Buffer 转 String
-好了，继续，
-写入 Buffer 后，可是怎么转 String 呢，发现了 readByteString() 转成 ByteString ,关于 ByteString ，我刚好看到过，可以直接转 String ，那这样不就齐活了吗？
+写入 Buffer 后，可是怎么转 String 呢，发现了 readByteString() 转成 ByteString ,关于 ByteString ，我刚好看到过，可以直接转 String 。
 ```java
 ByteString byteString = buffer.readByteString();
 String utf8 = byteString.utf8();
@@ -85,7 +83,7 @@ String utf8 = byteString.utf8();
 ```
 intercept utf8: {"action":"busi/login","data":{"DevID":"M15","DevType":0,"Password":"4QrcOUm6Wau+VuBX8g+IPg==","Username":"test3"}}
 ```
-所以这一段代码就如下
+那这样不就齐活了嘛。这一段代码就如下
 
 ```java
 Buffer buffer = new Buffer();
@@ -103,7 +101,8 @@ if (request.url() != null) {
   ...
 }
 ```
-第一步已经完成，第二步发送数据也必将简单，
+第一步已经完成，第二步发送数据也必将简单
+
 # 发送 TCP 请求得到数据
 这是之前已经现成的，直接通过 action 和参数发送即可
 ```java
@@ -237,9 +236,8 @@ public class SocketInterceptor implements Interceptor {
     }
 }
 ```
-在创建 Okhttp 的时候， addInterceptor() 上去就行了。
-
-httpClientBuilder.addInterceptor(new SocketInterceptor());
+在创建 Okhttp 的时候， addInterceptor() 上去就行了。   
+`httpClientBuilder.addInterceptor(new SocketInterceptor());`
 
 注意，不能使用 addNetworkInterceptor() ,因为会报错，原因还在查找中。
 

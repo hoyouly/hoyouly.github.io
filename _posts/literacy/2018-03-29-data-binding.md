@@ -461,7 +461,7 @@ public void onItemClick(View view) {
         android:layout_height="96dp"
         android:orientation="vertical">
 
-        。。。。。。
+        ...
         </RelativeLayout>
 </layout>
 

@@ -312,7 +312,7 @@ Observable<String> updatePic(@Body RequestBody imgs);
 ```
 记得把上面的 @Multipart 注解注释掉，因为他们两个不能一块使用
 
-然后再次测试一把。竟然成功了，可以了， ok 了。卧槽，操。。。
+然后再次测试一把。竟然成功了，可以了， ok 了。卧槽，操...
 
 踏破铁鞋无觅处，得来全不费工夫。
 

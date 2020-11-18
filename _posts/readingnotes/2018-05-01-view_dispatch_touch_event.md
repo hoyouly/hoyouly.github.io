@@ -8,7 +8,9 @@ tags: View 事件分发 Android开发艺术探索
 <!-- {:toc} -->
 
 ## 触摸事件
-点击事件，也称为触摸事件，是捕获触摸屏幕产生后的事件。所谓事件的分发，其实就是对 MotionEvent 事件的分发过程，即当一个 MotionEvent 产生后，系统需要把这个时间传递给具体的 view ,而这个传递的过程其实就是分发过程
+点击事件，也称为触摸事件，是捕获触摸屏幕产生后的事件。    
+所谓事件的分发，其实就是对 MotionEvent 事件的分发过程，即当一个 MotionEvent 产生后，系统需要把这个事件传递给具体的 view ,这个传递的过程就是分发过程
+
 ### MotionEvent
 触摸事件封装的类，可以得到触摸的坐标， getX() 和 getRawX() ；得到触摸的类型，例如 ACTION_DOWN ， ACTION_UP , ACTION_MOVE 等
 * getX()是表示 view 相对于自身左上角的 x 坐标,
@@ -42,6 +44,7 @@ public boolean dispatchTouchEvent(MotionEvent event) {
 **传递规则**    
 对于一个根 ViewGroup ,点击事件产生后，首先会传递给它，这个时候他的 dispatchTouchEvent() 就会被调用，如果这个 ViewGroup 的 onInterceptTouchEvent() 返回了 true ，表示它要拦截这个事件，这个事件就会交给这个 ViewGroup 处理，即调用它的 onTouchEvent()，如果 onInterceptTouchEvent() 返回 false ，则就会继续传递给子 View ，即调用子 View 的 dispatchTouchEvent() 方法，反复直到这个事件最终处理 。<font color="#ff000" > 实质就是一个大的递归函数。 并且使用的是DFS，深度优先遍历</font>  
 
+
 **View 处理一个事件**    
 **优先级由低到高**&#160;&#160;&#160;&#160; onClickListener < onTouchEvent < onTouchListener  
 
@@ -71,7 +74,7 @@ public boolean dispatchTouchEvent(MotionEvent event) {
 
 
 ## 源码分析
-当点击事件发生，事件最先传递给当前的 Activity ，由 Activity 的 dispatchTouchEvent() 进行分发，具体工作是由 Activity 中的 Window 来完成， Window 会将事件传递给 decor view ， decor view 一般就是当前界面装饰容器，即 setContentView() 所设置的 View 的父容器，通过Activity.getWindow().getDecorView()可以获得
+当点击事件发生，事件最先传递给当前的 Activity ，由 Activity 的 dispatchTouchEvent() 进行分发，具体工作是由 Activity 中的 Window 来完成， Window 会将事件传递给 DecorView ， DecorView 一般就是当前界面装饰容器，即 setContentView() 所设置的 View 的父容器，通过Activity.getWindow().getDecorView()可以获得
 
 ### Activity # dispatchTouchEvent()
 ```java
@@ -96,7 +99,8 @@ public  boolean superDispatchTouchEvent(MotionEvent event){
 }
 ```
 直接把事件传递给了 DecorView 的 superDispatchTouchEvent() 方法
-#### DecorView
+
+### DecorView
 继承 FrameLayout ，是一个父 View ，我们通常在 Activity 中 setContentView() 其实是把我们自己写的布局文件作为一个子 View 设置到这个 DecorView 中，所以才有了，
 ```java
 ViewGroup viewGroup =  (ViewGroup)getWindow().getDecorView().findViewById(android.R.id.content);
@@ -349,13 +353,14 @@ public void setOnClickListener(@Nullable OnClickListener l) {
 ```
 
 ## enable 属性和 Clickable 属性
-enable 可不可用
-clickable 可不可点击
+* enable 可不可用    
+* clickable 可不可点击   
+
 都是对 mPrivateFlags 进行操作的，判断 View 是否可用或者是否可点击，也是通过 mPrivateFlags 进行操作的，
 mPrivateFlags & CLICKABLE == CLICKABLE  代表控件是可点击的，
 mViewFlags & ENABLED_MASK == ENABLED   代表控件是可用的。
 
-1. 当 View 不可用的时候，通过 onTouch() 方法不会执行,参考 View 中的 dispatchTouchEvent() 中的代码
+1. 当 View 不可用的时候，通过 setOnTouchListener设置的OnTouchListener中的 onTouch()方法将不会执行。参考 View 中的 dispatchTouchEvent() 中的代码
 2. 当 View 不可用的时候， onTouchEvent() 会执行，但是 onClick() , OnLongClick() 等实质性逻辑不会执行，此时 onTouchEvent() 的返回值由该 View 是否可点击(包括长按，短按等点击事件)来决定。参考 View 中的onTouchEvent()
 3. 当 View 是不可点击的时候，除非调用了 View 的 setTouchDelegate() ,传入 mTouchDelegate ,否则 onTouchEvent() 必定返回 false ，具体逻辑，如 onClick() , onLongClick() 不会执行。
 

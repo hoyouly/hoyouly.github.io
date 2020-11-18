@@ -295,7 +295,7 @@ BroadcastRecord r;
   //step1: 处理并行广播        
   while (mParallelBroadcasts.size() > 0) {
         r = mParallelBroadcasts.remove(0);
-            。。。
+            ...
         final int N = r.receivers.size();
         for (int i=0; i<N; i++) {
           Object target = r.receivers.get(i);

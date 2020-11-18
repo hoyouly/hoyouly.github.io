@@ -1,19 +1,19 @@
 ---
 layout: post
-title: View 的绘制 - Draw 流程， invalidate 的流程 以及 requestLayout 流程
+title: View 的绘制 - draw 流程， invalidate 流程 以及 requestLayout 流程
 category: 读书笔记
 tags: View  Android开发艺术探索
 ---
 <!-- * content -->
 <!-- {:toc} -->
-# View的 Draw 流程
+# View的 draw 流程
 View 的 draw 过程遵循如下几步
 * 绘制背景    drawBackground();
 * 绘制自己    onDraw();
 * 如果是 ViewGroup 则绘制子 View ，  dispatchDraw();
 * 绘制装饰（滚动条）和前景，     onDrawForeground();
 
-View 绘制过程的传递是通过 dispatchDraw() 来实现的， dispatchDraw() 会遍历调用所有子元素的的 draw() ,如此 draw 事件就一层层传递下来，
+View 绘制过程的传递是通过 dispatchDraw() 来实现的， dispatchDraw() 会遍历调用所有子元素的的 draw() ,如此 draw 事件就一层层传递下来。
 ## View # draw()
 ```java
 public void draw(Canvas canvas) {
@@ -51,7 +51,7 @@ public void draw(Canvas canvas) {
           // we're done...
           return;
       }
-      ``````
+      ...
 }
 ```
 流程图如下：   
@@ -64,15 +64,23 @@ public void draw(Canvas canvas) {
 
 当一个控件的内容发生变化而需要重绘时，它会通过View.invalidate()方法将其需要重绘的区域沿着控件树自下而上的交给 ViewRootImpl ，并保存在 ViewRootImpl 的 mDirty 成员中，最后通过 scheduleTraversals() 引发一次遍历，进而进行重绘工作，这样就可以保证仅位于 mDirty 所描述的区域得到重绘，避免了不必要的开销。
 
-View 的 isOpaque() 方法返回值表示此控件是否为”实心”的，**所谓”实心”控件，是指在 onDraw() 方法中能够保证此控件的所有区域都会被其所绘制的内容完全覆盖**。对于”实心”控件来说，背景和子元素（如果有的话）是被其 onDraw() 的内容完全遮住的，因此便可跳过遮挡内容的绘制工作从而提升效率。
+View 的 isOpaque() 方法返回值表示此控件是否为”实心”的。
 
-**简单来说通过此控件所属的区域无法看到此控件下的内容。也就是既没有半透明也没有空缺的部分** 因为自定义 ViewGroup 控件默认是”实心”控件，所以默认不会调用 drawBackground() 和 onDraw() 方法，因为一旦 ViewGroup 的 onDraw() 方法，那么就会覆盖住它的子元素。但是我们仍然可以通过调用setWillNotDraw(false)和 setBackground() 方法来开启 ViewGroup 的 onDraw() 功能。
+**所谓”实心”控件，是指在 onDraw() 方法中能够保证此控件的所有区域都会被其所绘制的内容完全覆盖。**
 
+对于”实心”控件来说，背景和子元素（如果有的话）是被其 onDraw() 的内容完全遮住的，因此便可跳过遮挡内容的绘制工作从而提升效率。
+
+**简单来说通过此控件所属的区域无法看到此控件下的内容。也就是既没有半透明也没有空缺的部分。**
+
+因为自定义 ViewGroup 控件默认是”实心”控件，所以默认不会调用 drawBackground() 和 onDraw() 方法，因为一旦 ViewGroup 的 onDraw() 方法，那么就会覆盖住它的子元素。但是我们仍然可以通过调用setWillNotDraw(false)和 setBackground() 方法来开启 ViewGroup 的 onDraw() 功能。
+
+
+接下来说一个重要的方法， invalidate() ,我们经常使用 invalidate() 用来刷新 UI ，可是里面的逻辑到底是怎么样呢， invalidate() 真正的又是干嘛的呢？和 postInvalidata() 区别又是啥呢？？
 # View的 invalidate() 的流程
 
-接下来说一个重要的方法， invalidate() ,我们经常使用 invalidate() 用来刷新 UI ，可是里面的逻辑到底是怎么样呢， invalidat() 真正的又是干嘛的呢，和 postInvalidata() 区别又是啥呢？？
 ## View # invalidate()
-invalidate() 方法必须在主线程中执行，而 scheduleTraversals() 引发的遍历也是在主线程中执行的,但是调用 invilidat() 方法并不会使遍历立即开始，因为在调用 invalidate() 的方法执行完毕之前（准确说是主线程的 Looper 处理完其他消息之前），主线程根本没机会处理 scheduleTraversals() 所发出的消息，这种机制带来的好处就是 **在一个方法里面可以连续调用多个控件的 invalidate() ，而不用担心会由于多次重绘而产生的效率问题**
+invalidate() 方法必须在主线程中执行，而 scheduleTraversals() 引发的遍历也是在主线程中执行的。   
+但是调用 invalidate() 方法并不会使遍历立即开始，因为在调用 invalidate() 的方法执行完毕之前（准确说是主线程的 Looper 处理完其他消息之前），主线程根本没机会处理 scheduleTraversals() 所发出的消息，这种机制带来的好处就是 **在一个方法里面可以连续调用多个控件的 invalidate() ，而不用担心会由于多次重绘而产生的效率问题**
 
 另外多次调用 invalidate() 方法会使得 ViewRootImpl 多次接收到设置脏区域的请求， ViewRootImpl 会将这些脏区域累加到 mDirty 中，进而在随后的遍历中，一次性的完成所有脏区域的重绘。  
 
@@ -91,8 +99,7 @@ void invalidate(boolean invalidateCache) {
 ```
 ##  View # invalidateInternal()
 ```java
-void invalidateInternal(int l, int t , int r , int b , boolean invalidateCache ,
-            boolean fullInvalidate) {
+void invalidateInternal(int l, int t , int r , int b , boolean invalidateCache ,boolean fullInvalidate) {
 
         //如果 View 不可见，或者在动画中
         if (skipInvalidate()) {
@@ -127,7 +134,7 @@ void invalidateInternal(int l, int t , int r , int b , boolean invalidateCache ,
                 damage.set(l, t , r , b);
                 p.invalidateChild(this, damage);
             }
-            ``````
+            ...
         }
     }
 ```
@@ -142,7 +149,7 @@ void invalidateInternal(int l, int t , int r , int b , boolean invalidateCache ,
         if (attachInfo != null) {
                 RectF boundingRect = attachInfo.mTmpTransformRect;
                 boundingRect.set(dirty);
-                ``````  
+                ...  
                //父容器根据自身对子 View 的脏区域进行调整
                 transformMatrix.mapRect(boundingRect);
                 dirty.set((int) Math.floor(boundingRect.left),
@@ -198,7 +205,7 @@ void invalidateInternal(int l, int t , int r , int b , boolean invalidateCache ,
             }
             while (parent != null);
         }
-
+      }
 ```
 就会继续上传，parent.invalidateChildInParent(location, dirty)，最终会执行到 ViewRootImpl 中的 invalidataChileInParent() 中，至于原因，就是最上层的 ViewParents 就是 ViewRootImpl 。在 ViewRootImpl 的 setView() 中，由于传入的 View 正是 DecorView ，所以最顶层的 ViewParent 即 ViewRootImpl 。
 
@@ -242,7 +249,7 @@ public ViewParent invalidateChildInParent(int[] location, Rect dirty) {
         return null;
     }
 
-    ``````
+    ...
     invalidateRectOnScreen(dirty);
     return null;
 }
@@ -262,7 +269,7 @@ private void invalidateRectOnScreen(Rect dirty) {
     localDirty.union(dirty.left, dirty.top, dirty.right, dirty.bottom);    
     //在这里， mDirty 的区域就变为方法中的 dirty ，即要重绘的脏区域
 
-    ``````
+    ...
     if (!mWillDrawSoon && (intersected || mIsAnimating)) {
         scheduleTraversals();//执行 View 的工作流程
     }
@@ -289,7 +296,7 @@ scheduleTraversals() 经过一系列调用， 最终执行到了 performTraversa
 private void performTraversals() {
     boolean layoutRequested = mLayoutRequested && (!mStopped || mReportNextDraw);
     if (layoutRequested) {
-        measureHierarchy(```);//measure
+        measureHierarchy(...);//measure
     }
     if (layoutRequested) {//把 mLayoutRequested 设置回去。
       mLayoutRequested = false;
@@ -304,9 +311,7 @@ private void performTraversals() {
     }
 }
 ```
-而在 invalidate() 的时候，只执行了 scheduleTraversals() ,并没有设置 layoutRequested 值，并且在 performTraversals() 中会把 layoutRequested 设置为 false 。所以 layoutRequested =false，所以 measureHierarchy() 不会执行，即 performMeasure() 不会执行。进而 didLayout 变量为 false ，即 performLayout() 也不会执行。只执行了 performDraw() 方法，并且在 draw() 中会清除 mDirty 区域,并且只有设置了标识的 View 才会调用 draw() 方法进而调用onDraw()
-
-## View # draw()
+而在 invalidate() 的时候，只执行了 scheduleTraversals() ,并没有设置 layoutRequested 值，并且在 performTraversals() 中会把 layoutRequested 设置为 false 。所以 layoutRequested =false，所以 measureHierarchy() 不会执行，即 performMeasure() 不会执行。进而 didLayout 变量为 false ，即 performLayout() 也不会执行。只执行了 performDraw() 方法，并且在 draw() 中会清除 mDirty 区域,并且只有设置了标识的 View 才会调用 draw() 方法进而调用onDraw()。
 ```java
 private void draw(boolean fullRedrawNeeded) {
 ...
@@ -331,7 +336,10 @@ private void draw(boolean fullRedrawNeeded) {
 
 
 ## invalidate()  和 postInvalidate 区别
-postInvalidate()（可以在子线程）和invalidate()（在主线程）都用于请求 view 重绘的方法
+都用于请求 view 重绘的方法
+
+* postInvalidate() 可以在子线程中执行
+* invalidate() 只能在主线程中执行
 
 
 # View # requestLayout 流程
@@ -339,7 +347,7 @@ postInvalidate()（可以在子线程）和invalidate()（在主线程）都用�
 ## View # requestLayout()
 ```java
  if (mMeasureCache != null) mMeasureCache.clear();
-     ``````
+     ...
      // 增加 PFLAG_FORCE_LAYOUT 标记，在 measure 时会校验此属性
      mPrivateFlags |= PFLAG_FORCE_LAYOUT;
      mPrivateFlags |= PFLAG_INVALIDATED;
@@ -392,15 +400,17 @@ public void requestLayout() {
             if (sizeChanged) {
                 sizeChange(newWidth, newHeight , oldWidth , oldHeight);
             }
-            ``````
+            ...
         }
         return changed;
     }
 ```
-看完代码我们就知道了，如果 layout 布局有变化，那么也会调用invalidate（）重绘的。
+看完代码我们就知道了，如果 layout 布局有变化，那么也会调用invalidate()重绘的。
 整个流程图如下：
 ![Alt text](../../../../images/layout.png)
 
+
+**相关文章：**
 
 [View 的绘制 - 概览](../../../../2018/06/09/view_draw_procress_performTraversals/)   
 [View 的绘制 - Measure 流程](../../../../2018/06/12/view_draw_procress_measure/)   
