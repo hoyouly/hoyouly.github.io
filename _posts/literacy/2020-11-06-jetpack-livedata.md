@@ -15,12 +15,14 @@ tags:  Jetpack Livedata
 * 不会因为停止Activity崩溃
 * 无需手动处理生命周期
 * 共享资源
+
 ## 使用方式
 * observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T>
 最常用的方法，需要提供Observer处理数据变更后的处理。LifecycleOwner则是我们能够正确处理声明周期的关键！
 * setValue(T value) 设置数据
 * getValue():T 获取数据
 * postValue(T value) 在主线程中更新数据
+
 ## 使用场景
 
 绝大部分的LiveData都是配合其他Android Jetpack组件使
@@ -59,7 +61,7 @@ liveData 协程构造方法提供了一个协程代码块，这个块就是 Live
 
 查看源码可知
 ```kotlin
-un <T> liveData(
+fun <T> liveData(
     context: CoroutineContext = EmptyCoroutineContext,
     timeoutInMs: Long = DEFAULT_TIMEOUT,
     @BuilderInference block: suspend LiveDataScope<T>.() -> Unit
