@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 水平方向的 RecycleView 嵌套竖直方向的 RecycleView 滑动冲突解决办法
-category: 技术
+title: 工作填坑 - 水平方向的 RecycleView 嵌套竖直方向的 RecycleView 滑动冲突解决办法
+category: 工作填坑
 tags: RecycleView
 ---
 <!-- * content -->
@@ -186,4 +186,3 @@ public class InRecyclerView extends RecyclerView {
 
 ---
 搬运地址：    
-

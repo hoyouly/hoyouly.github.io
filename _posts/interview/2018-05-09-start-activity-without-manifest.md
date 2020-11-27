@@ -1,13 +1,13 @@
 ---
 layout: post
-title: 启动一个不在 AndroidManifest 中注册的 Activity
-category: 技术
+title: 街题系列 - 启动一个不在 AndroidManifest 中注册的 Activity
+category: 街题系列
 tags: AndroidManifest
 ---
 <!-- * content -->
 <!-- {:toc} -->
 
-这个也是一个面试题，但是没有归结到街题系列是因为我觉得这个问题应该不是被常问道的一个，所以归结到技术中。
+这个也是一个面试题。
 本文是参考[插件化入门篇-如何启动一个未注册过的Activity](https://www.jianshu.com/p/4fc77fbac938)，只是加上自己的了解，原理还有代码都是[插件化入门篇-如何启动一个未注册过的Activity](https://www.jianshu.com/p/4fc77fbac938)他里面的，
 1. 我把 attachBaseContext() 里面的代码提取出来一个新的方法，命名为 relaceActivity() ,经过证实， relaceActivity() 方法其他方法，例如 onCreat() 或者 onStart() 中也可以，我之前一直以为必须得放到 attachBaseContext() 中呢
 2. ` String stubPackage = "com.jerey.activityplugin";` 这是硬编码，我改了，通过 getPackageName() 得到包名，
