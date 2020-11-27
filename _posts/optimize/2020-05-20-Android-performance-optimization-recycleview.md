@@ -176,6 +176,6 @@ new LinearLayoutManager(this) {
 
 [RecyclerView性能优化](https://www.cnblogs.com/zgz345/p/13436005.html)   
 
-[RecyclerView 性能优化 | 安卓 offer 收割基](https://www.jianshu.com/p/aedb2842de30)   
+[RecyclerView 性能优化-安卓offer收割基](https://www.jianshu.com/p/aedb2842de30)   
 
 [RecyclerView性能优化及高级使用](https://blog.csdn.net/smileiam/article/details/88396546)

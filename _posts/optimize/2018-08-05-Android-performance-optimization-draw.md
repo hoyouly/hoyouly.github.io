@@ -7,17 +7,21 @@ description: Android 性能优化
 ---
 
 <!-- * content -->
-<!-- <!-- {:toc} --> -->
+<!-- <!-- {:toc} -->
+绘制优化，主要从两个方面进行优化
+1. 降低View.onDraw()的复杂度
+2. 避免过度绘制（OverDraw）
+
 
 # 降低View.onDraw()的复杂度
-
-##  onDraw() 中不要创建新的局部对象
+从两个方面优化降低复杂度。
+1. onDraw() 中不要创建新的局部对象     
 因为 onDraw 可能会被频繁调用，这样就会一瞬间产生大量临时对象，这样不仅占用过多的内存而且还导致系统频繁 GC ，降低程序的执行效率
-## 避免 onDraw() 执行大量耗时的工作
+2. 避免 onDraw() 执行大量耗时的工作    
 因为这样会抢占 CPU 时间片，从而导致 View 的绘制过程不流畅。
 
 # 避免过度绘制（OverDraw）
-就是屏幕上某一个像素，在同一帧的时间内，被绘制了多次
+过渡绘制就是屏幕上某一个像素，在同一帧的时间内，被绘制了多次
 
 原因： 在多层次的 UI 中，若不可见的 UI 也在做绘制操作，则会导致某些像素被绘制多次。
 ## 检测工具
@@ -85,11 +89,12 @@ description: Android 性能优化
 移除默认的 Window 背景
 
 ```xml
-// 方式1：在应用的主题中添加如下的一行属性
+<!-- 方式1：在应用的主题中添加如下的一行属性-->
 <item name="android:windowBackground">@android:color/transparent</item>
 <!-- 或者 -->
 <item name="android:windowBackground">@null</item>
-// 方式2：在 BaseActivity 的 onCreate() 方法中使用下面的代码移除
+
+<!--方式2：在 BaseActivity 的 onCreate() 方法中使用下面的代码移除 -->
 getWindow().setBackgroundDrawable(null);
 <!-- 或者 -->
 getWindow().setBackgroundDrawableResource(android.R.color.transparent);

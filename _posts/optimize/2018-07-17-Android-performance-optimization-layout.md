@@ -74,9 +74,8 @@ View importPanel=((ViewStub)findViewById(R.id.stub_import)).inflate();
 1. 可以通过<font color="#ff000" >Hierarchy Viewer</font>查看布局的嵌套情况。 使用 [View Server](https://github.com/romainguy/ViewServer) 可以在普通的手机上使用 Hierarchy Viewer
     注： Android Studio 3.1 或更高版本中， Hierarchy Viewer 已经被废弃，推荐在运行时使用 Layout Inspector 来检查应用程序的视图层次结构。
 2. 在开发者选项中的<font color="#ff000" >GPU过度可视化工具</font>，查看界面渲染情况，
-3. 可以使用<font color="#ff000" > Layout Inspector </font>辅助分析。捕捉当前页面快照。生成一个.li文件，通过 AndroidStudio 查看页面视图层次结构
-    打开布局检测器  
-    点击 Tools > Android > Layout Inspector。在出现的 Choose Process 对话框中，选择想要检查的应用进程，然后点击 OK 。
+3. 可以使用<font color="#ff000" > Layout Inspector </font>辅助分析。捕捉当前页面快照。生成一个.li文件，通过 AndroidStudio 查看页面视图层次结构   
+    打开布局检测器 :  点击 Tools > Android > Layout Inspector。在出现的 Choose Process 对话框中，选择想要检查的应用进程，然后点击 OK 。
 4. 使用<font color="#ff000" >Profile GPU Rendering </font>也是在开发者选项中打开。打开后的界面如下
     ![Alt text](../../../../images/carsetting_1.png)
    各个颜色的意思
