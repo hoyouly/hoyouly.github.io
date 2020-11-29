@@ -114,17 +114,18 @@ OkHttpClient 创建完成。接下来就是创建 Request 对象
 
 ```java
 //OkHttpClient.java
-@Override public Call newCall(Request request) {
-   return RealCall.newRealCall(this, request , false /* for web socket */);
- }
+@Override
+public Call newCall(Request request) {
+  return RealCall.newRealCall(this, request , false /* for web socket */);
+}
 
 //RealCall.java
- static RealCall newRealCall(OkHttpClient client, Request originalRequest , boolean forWebSocket) {
-   // Safely publish the Call instance to the EventListener.
-   RealCall call = new RealCall(client, originalRequest , forWebSocket);
-   call.eventListener = client.eventListenerFactory().create(call);
-   return call;
- }
+static RealCall newRealCall(OkHttpClient client, Request originalRequest , boolean forWebSocket) {
+  // Safely publish the Call instance to the EventListener.
+  RealCall call = new RealCall(client, originalRequest , forWebSocket);
+  call.eventListener = client.eventListenerFactory().create(call);
+  return call;
+}
 
 ```
 RealCall 实现了 Call 这个接口，大部分的操作都在这个 Call ，这个接口是 OkHttp 框架的操作核心。
@@ -146,7 +147,8 @@ public interface Call extends Cloneable {
 异步请求enqueue().
 
 ```java
-@Override public void enqueue(Callback responseCallback) {
+@Override
+public void enqueue(Callback responseCallback) {
   synchronized (this) {
     if (executed) throw new IllegalStateException("Already Executed");
     executed = true;
@@ -217,7 +219,6 @@ public synchronized ExecutorService executorService() {
     }
     return executorService;
   }
-
 ```
 
 AsyncCall 是 RealCall 的一个内部类，持有 RealCall 的引用，是对 RealCall 进行了封装
@@ -251,8 +252,9 @@ void executeOn(ExecutorService executorService) {
 因为 AsyncCall extends NamedRunnable ， NamedRunnable 实现了 Runnable ，所以就可以直接查看 run() 方法了。
 
 ```java
-//，NamedRunnable.java
-@Override public final void run() {
+//NamedRunnable.java
+@Override
+public final void run() {
   String oldName = Thread.currentThread().getName();
   Thread.currentThread().setName(name);
   try {
@@ -266,7 +268,8 @@ void executeOn(ExecutorService executorService) {
 最终执行到了 AsyncCall 的 execute() 方法
 
 ```java
-@Override protected void execute() {
+@Override
+protected void execute() {
   boolean signalledCallback = false;
   timeout.enter();
   try {
@@ -336,50 +339,50 @@ Response getResponseWithInterceptorChain() throws IOException {
 
 ```java
 //RealInterceptorChain.java
-@Override public Response proceed(Request request) throws IOException {
-    return proceed(request, streamAllocation , httpCodec , connection);
-  }
-  //这个方法用来获取 list 中下一个 Interceptor ，并调用它的intercept（）方法
-
+@Override
+public Response proceed(Request request) throws IOException {
+  return proceed(request, streamAllocation , httpCodec , connection);
+}
+//这个方法用来获取 list 中下一个 Interceptor ，并调用它的intercept()方法
 public Response proceed(Request request, StreamAllocation streamAllocation , HttpCodec httpCodec ,
-      RealConnection connection) throws IOException {
-    if (index >= interceptors.size()) throw new AssertionError();
+    RealConnection connection) throws IOException {
+  if (index >= interceptors.size()) throw new AssertionError();
 
-    calls++;
+  calls++;
 
-    //如果我们已经有一个 stream 。确定即将到来的 request 会使用它
-    if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
-      throw new IllegalStateException("network interceptor " + interceptors.get(index - 1) + " must retain the same host and port");
-    }
+  //如果我们已经有一个 stream 。确定即将到来的 request 会使用它
+  if (this.httpCodec != null && !this.connection.supportsUrl(request.url())) {
+    throw new IllegalStateException("network interceptor " + interceptors.get(index - 1) + " must retain the same host and port");
+  }
 
   //如果我们已经有一个 stream ， 确定chain.proceed()唯一的call
-    if (this.httpCodec != null && calls > 1) {
-      throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)+ " must call proceed() exactly once");
-    }
+  if (this.httpCodec != null && calls > 1) {
+    throw new IllegalStateException("network interceptor " + interceptors.get(index - 1)+ " must call proceed() exactly once");
+  }
 
-    // Call the next interceptor in the chain.取出来下一个拦截器，然后执行 intercept()
-    RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation , httpCodec ,
+  // Call the next interceptor in the chain.取出来下一个拦截器，然后执行 intercept()
+  RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation , httpCodec ,
  connection , index + 1, request , call , eventListener , connectTimeout , readTimeout , writeTimeout);
   //从 list 中获取到第一个Interceptor
-    Interceptor interceptor = interceptors.get(index);
-    Response response = interceptor.intercept(next);
+  Interceptor interceptor = interceptors.get(index);
+  Response response = interceptor.intercept(next);
 
-    // Confirm that the next interceptor made its required call to chain.proceed().
-    if (httpCodec != null && index + 1 < interceptors.size() && next.calls != 1) {
-      throw new IllegalStateException("network interceptor " + interceptor + " must call proceed() exactly once");
-    }
-
-    // Confirm that the intercepted response isn't null.
-    if (response == null) {
-      throw new NullPointerException("interceptor " + interceptor + " returned null");
-    }
-
-    if (response.body() == null) {
-      throw new IllegalStateException( "interceptor " + interceptor + " returned a response with no body");
-    }
-
-    return response;
+  // Confirm that the next interceptor made its required call to chain.proceed().
+  if (httpCodec != null && index + 1 < interceptors.size() && next.calls != 1) {
+    throw new IllegalStateException("network interceptor " + interceptor + " must call proceed() exactly once");
   }
+
+  // Confirm that the intercepted response isn't null.
+  if (response == null) {
+    throw new NullPointerException("interceptor " + interceptor + " returned null");
+  }
+
+  if (response.body() == null) {
+    throw new IllegalStateException( "interceptor " + interceptor + " returned a response with no body");
+  }
+
+  return response;
+}
 ```
 
 这个有点像是递归调用。
@@ -388,8 +391,7 @@ public Response proceed(Request request, StreamAllocation streamAllocation , Htt
 ```java
 // 实例化下一个拦截器对应的 RealIterceptorChain 对象， index 刚开始是 0 ，这里加一，下次取的时候就是下一个 interceptors
 RealInterceptorChain next = new RealInterceptorChain(interceptors, streamAllocation , httpCodec ,
- connection , index + 1, request , call , eventListener , connectTimeout , readTimeout ,
-    writeTimeout);
+ connection , index + 1, request , call , eventListener , connectTimeout , readTimeout ,writeTimeout);
 //得到当前的拦截器：
 Interceptor interceptor = interceptors.get(index);
 //调用当前拦截器的 intercept() 方法，并将下一个拦截器的 RealIterceptorChain 对象传递下去
@@ -432,27 +434,28 @@ addNetworkInterceptor() 添加网络拦截器
 负责失败重试以及重定向
 
 ```java
-@Override public Response intercept(Chain chain) throws IOException {
-    Request request = chain.request();
-    RealInterceptorChain realChain = (RealInterceptorChain) chain;
+@Override
+public Response intercept(Chain chain) throws IOException {
+  Request request = chain.request();
+  RealInterceptorChain realChain = (RealInterceptorChain) chain;
+  ...
+  Response priorResponse = null;
+  while (true) {
     ...
-    Response priorResponse = null;
-    while (true) {
+    try {
+      response = realChain.proceed(request, streamAllocation , null , null);
+      releaseConnection = false;
+    } catch (RouteException e) {
       ...
-      try {
-        response = realChain.proceed(request, streamAllocation , null , null);
-        releaseConnection = false;
-      } catch (RouteException e) {
-        ...
-      }
-      // Attach the prior response if it exists. Such responses never have a body.
-      if (priorResponse != null) {
-        response = response.newBuilder().priorResponse(priorResponse.newBuilder().body(null).build()).build();
-      }
-      ...
-      priorResponse = response;
     }
+    // Attach the prior response if it exists. Such responses never have a body.
+    if (priorResponse != null) {
+      response = response.newBuilder().priorResponse(priorResponse.newBuilder().body(null).build()).build();
+    }
+    ...
+    priorResponse = response;
   }
+}
 ```
 看到没有，这里面也执行了 realChain.proceed(），所以会传递到下一个拦截器中，即 BridgeInterceptor
 
@@ -461,21 +464,21 @@ addNetworkInterceptor() 添加网络拦截器
 负责把用户构造的请求转换为发送到服务器的请求、把服务器返回的响应转换为用户友好的响应的
 
 ```java
-@Override public Response intercept(Chain chain) throws IOException {
-    Request userRequest = chain.request();
-    Request.Builder requestBuilder = userRequest.newBuilder();
-    //检查 request 。将用户的 request 转换为发送到 server 的请求
-    RequestBody body = userRequest.body();
-    ...
-    Response networkResponse = chain.proceed(requestBuilder.build());
+@Override
+public Response intercept(Chain chain) throws IOException {
+  Request userRequest = chain.request();
+  Request.Builder requestBuilder = userRequest.newBuilder();
+  //检查 request 。将用户的 request 转换为发送到 server 的请求
+  RequestBody body = userRequest.body();
+  ...
+  Response networkResponse = chain.proceed(requestBuilder.build());
 
-    HttpHeaders.receiveHeaders(cookieJar, userRequest.url(), networkResponse.headers());
+  HttpHeaders.receiveHeaders(cookieJar, userRequest.url(), networkResponse.headers());
 
-    Response.Builder responseBuilder = networkResponse.newBuilder().request(userRequest);
-    ...
-    return responseBuilder.build();
-  }
-
+  Response.Builder responseBuilder = networkResponse.newBuilder().request(userRequest);
+  ...
+  return responseBuilder.build();
+}
 ```
 同样执行了 chain.proceed(），那么就可以继续传递拦截器。即 CacheInterceptor
 
@@ -483,98 +486,97 @@ addNetworkInterceptor() 添加网络拦截器
 缓存拦截器
 
 ```java
+@Override
+public Response intercept(Chain chain) throws IOException {
+  Response cacheCandidate = cache != null ? cache.get(chain.request()) : null;
 
-@Override public Response intercept(Chain chain) throws IOException {
-    Response cacheCandidate = cache != null ? cache.get(chain.request()) : null;
+  long now = System.currentTimeMillis();
 
-    long now = System.currentTimeMillis();
+  CacheStrategy strategy = new CacheStrategy.Factory(now, chain.request(), cacheCandidate).get();
+  Request networkRequest = strategy.networkRequest;
+  Response cacheResponse = strategy.cacheResponse;
 
-    CacheStrategy strategy = new CacheStrategy.Factory(now, chain.request(), cacheCandidate).get();
-    Request networkRequest = strategy.networkRequest;
-    Response cacheResponse = strategy.cacheResponse;
-
-    if (cache != null) {
-      cache.trackResponse(strategy);
-    }
-
-    if (cacheCandidate != null && cacheResponse == null) {
-      closeQuietly(cacheCandidate.body()); // The cache candidate wasn't applicable. Close it.
-    }
-
-    //如果我们禁止使用网络，且缓存为 null ，失败
-    if (networkRequest == null && cacheResponse == null) {
-      return new Response.Builder()
-          .request(chain.request())
-          .protocol(Protocol.HTTP_1_1)
-          .code(504)
-          .message("Unsatisfiable Request (only-if-cached)")
-          .body(Util.EMPTY_RESPONSE)
-          .sentRequestAtMillis(-1L)
-          .receivedResponseAtMillis(System.currentTimeMillis())
-          .build();
-    }
-
-    //没有网络请求，跳过网络，返回缓存
-    if (networkRequest == null) {
-      return cacheResponse.newBuilder()
-          .cacheResponse(stripBody(cacheResponse))
-          .build();
-    }
-
-    Response networkResponse = null;
-    try {
-      networkResponse = chain.proceed(networkRequest);
-    } finally {
-      //如果我们因为I/O或其他原因崩溃，不要泄漏缓存体
-      if (networkResponse == null && cacheCandidate != null) {
-        closeQuietly(cacheCandidate.body());
-      }
-    }
-
-    //如果我们有一个缓存的 response ，然后我们正在做一个条件GET
-    if (cacheResponse != null) {
-      if (networkResponse.code() == HTTP_NOT_MODIFIED) {
-        Response response = cacheResponse.newBuilder()
-            .headers(combine(cacheResponse.headers(), networkResponse.headers()))
-            .sentRequestAtMillis(networkResponse.sentRequestAtMillis())
-            .receivedResponseAtMillis(networkResponse.receivedResponseAtMillis())
-            .cacheResponse(stripBody(cacheResponse))
-            .networkResponse(stripBody(networkResponse))
-            .build();
-        networkResponse.body().close();
-
-      //更新缓存，在剥离content-Encoding之前
-        cache.trackConditionalCacheHit();
-        cache.update(cacheResponse, response);
-        return response;
-      } else {
-        closeQuietly(cacheResponse.body());
-      }
-    }
-
-    Response response = networkResponse.newBuilder()
-        .cacheResponse(stripBody(cacheResponse))
-        .networkResponse(stripBody(networkResponse))
-        .build();
-
-    if (cache != null) {
-      if (HttpHeaders.hasBody(response) && CacheStrategy.isCacheable(response, networkRequest)) {
-        // Offer this request to the cache.
-        CacheRequest cacheRequest = cache.put(response);
-        return cacheWritingResponse(cacheRequest, response);
-      }
-
-      if (HttpMethod.invalidatesCache(networkRequest.method())) {
-        try {
-          cache.remove(networkRequest);
-        } catch (IOException ignored) {
-          // The cache cannot be written.
-        }
-      }
-    }
-    return response;
+  if (cache != null) {
+    cache.trackResponse(strategy);
   }
 
+  if (cacheCandidate != null && cacheResponse == null) {
+    closeQuietly(cacheCandidate.body()); // The cache candidate wasn't applicable. Close it.
+  }
+
+  //如果我们禁止使用网络，且缓存为 null ，失败
+  if (networkRequest == null && cacheResponse == null) {
+    return new Response.Builder()
+        .request(chain.request())
+        .protocol(Protocol.HTTP_1_1)
+        .code(504)
+        .message("Unsatisfiable Request (only-if-cached)")
+        .body(Util.EMPTY_RESPONSE)
+        .sentRequestAtMillis(-1L)
+        .receivedResponseAtMillis(System.currentTimeMillis())
+        .build();
+  }
+
+  //没有网络请求，跳过网络，返回缓存
+  if (networkRequest == null) {
+    return cacheResponse.newBuilder()
+        .cacheResponse(stripBody(cacheResponse))
+        .build();
+  }
+
+  Response networkResponse = null;
+  try {
+    networkResponse = chain.proceed(networkRequest);
+  } finally {
+    //如果我们因为I/O或其他原因崩溃，不要泄漏缓存体
+    if (networkResponse == null && cacheCandidate != null) {
+      closeQuietly(cacheCandidate.body());
+    }
+  }
+
+  //如果我们有一个缓存的 response ，然后我们正在做一个条件GET
+  if (cacheResponse != null) {
+    if (networkResponse.code() == HTTP_NOT_MODIFIED) {
+      Response response = cacheResponse.newBuilder()
+          .headers(combine(cacheResponse.headers(), networkResponse.headers()))
+          .sentRequestAtMillis(networkResponse.sentRequestAtMillis())
+          .receivedResponseAtMillis(networkResponse.receivedResponseAtMillis())
+          .cacheResponse(stripBody(cacheResponse))
+          .networkResponse(stripBody(networkResponse))
+          .build();
+      networkResponse.body().close();
+
+    //更新缓存，在剥离content-Encoding之前
+      cache.trackConditionalCacheHit();
+      cache.update(cacheResponse, response);
+      return response;
+    } else {
+      closeQuietly(cacheResponse.body());
+    }
+  }
+
+  Response response = networkResponse.newBuilder()
+      .cacheResponse(stripBody(cacheResponse))
+      .networkResponse(stripBody(networkResponse))
+      .build();
+
+  if (cache != null) {
+    if (HttpHeaders.hasBody(response) && CacheStrategy.isCacheable(response, networkRequest)) {
+      // Offer this request to the cache.
+      CacheRequest cacheRequest = cache.put(response);
+      return cacheWritingResponse(cacheRequest, response);
+    }
+
+    if (HttpMethod.invalidatesCache(networkRequest.method())) {
+      try {
+        cache.remove(networkRequest);
+      } catch (IOException ignored) {
+        // The cache cannot be written.
+      }
+    }
+  }
+  return response;
+}
 ```
 缓存策略
 1. 根据 request 来判断 cache 中是否有缓存的 response ，如果设置了缓存，即 在OkHttpClient.Builder 中 执行了 cache() ，那么 cache 就不为 null ，
@@ -590,7 +592,8 @@ addNetworkInterceptor() 添加网络拦截器
 建立连接
 
 ```java
-@Override public Response intercept(Chain chain) throws IOException {
+@Override
+public Response intercept(Chain chain) throws IOException {
   RealInterceptorChain realChain = (RealInterceptorChain) chain;
   Request request = realChain.request();
   StreamAllocation streamAllocation = realChain.streamAllocation();
@@ -613,7 +616,8 @@ addNetworkInterceptor() 添加网络拦截器
 ### CallServerInterceptor
 发送和接收数据
 ```java
-@Override public Response intercept(Chain chain) throws IOException {
+@Override
+public Response intercept(Chain chain) throws IOException {
   RealInterceptorChain realChain = (RealInterceptorChain) chain;
   HttpCodec httpCodec = realChain.httpStream();
   StreamAllocation streamAllocation = realChain.streamAllocation();
@@ -703,10 +707,8 @@ addNetworkInterceptor() 添加网络拦截器
     throw new ProtocolException(
         "HTTP " + code + " had non-zero Content-Length: " + response.body().contentLength());
   }
-
   return response;
 }
-
 ```
 
 这里面没有执行 chain.proceed(request)，所以责任链到此结束，在这个 Intercept 中，真正得到网络数据，然后再通过 chain.proceed(request)一级一级返回 response ，最后到 RealCall 的 getResponseWithInterceptorChain() 中，这样就能继续执行下面的操作了，即返回这个 result ，还是执行callFailed().
