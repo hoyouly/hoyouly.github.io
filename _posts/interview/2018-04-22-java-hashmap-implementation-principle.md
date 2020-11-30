@@ -77,18 +77,16 @@ HashMap 采用方法二计算该对象应该保存到 table 数组中哪一个�
 1. 假如 key 的 hashcode 值 h 为1111 1111 1111 1111 1111 0000 1110 1010
 2. 进行无符号右移 16 位，高位补 0 即`h>>>16 `为0000 0000 0000 0000 1111 1111 1111 1111
 3. 步骤 1 和步骤 2 的值进行异或(相同为 0 ，不同为1 )操作，结果为 hash 即`hash=h^(h>>>16)` ，即  
-
-```java
-  1111 1111 1111 1111 1111 0000 1110 1010   
-^ 0000 0000 0000 0000 1111 1111 1111 1111
--------------------------------------------
-  1111 1111 1111 1111 0000 1111 0001 0101
+```
+ 1111 1111 1111 1111 1111 0000 1110 1010   
+^ 0000 0000 0000 0000 1111 1111 1111 1111    
+-------------------------------------------    
+  1111 1111 1111 1111 0000 1111 0001 0101    
 ```
 所以最后 hash 的值就是 1111 1111 1111 1111 0000 1111 0001 0101   
 4. 取模运算，用n-1把步骤三的结果取模 ，因为我们知道， n 是 2 的幂次方结果，默认是 16 ，所以n-1 肯定是 15 ，即 1111
-
-```java
-  0000 0000 0000 0000 0000 0000 0000 1111
+```
+ 0000 0000 0000 0000 0000 0000 0000 1111
 & 1111 1111 1111 1111 0000 1111 0001 0101
 ------------------------------------------
   0000 0000 0000 0000 0000 0000 0000 0101
@@ -109,58 +107,61 @@ HashMap 采用方法二计算该对象应该保存到 table 数组中哪一个�
 
 ```java  
 final V putVal(int hash, K key , V value , boolean onlyIfAbsent , boolean evict) {
-        Node<K, V>[] tab;
-        Node<K, V> p;
- int n , i;
-        //tab 为 null 的时候，创建
-        if ((tab = table) == null || (n = tab.length) == 0) {
-            n = (tab = resize()).length;
-        }
-        //(p = tab[i = (n - 1) & hash])
-        i = (n - 1) & hash; //计算index
-        p = tab[i];//得到 tab 中下标为 index 的值，
-        if (p == null) {//说明该 hash 没有碰撞，直接创建一个 Node ,放到 bucket 中
-            tab[i] = newNode(hash, key , value , null);
-        } else {//说明碰撞上了
-            Node<K, V> e;
-            K k;
-            k = p.key;//得到 p 对应的key
-            if (p.hash == hash && (k == key || (key != null && key.equals(k)))) {//hash值相同，并且 key 相等，说明是同一个
-                e = p;
-            } else if (p instanceof TreeNode) {//该链为树
-                e = ((TreeNode<K, V>) p).putTreeVal(this, tab , hash , key , value);
-            } else {//该链为链表
-                for (int binCount = 0; ; ++binCount) {
-                    e = p.next;
-                    if (e == null) {//p是处于链表尾部
-                        p.next = newNode(hash, key , value , null);//那么就创建一个新的，然后连接到 p 后面
-                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st  说明大于链表的阙值，应该转为红黑树
-                            treeifyBin(tab, hash);
-                        break;
-                    }
-                    //key已经存在，则直接覆盖value
-                    if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
-                        break;
-                    }
-                    p = e;
-                }
-            }
-            //写入
-            if (e != null) { // existing mapping for key
-                V oldValue = e.value;
-                if (!onlyIfAbsent || oldValue == null) e.value = value;
-                afterNodeAccess(e);
-                return oldValue;
-            }
-        }
-        ++modCount;
-        //超过load factor* current capacity ,进行扩容
-        if (++size > threshold) {
-            resize();
-        }
-        afterNodeInsertion(evict);
-        return null;
+    Node<K, V>[] tab;
+    Node<K, V> p;
+    int n , i;
+    //tab 为 null 的时候，创建
+    if ((tab = table) == null || (n = tab.length) == 0) {
+        n = (tab = resize()).length;
     }
+    //(p = tab[i = (n - 1) & hash])
+    i = (n - 1) & hash; //计算index
+    p = tab[i];//得到 tab 中下标为 index 的值，
+    if (p == null) {//说明该 hash 没有碰撞，直接创建一个 Node ,放到 bucket 中
+        tab[i] = newNode(hash, key , value , null);
+    } else {//说明碰撞上了
+        Node<K, V> e;
+        K k;
+        k = p.key;//得到 p 对应的key
+        if (p.hash == hash && (k == key || (key != null && key.equals(k)))) {
+          //hash值相同，并且 key 相等，说明是同一个
+            e = p;
+        } else if (p instanceof TreeNode) {//该链为树
+            e = ((TreeNode<K, V>) p).putTreeVal(this, tab , hash , key , value);
+        } else {//该链为链表
+            for (int binCount = 0; ; ++binCount) {
+                e = p.next;
+                if (e == null) {//p是处于链表尾部
+                  //创建一个新的，然后连接到 p 后面
+                    p.next = newNode(hash, key , value , null);
+                    if (binCount >= TREEIFY_THRESHOLD - 1)
+                    // -1 for 1st  说明大于链表的阙值，应该转为红黑树
+                        treeifyBin(tab, hash);
+                    break;
+                }
+                //key已经存在，则直接覆盖value
+                if (e.hash == hash && ((k = e.key) == key || (key != null && key.equals(k)))) {
+                    break;
+                }
+                p = e;
+            }
+        }
+        //写入
+        if (e != null) { // existing mapping for key
+            V oldValue = e.value;
+            if (!onlyIfAbsent || oldValue == null) e.value = value;
+            afterNodeAccess(e);
+            return oldValue;
+        }
+    }
+    ++modCount;
+    //超过load factor* current capacity ,进行扩容
+    if (++size > threshold) {
+        resize();
+    }
+    afterNodeInsertion(evict);
+    return null;
+}
 ```
 
 ## 扩容机制
@@ -219,86 +220,86 @@ JDK 1.8的优化
 
 ```java
 final Node<K, V>[] resize() {
-      Node<K, V>[] oldTab = table;
-      int oldCap = (oldTab == null) ? 0 : oldTab.length;
-      int oldThr = threshold;
- int newCap , newThr = 0;
-      if (oldCap > 0) {//说明不是初始化，
-          //超过最大值就不在扩容，只好随你去碰撞吧
-          if (oldCap >= MAXIMUM_CAPACITY) {
-              threshold = Integer.MAX_VALUE;
-              return oldTab;
-              //没有超过最大值，就扩充到原来的二倍
-          } else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY) {
-              newThr = oldThr << 1; // double threshold 新的阙值就是旧的阙值左移一位
-          }
-      } else if (oldThr > 0) {// initial capacity was placed in threshold{
-          newCap = oldThr;//初始容量被放入阈值
-      } else {               // zero initial threshold signifies using defaults 零初始阈值表示使用默认值
-          newCap = DEFAULT_INITIAL_CAPACITY;
-          newThr = (int) (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
-      }
+    Node<K, V>[] oldTab = table;
+    int oldCap = (oldTab == null) ? 0 : oldTab.length;
+    int oldThr = threshold;
+    int newCap , newThr = 0;
+    if (oldCap > 0) {//说明不是初始化，
+        //超过最大值就不在扩容，只好随你去碰撞吧
+        if (oldCap >= MAXIMUM_CAPACITY) {
+            threshold = Integer.MAX_VALUE;
+            return oldTab;
+            //没有超过最大值，就扩充到原来的二倍
+        } else if ((newCap = oldCap << 1) < MAXIMUM_CAPACITY && oldCap >= DEFAULT_INITIAL_CAPACITY) {
+            newThr = oldThr << 1; // double threshold 新的阙值就是旧的阙值左移一位
+        }
+    } else if (oldThr > 0) {// initial capacity was placed in threshold{
+        newCap = oldThr;//初始容量被放入阈值
+    } else {               // zero initial threshold signifies using defaults 零初始阈值表示使用默认值
+        newCap = DEFAULT_INITIAL_CAPACITY;
+        newThr = (int) (DEFAULT_LOAD_FACTOR * DEFAULT_INITIAL_CAPACITY);
+    }
 
-      //计算新的 resize 上限
-      if (newThr == 0) {
-          float ft = (float) newCap * loadFactor;
-          newThr = (newCap < MAXIMUM_CAPACITY && ft < (float) MAXIMUM_CAPACITY ? (int) ft : Integer.MAX_VALUE);
-      }
-      threshold = newThr;
-      @SuppressWarnings({"rawtypes", "unchecked"})
-      Node<K, V>[] newTab = (Node<K, V>[]) new Node[newCap];
-      table = newTab;
-      if (oldTab != null) {
-          //把整个 bucket 都移动到新的 bucket 中
-          for (int j = 0; j < oldCap; ++j) {
-              Node<K, V> e = oldTab[j];
-              if (e != null) {//说明该位置存有元素
-                  oldTab[j] = null;//把原来的位置清空
-                  if (e.next == null) {//说明该位置只有一个元素，
-                      newTab[e.hash & (newCap - 1)] = e;//计算新的位置并把该元素放入新的位置
-                  } else if (e instanceof TreeNode) {//说明该元素是一个红黑树
-                      ((TreeNode<K, V>) e).split(this, newTab , j , oldCap);
-                  } else { // preserve order  维持秩序
-                      Node<K, V> loHead = null, loTail = null;
-                      Node<K, V> hiHead = null, hiTail = null;
-                      Node<K, V> next;
-                      do {
-                          next = e.next;//保存该元素的next
-                          //原索引
-                          int newBit = e.hash & oldCap;//原来的 hash 值与旧的容量进行与操作，得到的就是 bit 是 1 还是 0 就好了
-                          if (newBit == 0) {// 说明插入的新的坐标位置和原来的一直
-                              if (loTail == null) {// 低位的末尾为null
-                                  loHead = e; //低位的头就是该元素
-                              } else {//低位的末尾不为 null ，说明这个位置已经有元素了，也就是发生了碰撞
-                                  loTail.next = e;//那么这个元素就排在后面，而不是插在已有的位置前面
-                              }
-                              loTail = e;//该低位尾部指向该元素
-                          } else {//原索引加上 oldcap 说明插入的新的坐标位置和原来的不一样
-                              if (hiTail == null) {//高位的末尾为null
-                                  hiHead = e;//那么高位的头元素就是该元素
-                              } else {//
-                                  hiTail.next = e;
-                              }
-                              hiTail = e;//高位的尾部指向该元素
-                          }
-                      } while ((e = next) != null);
+    //计算新的 resize 上限
+    if (newThr == 0) {
+        float ft = (float) newCap * loadFactor;
+        newThr = (newCap < MAXIMUM_CAPACITY && ft < (float) MAXIMUM_CAPACITY ? (int) ft : Integer.MAX_VALUE);
+    }
+    threshold = newThr;
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    Node<K, V>[] newTab = (Node<K, V>[]) new Node[newCap];
+    table = newTab;
+    if (oldTab != null) {
+        //把整个 bucket 都移动到新的 bucket 中
+        for (int j = 0; j < oldCap; ++j) {
+            Node<K, V> e = oldTab[j];
+            if (e != null) {//说明该位置存有元素
+                oldTab[j] = null;//把原来的位置清空
+                if (e.next == null) {//说明该位置只有一个元素，
+                    newTab[e.hash & (newCap - 1)] = e;//计算新的位置并把该元素放入新的位置
+                } else if (e instanceof TreeNode) {//说明该元素是一个红黑树
+                    ((TreeNode<K, V>) e).split(this, newTab , j , oldCap);
+                } else { // preserve order  维持秩序
+                    Node<K, V> loHead = null, loTail = null;
+                    Node<K, V> hiHead = null, hiTail = null;
+                    Node<K, V> next;
+                    do {
+                        next = e.next;//保存该元素的next
+                        //原索引
+                        int newBit = e.hash & oldCap;//原来的 hash 值与旧的容量进行与操作，得到的就是 bit 是 1 还是 0 就好了
+                        if (newBit == 0) {// 说明插入的新的坐标位置和原来的一直
+                            if (loTail == null) {// 低位的末尾为null
+                                loHead = e; //低位的头就是该元素
+                            } else {//低位的末尾不为 null ，说明这个位置已经有元素了，也就是发生了碰撞
+                                loTail.next = e;//那么这个元素就排在后面，而不是插在已有的位置前面
+                            }
+                            loTail = e;//该低位尾部指向该元素
+                        } else {//原索引加上 oldcap 说明插入的新的坐标位置和原来的不一样
+                            if (hiTail == null) {//高位的末尾为null
+                                hiHead = e;//那么高位的头元素就是该元素
+                            } else {//
+                                hiTail.next = e;
+                            }
+                            hiTail = e;//高位的尾部指向该元素
+                        }
+                    } while ((e = next) != null);
 
-                      //原索引放入到 buckets 中
-                      if (loTail != null) {
-                          loTail.next = null;//低位的末尾设置为null
-                          newTab[j] = loHead;//高位的新坐标就指向头低位的头元素
-                      }
-                      //原索引加上 oldcap 放入 buckets 中
-                      if (hiTail != null) {
-                          hiTail.next = null;
-                          newTab[j + oldCap] = hiHead;//高位的新坐标加上就的数组长度指向新的头元素
-                      }
-                  }
-              }
-          }
-      }
-      return newTab;
-  }
+                    //原索引放入到 buckets 中
+                    if (loTail != null) {
+                        loTail.next = null;//低位的末尾设置为null
+                        newTab[j] = loHead;//高位的新坐标就指向头低位的头元素
+                    }
+                    //原索引加上 oldcap 放入 buckets 中
+                    if (hiTail != null) {
+                        hiTail.next = null;
+                        newTab[j + oldCap] = hiHead;//高位的新坐标加上就的数组长度指向新的头元素
+                    }
+                }
+            }
+        }
+    }
+    return newTab;
+}
 ```
 代码中都带有注释，就不过多解释了，相信能看懂的。
 
@@ -310,7 +311,7 @@ final Node<K, V>[] resize() {
 
 Java 中另外一个线程安全，功能与 HashMap 类似的是 ConcurrentHashMap ,
 它和 HashMap 的区别：
-ConcurrentHashMap 也是不允许键值为 null ，但是他线程安全，并且对整个桶组进行了分割，然后再每一段上都用了 lock 锁进行保护，相对于 HashTable 的 syn 关键字锁的粒度更精细一些，并发性更好一些，
+ConcurrentHashMap 也是不允许键值为 null ，但是他线程安全，并且对整个桶组进行了分割，然后再每一段上都用了 lock 锁进行保护，相对于 HashTable 的 syn 关键字锁的粒度更精细一些，并发性更好一些
 
 
 

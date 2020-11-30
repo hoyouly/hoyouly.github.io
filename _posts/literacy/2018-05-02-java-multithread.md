@@ -95,26 +95,26 @@ public static void main(String[] args) {
     System.out.println("main 线程结束");
   }
 
-  public static class ThreadA extends Thread {
-    private String name;
-    public ThreadA(String num){
-      this.name=num;
-    }
-
-    @Override
-    public void run(){
-    System.out.println("线程 "+ name+" 开始执行");
-      for(int i=0;i<5;i++){
-        System.out.println(name+" 运行： "+i);
-      }
-      try{
-        sleep((int)Math.random()*10);
-      }catch(Exception e){
-
-      }
-      System.out.println("线程 "+ name+" 结束");
-    }
+public static class ThreadA extends Thread {
+  private String name;
+  public ThreadA(String num){
+    this.name=num;
   }
+
+  @Override
+  public void run(){
+  System.out.println("线程 "+ name+" 开始执行");
+    for(int i=0;i<5;i++){
+      System.out.println(name+" 运行： "+i);
+    }
+    try{
+      sleep((int)Math.random()*10);
+    }catch(Exception e){
+
+    }
+    System.out.println("线程 "+ name+" 结束");
+  }
+}
 ```
 运行结果如下：
 ```java
@@ -141,27 +141,6 @@ public static void main(String[] args) {
       e.printStackTrace();
     }
     System.out.println("main 线程结束");
-  }
-
-  public static class ThreadA extends Thread {
-    private String name;
-    public ThreadA(String num){
-      this.name=num;
-    }
-
-    @Override
-    public void run(){
-    System.out.println("线程 "+ name+" 开始执行");
-      for(int i=0;i<5;i++){
-        System.out.println(name+" 运行： "+i);
-      }
-      try{
-        sleep((int)Math.random()*10);
-      }catch(Exception e){
-
-      }
-      System.out.println("线程 "+ name+" 结束");
-    }
   }
 ```
 运行结果：

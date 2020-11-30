@@ -79,7 +79,7 @@ hoyouly : subscribe accept: main   value:1
 这次 create() 在 RxNewThreadScheduler-2 中执行，Schedulers.io() 有不起作用了
 
 真的和调用顺序有关，后面的不起作用吗？    
-会不会因他们两个同时设置一个 creat() ,总的有一个失效的。    
+会不会因他们两个同时设置一个 create() ,总的有一个失效的。    
 如果 两个 subscribeOn() 中间间隔一个操作符，那么这个操作符会不会就在另外一个线程中执行呢。
 
 再来一个实验。这一次 subscribeOn() 中间加一个 map() 操作符。

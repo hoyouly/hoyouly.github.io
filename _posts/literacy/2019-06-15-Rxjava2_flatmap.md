@@ -10,7 +10,7 @@ tags:  RxJava  Flatmap
 
 ## FlatMap
 简单来说就是把 被观察者的每次发射出来的事件，转换成一个子被观察者，然后通过合并（Merge）所有子被观察者的事件成总的一系列事件发送给观察者。
-相信很多人理解 flatmap 都是 根据 抛物线大神文章中的学生和课程的例子，我也是以这个例子分析源码的。
+相信很多人理解 flatmap 都是 根据 扔物线大神文章中的学生和课程的例子，我也是以这个例子分析源码的。
 
 ```java
 List<Student> students = new ArrayList<Student>();
@@ -83,7 +83,7 @@ MergeObserver(Observer<? super U> actual, Function<? super T, ? extends Observab
     this.observers = new AtomicReference<InnerObserver<?, ?>[]>(EMPTY);
 }
 ```
-2. 执行source.subscribe（）方法， source 就是上游对象，即 ObservableFromIterable , ObservableFromIterable extengs Observable ,最终也是调用 ObservableFromIterable 的 subscribeActual() ,所以直接看 ObservableFromIterable 中的 subscribeActual() ,而传递过来的 Observer 则是下游的 MergeObserver 对象
+2. 执行source.subscribe（）方法， source 就是上游对象，即 ObservableFromIterable , ObservableFromIterable extends Observable ,最终也是调用 ObservableFromIterable 的 subscribeActual() ,所以直接看 ObservableFromIterable 中的 subscribeActual() ,而传递过来的 Observer 则是下游的 MergeObserver 对象
 ```java
 public void subscribeActual(Observer<? super T> observer) { //observer 是 下游的 MergeObserver 对象
     Iterator<? extends T> it;
@@ -118,7 +118,7 @@ public void subscribeActual(Observer<? super T> observer) { //observer 是 下�
     }
 }
 ```
-observer 就是下游的 MergeObserver 对象，其中代理了 LambdaObserver ， LambdaObserver 中代理 Consumer 对象，有点像是俄罗斯套娃
+observer 就是下游的 MergeObserver 对象，其中代理了 LambdaObserver ， LambdaObserver 中代理 Consumer 对象，有点像是俄罗斯套娃      
 创建 FromIterableDisposable 的时候会把该 observer 传递过去，也就是 downstream
 ```java
 FromIterableDisposable(Observer<? super T> actual, Iterator<? extends T> it) {

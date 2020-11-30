@@ -63,12 +63,12 @@ LinkedHashMap 完成了 LRUCache 的核心功能，而 LruCache 要做的就是
 #### 关键字段
  LinkedHashMap ，总容量，已使用容量
 ```java
-   //核心数据结构
-    private final LinkedHashMap<K, V> map;
-    // 当前缓存数据所占的大小
-    private int size;
-    //缓存空间总容量
-    private int maxSize;
+//核心数据结构
+private final LinkedHashMap<K, V> map;
+// 当前缓存数据所占的大小
+private int size;
+//缓存空间总容量
+private int maxSize;
 ```
 **注意：** size字段，由于 map 中的数据类型是不定的，这些数据测量的大小方式也是不定的，比如 Bitmap 类型的数据和 String 类型的数据计算方式肯定不同，因此需要复写 sizeOf 方法，自己定义数据的测量方式，所以就有了经常看到的创建 LruCache 对象的方式
 ```java
@@ -187,7 +187,7 @@ public void trimToSize(int maxSize) {
 #### get()获取缓存数据
 *  根据 key 查询缓存，如果该 key 对应的 value 存在于缓存，直接返回value；
 *  访问到这个结点时， LinkHashMap 会将它移动到双向循环链表的的尾部。
-*  如果如果没有缓存的值，则返回 null 。（如果开发者重写了 create() 的话，返回创建的value）
+*  如果没有缓存的值，则返回 null 。（如果开发者重写了 create() 的话，返回创建的value）
 
 ```java
 public final V get(K key) {
@@ -268,14 +268,13 @@ public final V get(K key) {
 开发者根据需求是否重写改方法处理自己的逻辑，可以进行的一些操作包括
 1. 资源的回收
 2. <span style="border-bottom:1px solid red;">实现二级缓存。</span>   
-   **思路：** 重写 entryRemoved() 方法，把删除掉的 item 再次存入另外一个`LinkedHashMap<String, SoftWeakReference<Bitmap>>`中，这个数据当做二级缓存，每次获得图片的时候，先判断 LruCache 中是否存在缓存，如果没有的话，判断这个二级缓存中是否有，如果都没有在从 SDcard 中获取，如果 SDCard 中也不存在，那么直接从网络中获取，
-
+   **思路：** 重写 entryRemoved() 方法，把删除掉的 item 再次存入另外一个`LinkedHashMap<String, SoftWeakReference<Bitmap>>`中，这个数据当做二级缓存，每次获得图片的时候，先判断 LruCache 中是否存在缓存，如果没有的话，判断这个二级缓存中是否有，如果都没有在从 SDcard 中获取，如果 SDCard 中也不存在，那么直接从网络中获取，    
+   
 ```java
 /**
   * evicted=true：如果该条目被删除空间 （表示 进行了trimToSize or remove）
   * evicted=false， put 冲突后 或 get 里成功 create 后 导致 newValue !=null，那么则被 put() 或 get() 调用。
 **/
-
 protected void entryRemoved(boolean evicted, K key , V oldValue , V newValue) {
 }
 ```

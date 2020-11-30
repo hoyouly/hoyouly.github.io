@@ -101,111 +101,110 @@ void invalidate(boolean invalidateCache) {
 ```java
 void invalidateInternal(int l, int t , int r , int b , boolean invalidateCache ,boolean fullInvalidate) {
 
-        //如果 View 不可见，或者在动画中
-        if (skipInvalidate()) {
-            return;
-        }
-
-        //根据 mPrivateFlags 来标记是否重绘
-        if ((mPrivateFlags & (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)
-                || (invalidateCache && (mPrivateFlags & PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID)
-                || (mPrivateFlags & PFLAG_INVALIDATED) != PFLAG_INVALIDATED
-                || (fullInvalidate && isOpaque() != mLastIsOpaque)) {
-            if (fullInvalidate) {//上面传入为 true ，表示需要全部重绘
-                mLastIsOpaque = isOpaque();//
-                mPrivateFlags &= ~PFLAG_DRAWN;//去除绘制完毕标记。
-            }
-
-            //添加标记，表示 View 正在绘制。 PFLAG_DRAWN 为绘制完毕。
-            mPrivateFlags |= PFLAG_DIRTY;
-
-            //清除缓存，表示由当前 View 发起的重绘。
-            if (invalidateCache) {
-                mPrivateFlags |= PFLAG_INVALIDATED;
-                mPrivateFlags &= ~PFLAG_DRAWING_CACHE_VALID;
-            }
-
-            //把需要重绘的区域传递给父View
-            final AttachInfo ai = mAttachInfo;
-            final ViewParent p = mParent;
-            if (p != null && ai != null && l < r && t < b) {
-                final Rect damage = ai.mTmpInvalRect;
-                //设置重绘区域(区域为当前 View 在父容器中的整个布局)
-                damage.set(l, t , r , b);
-                p.invalidateChild(this, damage);
-            }
-            ...
-        }
+    //如果 View 不可见，或者在动画中
+    if (skipInvalidate()) {
+        return;
     }
+
+    //根据 mPrivateFlags 来标记是否重绘
+    if ((mPrivateFlags & (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)) == (PFLAG_DRAWN | PFLAG_HAS_BOUNDS)
+            || (invalidateCache && (mPrivateFlags & PFLAG_DRAWING_CACHE_VALID) == PFLAG_DRAWING_CACHE_VALID)
+            || (mPrivateFlags & PFLAG_INVALIDATED) != PFLAG_INVALIDATED
+            || (fullInvalidate && isOpaque() != mLastIsOpaque)) {
+        if (fullInvalidate) {//上面传入为 true ，表示需要全部重绘
+            mLastIsOpaque = isOpaque();//
+            mPrivateFlags &= ~PFLAG_DRAWN;//去除绘制完毕标记。
+        }
+
+        //添加标记，表示 View 正在绘制。 PFLAG_DRAWN 为绘制完毕。
+        mPrivateFlags |= PFLAG_DIRTY;
+
+        //清除缓存，表示由当前 View 发起的重绘。
+        if (invalidateCache) {
+            mPrivateFlags |= PFLAG_INVALIDATED;
+            mPrivateFlags &= ~PFLAG_DRAWING_CACHE_VALID;
+        }
+
+        //把需要重绘的区域传递给父View
+        final AttachInfo ai = mAttachInfo;
+        final ViewParent p = mParent;
+        if (p != null && ai != null && l < r && t < b) {
+            final Rect damage = ai.mTmpInvalRect;
+            //设置重绘区域(区域为当前 View 在父容器中的整个布局)
+            damage.set(l, t , r , b);
+            p.invalidateChild(this, damage);
+        }
+        ...
+    }
+}
 ```
 上述代码中，会设置一系列的标记位到 mPrivateFlags 中，并且通过父容器的 invalidateChild() ，将需要重绘的脏区域传给父容器。（ViewGroup和 ViewRootImpl 都继承了 ViewParent 类，该类中定义了子元素与父容器间的调用规范。）
 
 ## ViewGroup # invalidateChild()
 ```java
- public final void invalidateChild(View child, final Rect dirty) {
-        ViewParent parent = this;
+public final void invalidateChild(View child, final Rect dirty) {
+  ViewParent parent = this;
 
-        final AttachInfo attachInfo = mAttachInfo;
-        if (attachInfo != null) {
-                RectF boundingRect = attachInfo.mTmpTransformRect;
-                boundingRect.set(dirty);
-                ...  
-               //父容器根据自身对子 View 的脏区域进行调整
-                transformMatrix.mapRect(boundingRect);
-                dirty.set((int) Math.floor(boundingRect.left),
-                        (int) Math.floor(boundingRect.top),
-                        (int) Math.ceil(boundingRect.right),
-                        (int) Math.ceil(boundingRect.bottom));
+  final AttachInfo attachInfo = mAttachInfo;
+  if (attachInfo != null) {
+          RectF boundingRect = attachInfo.mTmpTransformRect;
+          boundingRect.set(dirty);
+          ...  
+         //父容器根据自身对子 View 的脏区域进行调整
+          transformMatrix.mapRect(boundingRect);
+          dirty.set((int) Math.floor(boundingRect.left),
+                  (int) Math.floor(boundingRect.top),
+                  (int) Math.ceil(boundingRect.right),
+                  (int) Math.ceil(boundingRect.bottom));
 
-            // 这里的 do while 方法，不断的去调用父类的 invalidateChildInParent() 来传递重绘请求
-            //直到调用到 ViewRootImpl 的invalidateChildInParent()（责任链模式）
-            do {
-                View view = null;
-                if (parent instanceof View) {
-                    view = (View) parent;
-                }
+      // 这里的 do while 方法，不断的去调用父类的 invalidateChildInParent() 来传递重绘请求
+      //直到调用到 ViewRootImpl 的invalidateChildInParent()（责任链模式）
+      do {
+          View view = null;
+          if (parent instanceof View) {
+              view = (View) parent;
+          }
 
-                if (drawAnimation) {
-                    if (view != null) {
-                        view.mPrivateFlags |= PFLAG_DRAW_ANIMATION;
-                    } else if (parent instanceof ViewRootImpl) {
-                        ((ViewRootImpl) parent).mIsAnimating = true;
-                    }
-                }
+          if (drawAnimation) {
+              if (view != null) {
+                  view.mPrivateFlags |= PFLAG_DRAW_ANIMATION;
+              } else if (parent instanceof ViewRootImpl) {
+                  ((ViewRootImpl) parent).mIsAnimating = true;
+              }
+          }
 
-                //如果父类是"实心"的，那么设置它的 mPrivateFlags 标识
-                if (view != null) {
-                    if ((view.mViewFlags & FADING_EDGE_MASK) != 0 &&
-                            view.getSolidColor() == 0) {
-                        opaqueFlag = PFLAG_DIRTY;
-                    }
-                    if ((view.mPrivateFlags & PFLAG_DIRTY_MASK) != PFLAG_DIRTY) {
-                        view.mPrivateFlags = (view.mPrivateFlags & ~PFLAG_DIRTY_MASK) | opaqueFlag;
-                    }
-                }
+          //如果父类是"实心"的，那么设置它的 mPrivateFlags 标识
+          if (view != null) {
+              if ((view.mViewFlags & FADING_EDGE_MASK) != 0 && view.getSolidColor() == 0) {
+                  opaqueFlag = PFLAG_DIRTY;
+              }
+              if ((view.mPrivateFlags & PFLAG_DIRTY_MASK) != PFLAG_DIRTY) {
+                  view.mPrivateFlags = (view.mPrivateFlags & ~PFLAG_DIRTY_MASK) | opaqueFlag;
+              }
+          }
 
-                //往上递归调用父类的invalidateChildInParent
-                parent = parent.invalidateChildInParent(location, dirty);
+          //往上递归调用父类的invalidateChildInParent
+          parent = parent.invalidateChildInParent(location, dirty);
 
-                //设置父类的脏区域
-                //父容器会把子 View 的脏区域转化为父容器中的坐标区域
-                if (view != null) {
-                    // Account for transform on current parent
-                    Matrix m = view.getMatrix();
-                    if (!m.isIdentity()) {
-                        RectF boundingRect = attachInfo.mTmpTransformRect;
-                        boundingRect.set(dirty);
-                        m.mapRect(boundingRect);
-                        dirty.set((int) Math.floor(boundingRect.left),
-                                (int) Math.floor(boundingRect.top),
-                                (int) Math.ceil(boundingRect.right),
-                                (int) Math.ceil(boundingRect.bottom));
-                    }
-                }
-            }
-            while (parent != null);
-        }
+          //设置父类的脏区域
+          //父容器会把子 View 的脏区域转化为父容器中的坐标区域
+          if (view != null) {
+              // Account for transform on current parent
+              Matrix m = view.getMatrix();
+              if (!m.isIdentity()) {
+                  RectF boundingRect = attachInfo.mTmpTransformRect;
+                  boundingRect.set(dirty);
+                  m.mapRect(boundingRect);
+                  dirty.set((int) Math.floor(boundingRect.left),
+                          (int) Math.floor(boundingRect.top),
+                          (int) Math.ceil(boundingRect.right),
+                          (int) Math.ceil(boundingRect.bottom));
+              }
+          }
       }
+      while (parent != null);
+  }
+}
 ```
 就会继续上传，parent.invalidateChildInParent(location, dirty)，最终会执行到 ViewRootImpl 中的 invalidataChileInParent() 中，至于原因，就是最上层的 ViewParents 就是 ViewRootImpl 。在 ViewRootImpl 的 setView() 中，由于传入的 View 正是 DecorView ，所以最顶层的 ViewParent 即 ViewRootImpl 。
 

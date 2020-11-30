@@ -16,7 +16,7 @@ tags: Android开发艺术探索  HandlerThread AsyncTaks IntentService
 
 扮演线程的角色有很多，包括 AsyncTask 和 IntentService ,同时 HandlerThread 也是一种特殊的线程
 ## AsyncTaks
-AsyncTask 底层使用的是线程池，分装了线程池和 Handler ，主要用于开发者可以使用在子线程中更新 UI 是一种轻量级的异步任务类。并不适合进行特别耗时的后台任务，
+AsyncTask 底层封装了线程池和 Handler ，主要用于开发者可以使用在子线程中更新 UI， 是一种轻量级的异步任务类，并不适合进行特别耗时的后台任务，
 ### AsyncTaks 的一些限制
 1. AsyncTask的类必须在主线程中加载。
 2. AsyncTask的对象必须在主线程中创建
@@ -95,7 +95,7 @@ private static class SerialExecutor implements Executor {
 * 两个线程池 sDefaultExecutor 和THREAD_POOL_EXECUTOR
   1. THREAD_POOL_EXECUTOR 是用来执行任务，
   2. sDefaultExecutor 只是为了任务的排队。
-* 一个Handler   InternalHandler
+* 一个Handler   InternalHandler    
 InternalHandler 用于将执行环境从线程池切换到主线程
 
 ```java

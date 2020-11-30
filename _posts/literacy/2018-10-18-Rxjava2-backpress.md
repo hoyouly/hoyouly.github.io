@@ -94,7 +94,7 @@ Subscription 和 Disposable 一样，也是一个开关，调用 cancel() 就可
 
 ```java
 hoyouly : Flowable : onSubscribe 0
-hoyouly : Flowable : onError create: could not emit value due to lack of requests
+hoyouly : Flowable : onError create could not emit value due to lack of requests
 ```
 
 如果 onSubscribe() 中执行了 request() ，但是 onNext() 中没有执行 request() ,那么输出的结果如下
