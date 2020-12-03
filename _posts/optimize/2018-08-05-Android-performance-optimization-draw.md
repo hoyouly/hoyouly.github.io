@@ -102,8 +102,7 @@ getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
 ### 移除控件中不必要的背景
 子 View 和父 View 如果背景相同，可移除子 View 的布局中的背景设置。
-
-例如 ListView 和 Item 之间，如果背景相同，就没必要设置 Item 的背景了
+ 的背景了
 
 例如 Viewpager + Fragment，如果每个 Fragment 都设置了背景色，则 Viewpager 没必要设置，可以移除。
 
@@ -115,14 +114,13 @@ getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 ### 自定义控件 View 优化，
 可以使用 clipRect() ,quickReject()
 
-* clipRect() 的效果如下()
-1. 给 Canvas 设置一个裁剪区域，只有在该区域的内才会被绘制，区域外的都不会被绘制
+* clipRect()   
+给 Canvas 设置一个裁剪区域，只有在该区域的内才会被绘制，区域外的都不会被绘制
 
-* quickReject()
-判断和某个矩形相交
-如果相交，则跳过相交区域，从而减少过度绘制。
+* quickReject()   
+判断和某个矩形相交。如果相交，则跳过相交区域，从而减少过度绘制。
 
-## 优化的例子
+# 优化的例子
 
 自定义了一个 View ，显示三张图片，代码如下
 
@@ -188,7 +186,7 @@ public class LayoutInflaterActivity extends Activity {
 效果如下。
 <img src="../../../../images/screen_4.png"  height="600" width="400">
 连紫色都没有，大片背景是绿色，说明多绘制了两层。图片显示的地方还有粉色，红色，这需要好好优化啊。
-### 优化一 减少布局嵌套
+## 优化一 减少布局嵌套
 
 我们发现 在 xml 中设置了父布局 LinearLayout 里面只有一个 CardView ，并且这个 CardView 还是 match_parent 的，其实完全可以把外层的 LinearLayout 去掉。直接加载 这个 CardView 即可。可以直接把这个 xml 文件删掉，直接在代码中加载，如下图
 ```java
@@ -206,7 +204,7 @@ public class LayoutInflaterActivity extends Activity {
 
 大片背景是紫色，说明多了一层绘制。
 接下来 我们处理第一步
-### 优化二 默认背景移除
+## 优化二 默认背景移除
 我们发现在 CardView 中设置了背景的 `setBackgroundColor(Color.WHITE)` 所以可以把默认背景移除。解决办法上面写道了。我们只使用其中一种，
 
 在 setContentView() 下面添加 getWindow().setBackgroundDrawable(null) 。
@@ -225,7 +223,7 @@ public class LayoutInflaterActivity extends Activity {
 <img src="../../../../images/screen_2.png"  height="600" width="400">
 大片的紫色背景变成了白色，说明默认背景已经移除。
 但是还有一部分紫色，绿色，粉色，可以进行再次处理。那就要用到 clipRect() 了
-### 优化三 使用 clipRect()
+## 优化三 使用 clipRect()
 
 主要看 CardView 的 onDraw() 方法。
 ```java
@@ -256,7 +254,7 @@ public class CardView extends View {
 <img src="../../../../images/screen_3.png"  height="600" width="400">
 只有白色和紫色了，就说明已经优化的很成功了。
 
-### 总结
+## 总结
 我们使用了三个优化措施，就处理了一个很常见的过渡绘制的问题。后续遇到这样的问题，可以参照上面的例子处理。
 
 ---   

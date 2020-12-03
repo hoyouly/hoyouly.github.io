@@ -80,11 +80,11 @@ static {
 
 ```
 AsyncTask 中对线程池的配置
-1. 核心线程数 至少有 2 个线程和最多 4 个线程(SDK 26 )。 `int CORE_POOL_SIZE =Math.max(2, Math.min(CPU_COUNT - 1, 4))`
-2. 线程池的最大线程数为 CPU 核心线程数的 2 倍+1。 `int CORE_POOL_SIZE =CPU_COUNT * 2 + 1`
-3. 核心线程无超时机制。 `threadPoolExecutor.allowCoreThreadTimeOut(true);`
-4. 非核心线程池在闲置时超时时间为 30 秒 。 `  int KEEP_ALIVE_SECONDS = 30`
-4. 任务队列的容量为 128 。`  BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(128)`
+1. 核心线程数 至少有 2 个线程和最多 4 个线程(SDK 26 )。 <span style="border-bottom:1px solid red;"> int CORE_POOL_SIZE =Math.max(2, Math.min(CPU_COUNT - 1, 4))</span>
+2. 线程池的最大线程数为 CPU 核心线程数的 2 倍+1。 <span style="border-bottom:1px solid red;"> int CORE_POOL_SIZE =CPU_COUNT * 2 + 1</span>
+3. 核心线程无超时机制。 <span style="border-bottom:1px solid red;"> threadPoolExecutor.allowCoreThreadTimeOut(true);</span>
+4. 非核心线程池在闲置时超时时间为 30 秒 。 <span style="border-bottom:1px solid red;"> int KEEP_ALIVE_SECONDS = 30</span>
+4. 任务队列的容量为 128 。<span style="border-bottom:1px solid red;"> BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(128)</span>
 
 ## 线程池的分类
 Android 中最常见的四类不同功能特性的线程池。他们都是直接或者间接通过配置 ThreadPoolExecute 来实现自己的功能特性的。从线程池的功能上来说， Android 的线程池主要分为 4 类，这 4 类线程池可以通过 Executors 所提供的工厂方法来得到。分别是 FixedThreadPool ， CachedThreadPool ， ScheduledThreadPool 以及SingleThreadExecutor
@@ -98,8 +98,7 @@ Android 中最常见的四类不同功能特性的线程池。他们都是直接
 ```java
 public static ExecutorService newFixedThreadPool(int nThreads) {
     return new ThreadPoolExecutor(nThreads, nThreads ,
- 0L , TimeUnit.MILLISECONDS,
-                                  new LinkedBlockingQueue<Runnable>());
+              0L , TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 }
 ```
 ### CachedTheadPool 线程数量不定的线程池
@@ -115,10 +114,8 @@ public static ExecutorService newFixedThreadPool(int nThreads) {
 ```java
 public static ExecutorService newCachedThreadPool() {
   return new ThreadPoolExecutor(0, Integer.MAX_VALUE,//
- 60L , TimeUnit.SECONDS,//
-                                new SynchronousQueue<Runnable>());
+            60L , TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 }
-
 ```
 ### ScheduleThreadPool 核心线程固定，非核心线程没有限制
 1. 通过 Executors 的 newScheduleThreadPool() 来创建，核心线程固定，非核心线程没有限制。
@@ -130,14 +127,14 @@ public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) 
     return new ScheduledThreadPoolExecutor(corePoolSize);
 }
 
-public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory) {
+public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize
+                , ThreadFactory threadFactory) {
     return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
 }
-============================================================================
+
 public ScheduledThreadPoolExecutor(int corePoolSize,ThreadFactory threadFactory) {
-    super(corePoolSize, Integer.MAX_VALUE,//
- DEFAULT_KEEPALIVE_MILLIS , MILLISECONDS ,//
- new DelayedWorkQueue() , threadFactory);
+    super(corePoolSize, Integer.MAX_VALUE,DEFAULT_KEEPALIVE_MILLIS , MILLISECONDS ,
+        new DelayedWorkQueue() , threadFactory);
 }
 ```
 
@@ -148,11 +145,7 @@ public ScheduledThreadPoolExecutor(int corePoolSize,ThreadFactory threadFactory)
 
 ```java
 public static ExecutorService newSingleThreadExecutor() {
-    return new FinalizableDelegatedExecutorService(
-                                new ThreadPoolExecutor(1, 1 , 0L , TimeUnit.MILLISECONDS,
-                                new LinkedBlockingQueue<Runnable>()));
-}
-```
-
+    return new FinalizableDelegatedExecutorService(new ThreadPoolExecutor(1, 1 , 0L
+                    , TimeUnit.MILLISECONDS,new LinkedBlockingQueue<Runnable>()));
 }
 ```
