@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 扫盲系列 - Kotlin 中的标准库函数 it、run、with、let、also和apply、use
+title: 扫盲系列 - Kotlin 中的标准库函数 run、with、let、also、apply、use、takeif
 category: 扫盲系列
 tags:  Kotlin
 ---
@@ -15,7 +15,8 @@ var dints2=ints.map{ it*2}
 File("test.txt").let { }
 ```
 等等，这些感觉好奇怪的，和java区别很大的，这些到底是啥呢，
-在学习这些之前，我们先大概了解一下什么是lambda表达式
+在学习这些之前，我们先大概了解一下两个知识点，lambda表达式和 it
+
 
 ## lambda表达式
 
@@ -27,14 +28,14 @@ File("test.txt").let { }
 例如
 ```java
 textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("hoyouly", " onClick "+v.getId());
-            }
-        });
+    @Override
+    public void onClick(View v) {
+        Log.d("hoyouly", " onClick "+v.getId());
+    }
+});
 ```
 简化成为 lambda表达式后就成了下面这种形式
-```
+```kotlin
 textView.setOnClickListener(view -> {Log.d("hoyouly", " onClick "+v.getId()});
 //只有一行代码的，可以把{} 也省略掉
 textView.setOnClickListener(view -> Log.d("hoyouly", " onClick "+v.getId());
@@ -54,10 +55,9 @@ executor.submit(
 executor.submit(() ->{/*todo*/})
 ```
 
-Kotlin里提供了一些有趣的函数，包括it，let，apply，run，with，also,inline 可以成为Kotlin的标准库函数，他们都是建立在lamdba表达式的基础上的。
-
 ## it
-对于这种单个参数的运算式，例如
+简单来说，it 就是为了简化代码而存在的。   
+例如,对于这种单个参数的运算式。
 ```kotlin
 val dints=ints.map{value->value*2}
 ```
@@ -66,7 +66,9 @@ val dints=ints.map{value->value*2}
 ```kotlin
 val dints2=ints.map{ it*2}
 ```
-简单来说，it 就是为了简化代码而存在的
+
+Kotlin里提供了一些有趣的函数，包括 let，apply，run，with，also,use、takeif等，他们都是建立在lamdba表达式的基础上的,并且用到了it.
+
 ## let
 let能把更复杂的对象赋给it
 
@@ -97,7 +99,7 @@ File("test.txt").let {
 ```
 let 返回的是代码块中最后一行的对象
 
-```
+```kotlin
 fun testlet() {
     val original = "abc"
 
@@ -114,7 +116,8 @@ fun testlet() {
 ```
 
 ## also
-和let 类似，但是 返回的还是对象本身，并不会发生变化
+kotlin 1.1 版本新加入的内容，像是let和apply的加强版。
+有let的功能，可以直接操作对象本身，又与apply返回类似，是对象本身，并且不会发生变化
 ```kotlin
 original.also {
     println("The original String is $it") //abc
@@ -154,9 +157,8 @@ fun makeDir(path: String): File {
 
 ```
 
-
 ## apply
-apply可以操作一个对象的任意函数，再结合let返回该对象，例如
+apply可以操作一个对象的任意函数，可以结合let返回该对象，例如
 ```kotlin
 var array: ArrayList<Int> = ArrayList()
 println(array.size)//  0
@@ -168,8 +170,22 @@ array.apply {
 }
 ```
 ## run
-* apply是操作一个对象，run则是操作一块儿代码
-* apply返回操作的对象，run的返回则是最后一行代码的对象,这一点和let 很相似的
+是一个扩展函数，最终返回该扩展函数的结果。
+
+在run函数中，我们拥有了一个单独的作用域，例如定义一个 nickName，并且他的作用域只存在于run函数中。
+
+```kotlin
+fun main() {
+    val nickName = "Prefet"
+    run {
+        val nickName = "YarenTang"
+        println(nickName) //YarenTang
+    }
+    println(nickName) //Prefet
+  }
+```
+
+可以和let组合使用。
 
 ```kotlin
 array.run {
@@ -193,7 +209,7 @@ array.run {
     println(array.size) // 2
 }
 ```
-这是因为 run()返回的是最后一行代码的对象，因子最后一行代码没有对象，所以就返回了Unit
+这是因为 run()返回的是最后一行代码的对象，因为最后一行代码没有对象，所以就返回了Unit
 
 run的一个应用可以把将show()方法应用到两个View中，而不需要去调用两次show()方法
 ```kotlin
@@ -201,6 +217,10 @@ run {
   if (firstTimeView) introView else normalView
 }.show()
 ```
+### run 和 apply 区别
+* apply是操作一个对象，run则是操作一块代码
+* apply返回操作的对象，run的返回则是最后一行代码的对象,这一点和let 很相似的
+
 
 ## with
 with有点儿像apply，也是操作一个对象，不过它是用函数方式，把对象作为参数传入with函数，然后在代码块中操作，例如
@@ -244,25 +264,31 @@ webview.settings?.run {
 }
 ```
 
-## inline
-inline内联函数，其实相当于对代码块的一个标记，这个代码块将在编译时被放进代码的内部，相当于说，内联函数在编译后就被打散到调用它的函数里的，目的是得到一些性能上的优势。
+## takeif
+如果不仅仅想判空，还想加入判断条件，可以使用takeif
+```kotlin
+val result=student.takeif{it.age>19}.let{...}
+```
+年龄大于19的才会执行let操作。
 
-## 使用标准库函数的补充
-1. 建议尽量不要使用多个标准库函数进行嵌套，不要为了简化而去做简化，否则整个代码可读性会大大降低，一会是it指代，一会又是this指代，估计隔一段时间后连你自己都不知道指代什么了。
-2. let函数和run函数之所以能够返回其他类型的值，其原理在于lambda表达式内部返回最后一行表达式的值，所以只要最后一行表达式返回不同的对象，那么它们就返回不同类型，表现上就是返回其他类型
-3. T.also和T.apply函数之所以能能返回自己本身，是因为在各自Lambda表达式内部最后一行都调用return this,返回它们自己本身，这个this能被指代调用者，是因为它们都是扩展函数特性
+和filter异曲同工，不过takeif 只操作单条数据，与takeif相反的还有takeUnless,即接收器不满足特定条件才会执行
 
 ## use
 * 实现了Closeable接口的对象可调用use函数
 * use函数会自动关闭调用者（无论中间是否出现异常）
 * Kotlin的File对象和IO流操作变得行云流水
-
 ```kotlin
 File("/home/test.txt").readLines()
         .forEach { println(it) }
 
 ```
 readLines()内部间接使用了use函数，这样就省去了捕获异常和关闭流的烦恼
+
+## 使用标准库函数的补充
+1. 建议尽量不要使用多个标准库函数进行嵌套，不要为了简化而去做简化，否则整个代码可读性会大大降低，一会是it指代，一会又是this指代，估计隔一段时间后连你自己都不知道指代什么了。
+2. let函数和run函数之所以能够返回其他类型的值，其原理在于lambda表达式内部返回最后一行表达式的值，所以只要最后一行表达式返回不同的对象，那么它们就返回不同类型，表现上就是返回其他类型
+3. T.also和T.apply函数之所以能能返回自己本身，是因为在各自Lambda表达式内部最后一行都调用return this,返回它们自己本身，这个this能被指代调用者，是因为它们都是扩展函数特性
+
 
 - - - -
 搬运地址：    
